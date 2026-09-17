@@ -1,0 +1,29 @@
+# dependencies
+node_modules/
+
+# builds
+.next/
+out/
+dist/
+build/
+*.tsbuildinfo
+
+# generated (Prisma client, etc.)
+generated/
+
+# env
+.env
+.env.*
+!.env.example
+
+# tests / coverage
+coverage/
+
+# logs
+npm-debug.log*
+*.log
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
