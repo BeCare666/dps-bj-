@@ -31,7 +31,7 @@ export default async function VerificationEmailPage({
             à <span className="font-medium text-text">{email}</span>
           </>
         )}
-        . Cliquez sur le lien qu&apos;il contient pour activer votre compte — il expire dans 48 heures.
+        . Cliquez sur le lien qu&apos;il contient pour activer votre compte. Il expire dans 48 heures.
       </p>
 
       {email && (

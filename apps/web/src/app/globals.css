@@ -29,11 +29,43 @@
   --color-warning-soft: #fbf1de;
   --color-danger: #c23a3a;
   --color-danger-soft: #fbeaea;
+  /* Distinct de --color-primary : réservé aux messages/badges informatifs
+     neutres (ex. "en attente", note contextuelle) — jamais un appel à l'action. */
+  --color-info: #2f6fb0;
+  --color-info-soft: #eaf3fb;
 
+  /* Bleu nuit institutionnel : surfaces sombres de la vitrine uniquement
+     (footer, bandeau d'appel à l'action). Jamais utilisé dans les dashboards. */
+  --color-navy: #0a1a38;
+  --color-navy-deep: #06122a;
+
+  /* --shadow-soft : cartes/surfaces au repos. --shadow-elevated : contenu
+     flottant au-dessus du reste (Modal, Dropdown, Toast). */
   --shadow-soft: 0 1px 2px rgba(16, 24, 43, 0.04), 0 8px 24px -12px rgba(22, 87, 204, 0.12);
+  --shadow-elevated: 0 4px 8px rgba(16, 24, 43, 0.06), 0 16px 40px -12px rgba(16, 24, 43, 0.18);
+  --radius-sm: 0.375rem;
   --radius-md: 0.625rem;
   --radius-lg: 1rem;
 }
+
+/*
+ * Hiérarchie typographique (Phase 1 — formalisée, pas de nouvelles classes
+ * utilitaires : Tailwind + les deux familles ci-dessous suffisent déjà).
+ * Composants à construire en Phase 2 : respecter ces couples classe/usage.
+ *
+ *   Niveau              Classes de référence                         Usage
+ *   Titre de page (h1)  font-display text-2xl/text-3xl font-bold     En-tête de page
+ *   Titre de section    font-display text-lg/text-xl font-semibold   En-tête de carte/section
+ *   Corps de texte      font-sans text-sm text-text                  Contenu courant
+ *   Texte secondaire    font-sans text-sm text-text-muted            Sous-titres, descriptions
+ *   Label de champ      font-sans text-sm font-medium text-text      Labels de formulaire
+ *   Caption / meta      font-sans text-xs text-text-faint            Horodatages, mentions annexes
+ *   Donnée chiffrée     font-display font-bold tabular-nums          KPI, StatCard, scores
+ *
+ * Pas de dark mode pour l'instant — thème clair unique assumé (choix
+ * délibéré, voir commentaire en tête de fichier), à revisiter seulement sur
+ * demande explicite plutôt que par ajout silencieux de media queries.
+ */
 
 @theme inline {
   --color-bg: var(--color-bg);
@@ -55,9 +87,22 @@
   --color-warning-soft: var(--color-warning-soft);
   --color-danger: var(--color-danger);
   --color-danger-soft: var(--color-danger-soft);
+  --color-info: var(--color-info);
+  --color-info-soft: var(--color-info-soft);
+  --color-navy: var(--color-navy);
+  --color-navy-deep: var(--color-navy-deep);
 
   --font-sans: var(--font-body);
   --font-display: var(--font-display);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }
 
 body {
@@ -65,7 +110,58 @@ body {
   color: var(--color-text);
 }
 
+/* Typographie des documents légaux (CGU, confidentialité) : contenu rédigé en
+   JSX simple, stylé ici plutôt que classe par classe. */
+.legal-contenu > * + * {
+  margin-top: 1rem;
+}
+.legal-contenu ul {
+  list-style: disc;
+  padding-left: 1.25rem;
+}
+.legal-contenu li + li {
+  margin-top: 0.4rem;
+}
+.legal-contenu li::marker {
+  color: var(--color-primary);
+}
+.legal-contenu strong {
+  color: var(--color-text);
+  font-weight: 600;
+}
+.legal-contenu a {
+  color: var(--color-primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.legal-contenu table {
+  width: 100%;
+  font-size: 0.875rem;
+  border-collapse: collapse;
+}
+.legal-contenu th {
+  text-align: left;
+  color: var(--color-text);
+  font-weight: 600;
+}
+.legal-contenu th,
+.legal-contenu td {
+  border-bottom: 1px solid var(--color-border);
+  padding: 0.6rem 0.75rem 0.6rem 0;
+  vertical-align: top;
+}
+
 ::selection {
   background: var(--color-primary-soft);
   color: var(--color-primary-hover);
+}
+
+/* Barre de défilement discrète pour les zones scrollables internes (menu de
+   la sidebar) : visible seulement au survol, comme sur les consoles SaaS. */
+.scrollbar-fin {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+.scrollbar-fin:hover {
+  scrollbar-color: var(--color-border) transparent;
 }

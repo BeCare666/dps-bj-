@@ -30,10 +30,18 @@ export default async function TableauDeBordEiPage() {
 
   return (
     <div className="mx-auto max-w-4xl px-5 py-12 sm:px-8">
-      <Reveal>
-        <span className="text-xs font-medium uppercase tracking-wide text-text-faint">Module EI</span>
-        <h1 className="mt-2 font-display text-3xl font-bold text-text">Tableau de bord</h1>
-        <p className="mt-2 text-text-muted">Vue d&apos;ensemble des événements indésirables de l&apos;organisation.</p>
+      <Reveal className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <span className="text-xs font-medium uppercase tracking-wide text-text-faint">Module EI</span>
+          <h1 className="mt-2 font-display text-3xl font-bold text-text">Tableau de bord</h1>
+          <p className="mt-2 text-text-muted">Vue d&apos;ensemble des événements indésirables de l&apos;organisation.</p>
+        </div>
+        <a
+          href="/api/evenements-indesirables/export-csv"
+          className="inline-flex items-center justify-center rounded-[var(--radius-md)] border border-border bg-surface px-5 py-2.5 text-sm font-medium text-text transition-colors hover:border-primary/40 hover:bg-primary-soft/60"
+        >
+          Exporter en CSV
+        </a>
       </Reveal>
 
       <Reveal delay={0.05} className="mt-8 grid gap-5 sm:grid-cols-3">
@@ -48,7 +56,11 @@ export default async function TableauDeBordEiPage() {
         <div className="rounded-[var(--radius-lg)] border border-border bg-surface p-6">
           <p className="text-xs font-medium uppercase tracking-wide text-text-faint">Délai moyen de clôture</p>
           <p className="mt-2 font-display text-3xl font-bold text-text">
-            {stats.delaiMoyenClotureJours !== null ? `${stats.delaiMoyenClotureJours} j` : "—"}
+            {stats.delaiMoyenClotureJours !== null ? (
+              `${stats.delaiMoyenClotureJours} j`
+            ) : (
+              <span className="text-base font-medium text-text-faint">Aucun EI clôturé</span>
+            )}
           </p>
         </div>
       </Reveal>

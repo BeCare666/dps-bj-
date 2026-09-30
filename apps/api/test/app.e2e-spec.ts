@@ -16,11 +16,12 @@ describe('AppController (e2e)', () => {
     await app.init();
   });
 
-  it('/ (GET)', () => {
-    return request(app.getHttpServer())
-      .get('/')
-      .expect(200)
-      .expect('Hello World!');
+  // Test scaffold d'origine (Nest CLI) mis à jour : JwtAuthGuard est global
+  // dans cette application (voir AuthModule) et "/" ne porte pas @Public(),
+  // donc une requête non authentifiée est refusée — c'est le comportement
+  // réel et correct, pas une régression.
+  it('/ (GET) sans authentification → 401', () => {
+    return request(app.getHttpServer()).get('/').expect(401);
   });
 
   afterEach(async () => {

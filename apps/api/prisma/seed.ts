@@ -97,10 +97,35 @@ async function seedGrillePlaceholder(type: TypeEtablissement) {
   console.log(`${nom} v1 créée.`);
 }
 
+// D8 — provisionne la seule ligne de paramètre validée à ce jour. Le
+// paramètre n'existe qu'ici : l'API ne permet jamais de créer une nouvelle
+// clé, seulement de modifier une clé déjà seedée (voir ParametresService).
+async function seedParametres() {
+  const cle = "duree_essai_module_jours";
+  const existant = await prisma.parametrePlateforme.findUnique({ where: { cle } });
+  if (existant) {
+    console.log(`Paramètre ${cle} déjà présent, aucune modification.`);
+    return;
+  }
+
+  const valeurDefaut = process.env.DUREE_ESSAI_MODULE_JOURS ?? "90";
+  await prisma.parametrePlateforme.create({
+    data: {
+      cle,
+      valeur: valeurDefaut,
+      type: "entier",
+      description: "Durée (en jours) de l'essai gratuit accordé à un établissement à la première utilisation d'un module NEWS ou EI (RM6).",
+      valeurDefaut,
+    },
+  });
+  console.log(`Paramètre ${cle} créé (valeur : ${valeurDefaut}).`);
+}
+
 async function main() {
   await seedAdmin();
   await seedGrillePlaceholder(TypeEtablissement.EH);
   await seedGrillePlaceholder(TypeEtablissement.ESPC);
+  await seedParametres();
 }
 
 main()

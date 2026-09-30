@@ -2,24 +2,31 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, motion, useMotionValueEvent, useScroll } from "motion/react";
 import { Button } from "@/components/ui/button";
+import { Logo } from "@/components/shell/logo";
 
 const NAV_LINKS = [
-  { href: "/", label: "Accueil" },
+  { href: "/#modules", label: "Modules" },
+  { href: "/#etablissements", label: "Établissements" },
   { href: "/formations", label: "Formations" },
   { href: "/a-propos", label: "À propos" },
 ];
 
 export function SiteHeader() {
   const [ouvert, setOuvert] = useState(false);
+  const [defile, setDefile] = useState(false);
+  const { scrollY } = useScroll();
+  useMotionValueEvent(scrollY, "change", (y) => setDefile(y > 12));
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border/70 bg-bg/85 backdrop-blur-md">
+    <header
+      className={`sticky top-0 z-50 border-b backdrop-blur-md transition-[background-color,border-color,box-shadow] duration-300 ${
+        defile ? "border-border/70 bg-bg/90 shadow-[0_8px_30px_-18px_rgba(10,26,56,0.35)]" : "border-transparent bg-bg/70"
+      }`}
+    >
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5 sm:px-8">
-        <Link href="/" className="flex items-center gap-1 font-display text-lg font-bold text-[#0f3d8a]">
-          dps<span className="text-accent">.</span>bj
-        </Link>
+        <Logo />
 
         <nav className="hidden items-center gap-8 md:flex">
           {NAV_LINKS.map((link) => (

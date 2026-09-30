@@ -36,7 +36,7 @@ export default async function AutoEvaluationPage() {
         <span className="text-xs font-medium uppercase tracking-wide text-text-faint">Module gratuit</span>
         <h1 className="mt-2 font-display text-3xl font-bold text-text">Auto-évaluation</h1>
         <p className="mt-2 text-text-muted">
-          Grille{organisation ? ` ${organisation.type}` : ""} — répondez critère par critère, le score est calculé
+          Grille{organisation ? ` ${organisation.type}` : ""}. Répondez critère par critère : le score est calculé
           automatiquement à la soumission.
         </p>
       </Reveal>
@@ -99,7 +99,7 @@ export default async function AutoEvaluationPage() {
                 <div>
                   <p className="font-medium text-text">{s.grille.nom}</p>
                   <p className="text-xs text-text-muted">
-                    Soumise le {s.dateSoumission ? formaterDate(s.dateSoumission) : "—"}
+                    {s.dateSoumission ? `Soumise le ${formaterDate(s.dateSoumission)}` : "Date de soumission non renseignée"}
                   </p>
                 </div>
                 <span className="font-display text-lg font-bold text-primary">{s.scoreGlobal}%</span>

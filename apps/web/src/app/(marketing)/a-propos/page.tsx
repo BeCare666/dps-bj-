@@ -15,8 +15,8 @@ export default function AProposPage() {
           Un dispositif né des besoins du terrain
         </h1>
         <p className="mt-5 text-base leading-7 text-text-muted">
-          Le Dispositif de Sécurité des Patients (dps.bj) accompagne les établissements de santé du Bénin —
-          hôpitaux (EH) comme établissements de santé primaire communautaire (ESPC) — dans une démarche continue
+          Le Dispositif de Sécurité des Patients (dps.bj) accompagne les établissements de santé du Bénin,
+          hôpitaux (EH) comme établissements de santé primaire communautaire (ESPC), dans une démarche continue
           d&apos;amélioration de la qualité et de la sécurité des soins.
         </p>
         <p className="mt-4 text-base leading-7 text-text-muted">

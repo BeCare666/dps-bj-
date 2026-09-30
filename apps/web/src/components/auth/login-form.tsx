@@ -8,11 +8,12 @@ import { connexionAction, type EtatFormulaire } from "@/lib/auth-actions";
 
 const ETAT_INITIAL: EtatFormulaire = {};
 
-export function LoginForm() {
+export function LoginForm({ next }: { next?: string }) {
   const [etat, action] = useActionState(connexionAction, ETAT_INITIAL);
 
   return (
     <form action={action} className="flex flex-col gap-4">
+      {next && <input type="hidden" name="next" value={next} />}
       <Field label="Email" name="email" type="email" autoComplete="email" required />
       <div className="flex flex-col gap-1.5">
         <Field label="Mot de passe" name="motDePasse" type="password" autoComplete="current-password" required />

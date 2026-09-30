@@ -8,6 +8,7 @@ import type { Utilisateur, UtilisateurRole } from "../generated/prisma/client.js
 import type { RegisterOrganisationDto } from "./dto/register-organisation.dto.js";
 import type { RegisterIndividuelDto } from "./dto/register-individuel.dto.js";
 import type { LoginDto } from "./dto/login.dto.js";
+import type { ModifierProfilDto } from "./dto/modifier-profil.dto.js";
 import type { JwtAccessPayload } from "./types/jwt-payload.type.js";
 import { generateOpaqueToken, hashOpaqueToken, ttlToMs } from "./auth.util.js";
 
@@ -98,6 +99,46 @@ export class AuthService {
     return { utilisateur };
   }
 
+  // Profil affichable (en-tête admin/organisation) — le payload du JWT
+  // (JwtAccessPayload) ne contient volontairement que l'id/rôles/organisation,
+  // pas le nom ni l'email, pour rester léger sur chaque requête authentifiée.
+  async obtenirProfil(userId: string) {
+    const utilisateur = await this.prisma.utilisateur.findUnique({
+      where: { id: userId },
+      select: { id: true, nom: true, prenom: true, email: true, telephone: true, typeCompte: true },
+    });
+    return utilisateur;
+  }
+
+  // Auto-édition du profil personnel — même pattern que
+  // OrganisationsService.modifierMesInfos (D8.1) : scope strictement
+  // `user.sub` côté contrôleur, jamais un `:id` fourni par le frontend.
+  async modifierMonProfil(userId: string, dto: ModifierProfilDto) {
+    const avant = await this.prisma.utilisateur.findUnique({
+      where: { id: userId },
+      select: { nom: true, prenom: true, telephone: true },
+    });
+
+    const apres = await this.prisma.utilisateur.update({
+      where: { id: userId },
+      data: { nom: dto.nom, prenom: dto.prenom, telephone: dto.telephone },
+      select: { id: true, nom: true, prenom: true, email: true, telephone: true, typeCompte: true },
+    });
+
+    await this.prisma.journalAudit.create({
+      data: {
+        utilisateurId: userId,
+        action: "utilisateur.modifier_profil",
+        entite: "Utilisateur",
+        entiteId: userId,
+        donneesAvant: avant ?? {},
+        donneesApres: { nom: apres.nom, prenom: apres.prenom, telephone: apres.telephone },
+      },
+    });
+
+    return apres;
+  }
+
   async login(dto: LoginDto): Promise<TokensEtUtilisateur> {
     const utilisateur = await this.prisma.utilisateur.findUnique({
       where: { email: dto.email },
@@ -158,10 +199,23 @@ export class AuthService {
   async logout(rawRefreshToken: string | undefined): Promise<void> {
     if (!rawRefreshToken) return;
     const tokenHash = hashOpaqueToken(rawRefreshToken);
-    await this.prisma.refreshToken.updateMany({
-      where: { tokenHash, revokedAt: null },
-      data: { revokedAt: new Date() },
-    });
+    const token = await this.prisma.refreshToken.findUnique({ where: { tokenHash } });
+    if (!token || token.revokedAt) return;
+
+    await this.prisma.refreshToken.update({ where: { id: token.id }, data: { revokedAt: new Date() } });
+
+    const utilisateur = await this.prisma.utilisateur.findUnique({ where: { id: token.utilisateurId } });
+    if (utilisateur) {
+      await this.prisma.journalAudit.create({
+        data: {
+          organisationId: utilisateur.organisationId,
+          utilisateurId: utilisateur.id,
+          action: "deconnexion",
+          entite: "Utilisateur",
+          entiteId: utilisateur.id,
+        },
+      });
+    }
   }
 
   // Réponse volontairement identique que l'email existe ou non, pour ne pas

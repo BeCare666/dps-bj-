@@ -64,7 +64,7 @@ export class SessionsEvaluationService {
     const session = await this.prisma.sessionEvaluation.findUnique({ where: { id: sessionId } });
     this.verifierAppartenance(session, user);
     if (session.statut !== StatutSessionEvaluation.EN_COURS) {
-      throw new ConflictException("Session déjà soumise, les réponses sont immuables (RM3)");
+      throw new ConflictException("Session déjà soumise, les réponses ne peuvent plus être modifiées.");
     }
 
     const element = await this.prisma.elementMesurable.findUnique({

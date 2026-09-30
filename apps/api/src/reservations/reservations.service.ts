@@ -2,6 +2,7 @@ import { BadRequestException, ConflictException, ForbiddenException, Injectable,
 import { PrismaService } from "../prisma/prisma.service.js";
 import { KkiapayService } from "../paiements/kkiapay.service.js";
 import { MailerService } from "../notifications/mailer.service.js";
+import { NotificationsInternesService } from "../notifications-internes/notifications-internes.service.js";
 import { FormuleFormation, RoleUtilisateur, StatutReservation, TypeCompte } from "../generated/prisma/enums.js";
 import type { Reservation } from "../generated/prisma/client.js";
 import type { JwtAccessPayload } from "../auth/types/jwt-payload.type.js";
@@ -19,6 +20,7 @@ export class ReservationsService {
     private readonly prisma: PrismaService,
     private readonly kkiapay: KkiapayService,
     private readonly mailer: MailerService,
+    private readonly notificationsInternes: NotificationsInternesService,
   ) {}
 
   // 9.1/9.2/9.9 — Organisation et Individuel peuvent réserver, pas l'admin plateforme.
@@ -54,7 +56,14 @@ export class ReservationsService {
         statut: query.statut,
         ...(estAdmin ? {} : user.organisationId ? { organisationId: user.organisationId } : { utilisateurId: user.sub }),
       },
-      include: { formation: true, facture: true },
+      include: {
+        formation: true,
+        facture: true,
+        // Utile côté admin (annuaire du client de la réservation) ; sans effet
+        // pour un compte non-admin, qui connaît déjà son propre profil.
+        utilisateur: { select: { id: true, nom: true, prenom: true, email: true } },
+        organisation: { select: { id: true, nom: true } },
+      },
       orderBy: { createdAt: "desc" },
     });
   }
@@ -118,8 +127,19 @@ export class ReservationsService {
 
     await this.notifierUtilisateur(
       reservation.utilisateurId,
-      "Paiement confirmé — une date de rendez-vous vous sera communiquée sous 48h",
+      "Paiement confirmé. Une date de rendez-vous vous sera communiquée sous 48 h.",
     );
+
+    const formation = await this.prisma.formation.findUnique({
+      where: { id: reservation.formationId },
+      select: { titre: true },
+    });
+    await this.notificationsInternes.creerPourAdmins({
+      type: "RESERVATION_PAYEE",
+      titre: "Réservation payée, date de RDV à fixer",
+      message: `${formation?.titre ?? "Une formation"} · ${reservation.tarifApplique.toLocaleString("fr-FR")} FCFA`,
+      lienUrl: "/admin/reservations",
+    });
 
     return misAJour;
   }

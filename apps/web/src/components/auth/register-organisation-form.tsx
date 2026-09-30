@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import { Field, SelectField } from "@/components/ui/field";
 import { SubmitButton } from "./submit-button";
+import { AcceptationCgu } from "./acceptation-cgu";
 import { inscrireOrganisationAction, type EtatFormulaire } from "@/lib/auth-actions";
 
 const ETAT_INITIAL: EtatFormulaire = {};
@@ -46,6 +47,8 @@ export function RegisterOrganisationForm() {
       {etat.erreur && (
         <p className="rounded-[var(--radius-md)] bg-danger-soft px-3.5 py-2.5 text-sm text-danger">{etat.erreur}</p>
       )}
+
+      <AcceptationCgu />
 
       <SubmitButton>Créer le compte établissement</SubmitButton>
     </form>

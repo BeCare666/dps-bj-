@@ -3,8 +3,16 @@ import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
 import { PrismaModule } from './prisma/prisma.module.js';
 import { NotificationsModule } from './notifications/notifications.module.js';
+import { NotificationsInternesModule } from './notifications-internes/notifications-internes.module.js';
 import { AuthModule } from './auth/auth.module.js';
 import { OrganisationsModule } from './organisations/organisations.module.js';
+import { UtilisateursModule } from './utilisateurs/utilisateurs.module.js';
+import { AuditModule } from './audit/audit.module.js';
+import { IntegrationsModule } from './integrations/integrations.module.js';
+import { AlertesPlateformeModule } from './alertes-plateforme/alertes-plateforme.module.js';
+import { AnalyticsModule } from './analytics/analytics.module.js';
+import { ParametresModule } from './parametres/parametres.module.js';
+import { SecuriteModule } from './securite/securite.module.js';
 import { GrillesModule } from './grilles/grilles.module.js';
 import { SessionsEvaluationModule } from './sessions-evaluation/sessions-evaluation.module.js';
 import { AbonnementsModule } from './abonnements/abonnements.module.js';
@@ -21,8 +29,16 @@ import { ReservationsModule } from './reservations/reservations.module.js';
   imports: [
     PrismaModule,
     NotificationsModule,
+    NotificationsInternesModule,
     AuthModule,
     OrganisationsModule,
+    UtilisateursModule,
+    AuditModule,
+    IntegrationsModule,
+    AlertesPlateformeModule,
+    AnalyticsModule,
+    ParametresModule,
+    SecuriteModule,
     GrillesModule,
     SessionsEvaluationModule,
     AbonnementsModule,

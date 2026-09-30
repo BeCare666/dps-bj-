@@ -79,7 +79,7 @@ export default async function ResultatsPage({ params }: { params: Promise<{ id: 
               >
                 <p className="text-xs font-medium uppercase tracking-wide text-text-faint">{critere.domaineNom}</p>
                 <p className="mt-1 text-sm text-text">
-                  <span className="font-medium">{critere.code}</span> — {critere.libelle}
+                  <span className="font-medium">{critere.code}</span> · {critere.libelle}
                 </p>
               </div>
             ))}

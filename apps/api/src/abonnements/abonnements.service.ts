@@ -1,14 +1,22 @@
 import { ForbiddenException, Injectable } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service.js";
+import { ParametresService } from "../parametres/parametres.service.js";
 import { ModuleMetier, StatutAbonnement } from "../generated/prisma/enums.js";
 import type { AbonnementModule } from "../generated/prisma/client.js";
 
 // RM6 — essai gratuit paramétrable, 90 jours par défaut, bascule auto en payant.
-const DUREE_ESSAI_JOURS = Number(process.env.DUREE_ESSAI_MODULE_JOURS ?? 90);
+// D8 — lu depuis ParametrePlateforme (base), plus depuis process.env : la
+// valeur d'origine (variable d'env) sert de repli/valeur de seed uniquement,
+// voir prisma/seed.ts. Un changement via /admin/parametres s'applique donc
+// immédiatement à toute nouvelle provision d'essai, sans redéploiement.
+const DEFAUT_DUREE_ESSAI_JOURS = Number(process.env.DUREE_ESSAI_MODULE_JOURS ?? 90);
 
 @Injectable()
 export class AbonnementsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly parametres: ParametresService,
+  ) {}
 
   // Provisionne l'essai à la première utilisation du module par l'organisation,
   // puis autorise/refuse l'accès selon le statut courant.
@@ -18,6 +26,10 @@ export class AbonnementsService {
     });
 
     if (!abonnement) {
+      const dureeEssaiJours = await this.parametres.obtenirValeurEntiere(
+        "duree_essai_module_jours",
+        DEFAUT_DUREE_ESSAI_JOURS,
+      );
       const maintenant = new Date();
       abonnement = await this.prisma.abonnementModule.create({
         data: {
@@ -25,7 +37,7 @@ export class AbonnementsService {
           module,
           statut: StatutAbonnement.ESSAI,
           essaiDebut: maintenant,
-          essaiFin: new Date(maintenant.getTime() + DUREE_ESSAI_JOURS * 86_400_000),
+          essaiFin: new Date(maintenant.getTime() + dureeEssaiJours * 86_400_000),
         },
       });
     }
@@ -39,7 +51,7 @@ export class AbonnementsService {
 
     if (abonnement.statut === StatutAbonnement.EXPIRE) {
       throw new ForbiddenException(
-        `Accès au module ${module} expiré — un abonnement est nécessaire pour continuer`,
+        `Accès au module ${module} expiré. Un abonnement est nécessaire pour continuer.`,
       );
     }
 

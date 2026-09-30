@@ -34,7 +34,7 @@ export default async function EvenementDetailPage({ params }: { params: Promise<
           <p className="mt-2 text-sm text-text-muted">
             Déclaré le {formaterDate(evenement.dateDeclaration)}
             {evenement.declarePar ? ` par ${evenement.declarePar.prenom} ${evenement.declarePar.nom}` : ""}
-            {evenement.typeEi ? ` — ${evenement.typeEi.libelle}` : ""}
+            {evenement.typeEi ? ` · ${evenement.typeEi.libelle}` : ""}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -134,7 +134,7 @@ export default async function EvenementDetailPage({ params }: { params: Promise<
           <div className="mt-3 flex flex-col gap-2">
             {evenement.transitions.map((t) => (
               <p key={t.id} className="text-xs text-text-muted">
-                {formaterDateHeure(t.createdAt)} — {t.ancienStatut} → {t.nouveauStatut}
+                {formaterDateHeure(t.createdAt)} · {t.ancienStatut} → {t.nouveauStatut}
               </p>
             ))}
           </div>

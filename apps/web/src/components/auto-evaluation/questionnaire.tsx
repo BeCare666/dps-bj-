@@ -137,7 +137,7 @@ export function Questionnaire({ session }: { session: SessionEvaluation }) {
                                 onChange={(e) => repondre(element.id, e.target.value)}
                                 className="rounded-[var(--radius-md)] border border-border bg-bg px-3 py-1.5 text-sm text-text"
                               >
-                                <option value="">—</option>
+                                <option value="">Sélectionner…</option>
                                 {element.optionsChoix.map((opt) => (
                                   <option key={opt} value={opt}>
                                     {opt}

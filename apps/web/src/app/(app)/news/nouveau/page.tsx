@@ -3,7 +3,7 @@ import { Reveal } from "@/components/motion/reveal";
 import { PatientForm } from "@/components/news/patient-form";
 
 export const metadata: Metadata = {
-  title: "Nouveau patient — NEWS",
+  title: "Nouveau patient · NEWS",
   robots: { index: false, follow: false },
 };
 

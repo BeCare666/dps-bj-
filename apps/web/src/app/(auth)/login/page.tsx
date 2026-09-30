@@ -10,9 +10,9 @@ export const metadata: Metadata = {
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ verified?: string; reset?: string }>;
+  searchParams: Promise<{ verified?: string; reset?: string; next?: string }>;
 }) {
-  const { verified, reset } = await searchParams;
+  const { verified, reset, next } = await searchParams;
 
   return (
     <AuthCard
@@ -29,7 +29,7 @@ export default async function LoginPage({
     >
       {verified === "true" && (
         <p className="mb-4 rounded-[var(--radius-md)] bg-success-soft px-3.5 py-2.5 text-sm text-success">
-          Adresse email confirmée — vous pouvez vous connecter.
+          Adresse email confirmée. Vous pouvez maintenant vous connecter.
         </p>
       )}
       {verified === "false" && (
@@ -39,10 +39,10 @@ export default async function LoginPage({
       )}
       {reset === "true" && (
         <p className="mb-4 rounded-[var(--radius-md)] bg-success-soft px-3.5 py-2.5 text-sm text-success">
-          Mot de passe réinitialisé — vous pouvez vous connecter.
+          Mot de passe réinitialisé. Vous pouvez maintenant vous connecter.
         </p>
       )}
-      <LoginForm />
+      <LoginForm next={next} />
     </AuthCard>
   );
 }

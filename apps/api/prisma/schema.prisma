@@ -234,6 +234,7 @@ model Utilisateur {
   actionsCorrectivesAFaire ActionCorrective[]
   transitionsEi           EvenementTransition[]
   reservations            Reservation[]
+  notifications           Notification[]
 
   @@index([organisationId])
   @@index([serviceId])
@@ -774,4 +775,48 @@ model Facture {
   reservation Reservation @relation(fields: [reservationId], references: [id])
 
   @@map("factures")
+}
+
+// Notifications in-app (§10.13) — distinctes des emails Brevo (src/notifications/) :
+// un flux court, propre à l'interface, marqué lu/non lu, sans dépendre d'un
+// fournisseur externe. Premier déclencheur : réservation passée à PAYEE,
+// à destination des ADMIN_PLATEFORME (action requise : fixer la date de RDV).
+model Notification {
+  id             String    @id @default(cuid())
+  destinataireId String    @map("destinataire_id")
+  type           String
+  titre          String
+  message        String
+  lienUrl        String?   @map("lien_url")
+  luLe           DateTime? @map("lu_le")
+  createdAt      DateTime  @default(now()) @map("created_at")
+
+  destinataire Utilisateur @relation(fields: [destinataireId], references: [id], onDelete: Cascade)
+
+  @@index([destinataireId])
+  @@index([destinataireId, luLe])
+  @@map("notifications")
+}
+
+// D8 — système de paramètres plateforme. Volontairement réduit au strict
+// nécessaire : une seule ligne aujourd'hui (duree_essai_module_jours),
+// justifiée par RM6 ("essai gratuit... paramétrable") et vérifiée dans le
+// code (AbonnementsService lisait déjà process.env.DUREE_ESSAI_MODULE_JOURS,
+// mais uniquement au démarrage — jamais éditable à chaud). Portée plateforme
+// uniquement : aucun paramètre organisation n'est validé à ce jour, donc pas
+// de colonne organisationId ici (cf. §12 du rapport D8.0 — ne pas créer une
+// portée qui ne correspond à aucun besoin réel). Modification tracée via
+// JournalAudit existant, pas de colonne d'audit dédiée ici (évite la
+// duplication d'un mécanisme déjà en place).
+model ParametrePlateforme {
+  id           String   @id @default(cuid())
+  cle          String   @unique
+  valeur       String
+  type         String
+  description  String
+  valeurDefaut String   @map("valeur_defaut")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@map("parametres_plateforme")
 }

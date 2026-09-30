@@ -37,6 +37,12 @@ export async function synchroniserCookiesSession(reponseApi: Response): Promise<
   }
 }
 
+// Utilisé par `connexionAction` pour lire le rôle avant même que le cookie ne
+// soit reposé sur l'origine Next.js (évite un aller-retour cookies() en plus).
+export function extraireAccessTokenDepuisReponse(reponseApi: Response): string | undefined {
+  return extraireValeurCookie(reponseApi.headers.getSetCookie(), "access_token");
+}
+
 export async function effacerCookiesSession(): Promise<void> {
   const store = await cookies();
   store.delete("access_token");

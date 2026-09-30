@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { apiFetchJson } from "@/lib/api-server";
 import { formaterFcfa } from "@/lib/format";
 import { Reveal } from "@/components/motion/reveal";
@@ -6,7 +7,7 @@ import type { Formation } from "@/lib/types";
 
 export const metadata: Metadata = {
   title: "Formations",
-  description: "Catalogue des formations à la sécurité des patients proposées par dps.bj — réservation individuelle ou en groupe.",
+  description: "Catalogue des formations à la sécurité des patients proposées par dps.bj, en réservation individuelle ou en groupe.",
 };
 
 async function obtenirFormations(): Promise<Formation[]> {
@@ -34,14 +35,17 @@ export default async function FormationsPage() {
       {formations.length === 0 ? (
         <Reveal className="mt-12">
           <p className="rounded-[var(--radius-lg)] border border-dashed border-border bg-bg-subtle px-6 py-10 text-center text-sm text-text-muted">
-            Aucune formation disponible pour le moment — revenez bientôt.
+            Aucune formation disponible pour le moment. Revenez bientôt.
           </p>
         </Reveal>
       ) : (
         <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {formations.map((formation, i) => (
             <Reveal key={formation.id} delay={i * 0.06}>
-              <article className="flex h-full flex-col rounded-[var(--radius-lg)] border border-border bg-surface p-6 transition-colors hover:border-primary/30">
+              <Link
+                href={`/formations/${formation.id}`}
+                className="flex h-full flex-col rounded-[var(--radius-lg)] border border-border bg-surface p-6 transition-colors hover:border-primary/30"
+              >
                 <h2 className="font-display text-lg font-semibold text-text">{formation.titre}</h2>
                 {formation.dureeHeures && (
                   <span className="mt-1 text-xs font-medium text-text-faint">{formation.dureeHeures} heures</span>
@@ -53,7 +57,7 @@ export default async function FormationsPage() {
                     {formaterFcfa(formation.prixIndividuel)}
                   </p>
                 </div>
-              </article>
+              </Link>
             </Reveal>
           ))}
         </div>

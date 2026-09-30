@@ -8,6 +8,9 @@ const VARIANTS = {
   primary: "bg-primary text-primary-foreground hover:bg-primary-hover shadow-[var(--shadow-soft)]",
   secondary: "bg-surface text-text border border-border hover:border-primary/40 hover:bg-primary-soft/60",
   ghost: "bg-transparent text-text-muted hover:text-text hover:bg-bg-subtle",
+  // Actions destructrices (ConfirmDialog notamment) — jamais utilisé comme
+  // variante "primary" par défaut d'une page.
+  danger: "bg-danger text-primary-foreground hover:bg-danger/90 shadow-[var(--shadow-soft)]",
 } as const;
 
 type Variant = keyof typeof VARIANTS;

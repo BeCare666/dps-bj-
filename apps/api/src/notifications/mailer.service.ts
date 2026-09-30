@@ -16,7 +16,7 @@ export class MailerService {
   async sendVerificationEmail(email: string, prenom: string, lienVerification: string): Promise<void> {
     await this.envoyerSansEchouer({
       destinataire: { email, name: prenom },
-      sujet: "Confirmez votre adresse email — dps.bj",
+      sujet: "Confirmez votre adresse email · dps.bj",
       contenuHtml: rendreEmailVerification({ prenom, lienVerification }),
       contenuTexte: `Bienvenue ${prenom},\n\nConfirmez votre adresse email pour activer votre compte dps.bj :\n${lienVerification}\n\nCe lien expire dans 48 heures.`,
     });
@@ -26,7 +26,7 @@ export class MailerService {
     const lien = `${process.env.WEB_APP_URL}/reinitialiser-mot-de-passe?token=${resetToken}`;
     await this.envoyerSansEchouer({
       destinataire: { email },
-      sujet: "Réinitialisation de votre mot de passe — dps.bj",
+      sujet: "Réinitialisation de votre mot de passe · dps.bj",
       contenuHtml: `<p>Vous avez demandé la réinitialisation de votre mot de passe.</p><p><a href="${lien}">Choisir un nouveau mot de passe</a></p><p>Ce lien expire dans 1 heure. Si vous n'êtes pas à l'origine de cette demande, ignorez cet email.</p>`,
     });
   }
@@ -35,7 +35,7 @@ export class MailerService {
   async sendAlerteNewsEmail(email: string, patientNomComplet: string, niveauRisque: string): Promise<void> {
     await this.envoyerSansEchouer({
       destinataire: { email },
-      sujet: `Alerte NEWS ${niveauRisque} — ${patientNomComplet}`,
+      sujet: `Alerte NEWS ${niveauRisque} : ${patientNomComplet}`,
       contenuHtml: `<p>Une mesure NEWS de niveau <strong>${niveauRisque}</strong> a été enregistrée pour le patient <strong>${patientNomComplet}</strong>.</p><p>Merci de consulter le dossier patient sur dps.bj.</p>`,
     });
   }

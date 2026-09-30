@@ -7,11 +7,14 @@ import {
   Patch,
   Post,
   Query,
+  Res,
   UploadedFile,
   UseInterceptors,
 } from "@nestjs/common";
+import type { Response } from "express";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { EvenementsIndesirablesService } from "./evenements-indesirables.service.js";
+import { evenementsIndesirablesVersCsv } from "./export-csv.util.js";
 import { DeclarerEiDto } from "./dto/declarer-ei.dto.js";
 import { QualifierEiDto } from "./dto/qualifier-ei.dto.js";
 import { CreerCauseDto } from "./dto/creer-cause.dto.js";
@@ -67,6 +70,24 @@ export class EvenementsIndesirablesController {
   @Get("export")
   exporter(@Query() query: ExportEiQueryDto, @CurrentUser() user: JwtAccessPayload) {
     return this.evenementsService.exporter(query, user);
+  }
+
+  // D11 — même méthode de service, même RBAC/isolation organisationnelle que
+  // l'export JSON existant ; seul le format de sortie change.
+  @Roles(...ROLES_TRAITEMENT)
+  @Get("export.csv")
+  async exporterCsv(
+    @Query() query: ExportEiQueryDto,
+    @CurrentUser() user: JwtAccessPayload,
+    @Res() res: Response,
+  ) {
+    const evenements = await this.evenementsService.exporter(query, user);
+    const csv = evenementsIndesirablesVersCsv(evenements);
+    res.set({
+      "Content-Type": "text/csv; charset=utf-8",
+      "Content-Disposition": `attachment; filename="evenements-indesirables-${Date.now()}.csv"`,
+    });
+    res.send(csv);
   }
 
   @Get(":id")

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Plus_Jakarta_Sans } from "next/font/google";
+import { ToastProvider } from "@/components/ui/toast";
 import "./globals.css";
 
 const body = Inter({
@@ -20,7 +21,7 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "dps.bj — Dispositif de Sécurité des Patients",
+    default: "dps.bj · Dispositif de Sécurité des Patients",
     template: "%s · dps.bj",
   },
   description:
@@ -37,7 +38,7 @@ export const metadata: Metadata = {
     type: "website",
     locale: "fr_FR",
     siteName: "dps.bj",
-    title: "dps.bj — Dispositif de Sécurité des Patients",
+    title: "dps.bj · Dispositif de Sécurité des Patients",
     description:
       "Auto-évaluation, surveillance NEWS, événements indésirables et formations pour les établissements de santé au Bénin.",
   },
@@ -54,7 +55,9 @@ export const viewport = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="fr" className={`${body.variable} ${display.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col font-sans bg-bg text-text">{children}</body>
+      <body className="min-h-full flex flex-col font-sans bg-bg text-text">
+        <ToastProvider>{children}</ToastProvider>
+      </body>
     </html>
   );
 }

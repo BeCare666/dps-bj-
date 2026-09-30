@@ -8,7 +8,7 @@ import { StatutPatientBadge } from "@/components/news/badges";
 import type { Alerte, Patient } from "@/lib/types";
 
 export const metadata: Metadata = {
-  title: "NEWS — Surveillance clinique",
+  title: "NEWS · Surveillance clinique",
   robots: { index: false, follow: false },
 };
 
@@ -102,7 +102,7 @@ export default async function NewsPage() {
                   <p className="font-medium text-text">
                     {p.prenom} {p.nom}
                   </p>
-                  <p className="text-xs text-text-muted">Sorti le {p.dateSortie ? formaterDate(p.dateSortie) : "—"}</p>
+                  <p className="text-xs text-text-muted">{p.dateSortie ? `Sorti le ${formaterDate(p.dateSortie)}` : "Date de sortie non renseignée"}</p>
                 </div>
                 <StatutPatientBadge statut={p.statut} />
               </Link>

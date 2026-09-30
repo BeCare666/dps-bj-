@@ -66,7 +66,7 @@ export class GrillesService {
     if (!grille) throw new NotFoundException("Grille introuvable");
     if (grille.statut !== StatutGrille.BROUILLON) {
       throw new ConflictException(
-        "Une grille publiée ou archivée est immuable (RM3) — créez une nouvelle version pour la modifier",
+        "Une grille publiée ou archivée ne peut plus être modifiée. Créez une nouvelle version pour la faire évoluer.",
       );
     }
 

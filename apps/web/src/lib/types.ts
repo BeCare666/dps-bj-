@@ -1,3 +1,14 @@
+import type { RoleUtilisateur } from "@dps/shared";
+
+// État partagé des Server Actions qui font une simple mutation (succès/erreur),
+// par opposition à EtatFormulaire (lib/auth-actions.ts, flux d'auth qui
+// redirigent plutôt que de renvoyer un succès affichable) — Phase 2, élimine
+// la duplication littérale qui existait entre admin-actions.ts et auth-actions.ts.
+export interface EtatAction {
+  erreur?: string;
+  succes?: boolean;
+}
+
 export interface Formation {
   id: string;
   titre: string;
@@ -25,6 +36,7 @@ export interface Organisation {
   telephone: string | null;
   email: string | null;
   actif: boolean;
+  createdAt: string;
 }
 
 export interface ElementMesurable {
@@ -267,4 +279,150 @@ export interface TableauDeBordEi {
   parService: Record<string, number>;
   tauxCloture: number;
   delaiMoyenClotureJours: number | null;
+}
+
+// --- Module Formations / Réservations ---
+
+export type FormuleFormation = "INDIVIDUEL" | "GROUPE_5" | "GROUPE_10";
+export type StatutReservation = "ATTENTE_PAIEMENT" | "PAYEE" | "CONFIRMEE" | "REALISEE" | "ANNULEE";
+
+export interface Facture {
+  id: string;
+  reservationId: string;
+  numero: string;
+  montant: number;
+  emiseLe: string;
+}
+
+export interface Reservation {
+  id: string;
+  formationId: string;
+  utilisateurId: string;
+  organisationId: string | null;
+  formule: FormuleFormation;
+  tarifApplique: number;
+  statut: StatutReservation;
+  kkiapayTransactionId: string | null;
+  dateRdv: string | null;
+  presenceConfirmee: boolean;
+  createdAt: string;
+  formation?: Formation;
+  facture?: Facture | null;
+  utilisateur?: { id: string; nom: string; prenom: string; email: string };
+  organisation?: { id: string; nom: string } | null;
+}
+
+// --- Profil / notifications in-app ---
+
+export interface UtilisateurProfil {
+  id: string;
+  nom: string;
+  prenom: string;
+  email: string;
+  telephone: string | null;
+  typeCompte: "ORGANISATION" | "INDIVIDUEL" | "ADMIN_PLATEFORME";
+}
+
+export interface UtilisateurAdmin {
+  id: string;
+  nom: string;
+  prenom: string;
+  email: string;
+  typeCompte: "ORGANISATION" | "INDIVIDUEL" | "ADMIN_PLATEFORME";
+  organisationId: string | null;
+  serviceId: string | null;
+  actif: boolean;
+  emailVerifieLe: string | null;
+  createdAt: string;
+  roles: { role: RoleUtilisateur }[];
+  organisation: { id: string; nom: string } | null;
+}
+
+export interface SessionUtilisateur {
+  id: string;
+  createdAt: string;
+  expiresAt: string;
+  revokedAt: string | null;
+}
+
+export interface OrganisationDetailAdmin extends Organisation {
+  _count: {
+    utilisateurs: number;
+    patients: number;
+    evenementsIndesirables: number;
+    reservations: number;
+  };
+}
+
+export type StatutIntegration = "verifie_ok" | "verifie_erreur" | "configure" | "non_configure";
+
+export interface EtatIntegration {
+  nom: string;
+  statut: StatutIntegration;
+  details: string;
+}
+
+export interface LigneAlertePlateforme {
+  organisationId: string;
+  organisationNom: string;
+  source: "NEWS" | "EI";
+  niveau: string;
+  statut: string;
+  nombre: number;
+  depuisLe: string;
+}
+
+export interface AnalyticsPlateforme {
+  etablissements: { total: number; actifs: number; inactifs: number; parType: Record<string, number> };
+  utilisateurs: { total: number; actifs: number; inactifs: number; parRole: Record<string, number> };
+  reservationsParStatut: Record<string, number>;
+  formations: { total: number; actives: number; inactives: number };
+  autoEvaluation: { nombreSessionsSoumises: number; scoreMoyenParType: Record<string, number> };
+  evenementsIndesirables: {
+    total: number;
+    parStatut: Record<string, number>;
+    parGravite: Record<string, number>;
+    tauxClotureePct: number;
+    delaiMoyenClotureJours: number | null;
+  };
+  mesuresNewsParNiveau: Record<string, number>;
+}
+
+export interface ParametrePlateforme {
+  id: string;
+  cle: string;
+  valeur: string;
+  type: string;
+  description: string;
+  valeurDefaut: string;
+  updatedAt: string;
+}
+
+export interface EtatSecurite {
+  session: { jwtAccessTtl: string; jwtRefreshTtl: string };
+  rateLimiting: Array<{ endpoint: string; limite: string; fenetre: string; justification: string }>;
+}
+
+export interface JournalAuditEntry {
+  id: string;
+  organisationId: string | null;
+  utilisateurId: string | null;
+  action: string;
+  entite: string;
+  entiteId: string | null;
+  donneesAvant: unknown;
+  donneesApres: unknown;
+  createdAt: string;
+  utilisateur: { id: string; nom: string; prenom: string; email: string } | null;
+  organisation: { id: string; nom: string } | null;
+}
+
+export interface NotificationInterne {
+  id: string;
+  type: string;
+  titre: string;
+  message: string;
+  lienUrl: string | null;
+  luLe: string | null;
+  createdAt: string;
 }

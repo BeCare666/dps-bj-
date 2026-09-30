@@ -1,9 +1,12 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 import { API_URL, apiFetch } from "./api-server";
-import { synchroniserCookiesSession, effacerCookiesSession } from "./session-cookies";
+import { synchroniserCookiesSession, effacerCookiesSession, extraireAccessTokenDepuisReponse } from "./session-cookies";
+import { decoderPayloadJwt } from "./session";
 import { messageErreurApi } from "./api-error";
+import type { EtatAction } from "./types";
 
 export interface EtatFormulaire {
   erreur?: string;
@@ -28,10 +31,16 @@ async function appelerApiPublic(path: string, payload: unknown): Promise<{ res: 
   return { res, corps };
 }
 
+// Case "J'accepte les CGU" des formulaires d'inscription : le navigateur
+// l'impose déjà (required), revérifié ici pour ne pas dépendre du seul client.
+const ERREUR_CGU = "Vous devez accepter les conditions générales d'utilisation pour créer un compte.";
+
 export async function inscrireOrganisationAction(
   _etat: EtatFormulaire,
   formData: FormData,
 ): Promise<EtatFormulaire> {
+  if (formData.get("accepteCgu") !== "on") return { erreur: ERREUR_CGU };
+
   const payload = {
     organisationNom: valeur(formData, "organisationNom"),
     organisationIfu: valeur(formData, "organisationIfu"),
@@ -58,6 +67,8 @@ export async function inscrireIndividuelAction(
   _etat: EtatFormulaire,
   formData: FormData,
 ): Promise<EtatFormulaire> {
+  if (formData.get("accepteCgu") !== "on") return { erreur: ERREUR_CGU };
+
   const payload = {
     nom: valeur(formData, "nom"),
     prenom: valeur(formData, "prenom"),
@@ -85,8 +96,18 @@ export async function connexionAction(_etat: EtatFormulaire, formData: FormData)
     return { erreur: messageErreurApi(corps, "Identifiants invalides.") };
   }
 
+  const accessToken = extraireAccessTokenDepuisReponse(res);
+  const estAdmin = accessToken
+    ? (decoderPayloadJwt(accessToken)?.roles.includes("ADMIN_PLATEFORME") ?? false)
+    : false;
+
   await synchroniserCookiesSession(res);
-  redirect("/tableau-de-bord");
+
+  const next = valeurOptionnelle(formData, "next");
+  // Anti open-redirect : uniquement un chemin relatif interne (jamais "//hôte externe").
+  const destinationParDefaut = estAdmin ? "/admin/reservations" : "/tableau-de-bord";
+  const destination = next && next.startsWith("/") && !next.startsWith("//") ? next : destinationParDefaut;
+  redirect(destination);
 }
 
 export async function renvoyerVerificationAction(
@@ -130,4 +151,38 @@ export async function deconnexionAction(): Promise<void> {
   await apiFetch("/auth/logout", { method: "POST" });
   await effacerCookiesSession();
   redirect("/login");
+}
+
+// D8.2 (U-01) — révocation d'une session PERSONNELLE uniquement : aucun
+// utilisateurId dans l'URL, l'API scope déjà sur le token (voir AuthController).
+export async function revoquerMaSessionAction(sessionId: string): Promise<EtatAction> {
+  const res = await apiFetch(`/auth/me/sessions/${sessionId}/revoquer`, { method: "POST" });
+  if (!res.ok) {
+    const corps = await res.json().catch(() => undefined);
+    return { erreur: messageErreurApi(corps, "Impossible de révoquer cette session.") };
+  }
+  revalidatePath("/mes-sessions");
+  revalidatePath("/admin/mes-sessions");
+  return { succes: true };
+}
+
+// Phase 5 (refonte frontend) — auto-édition du profil personnel, même pattern
+// que modifierMonOrganisationAction (D8.1) : scope strictement le compte
+// connecté côté API (PATCH /auth/me/profil), jamais un id fourni ici.
+export async function modifierMonProfilAction(_etat: EtatAction, formData: FormData): Promise<EtatAction> {
+  const nom = String(formData.get("nom") ?? "").trim();
+  const prenom = String(formData.get("prenom") ?? "").trim();
+  const telephone = String(formData.get("telephone") ?? "").trim();
+
+  const res = await apiFetch("/auth/me/profil", {
+    method: "PATCH",
+    body: JSON.stringify({ nom, prenom, telephone }),
+  });
+  if (!res.ok) {
+    const corps = await res.json().catch(() => undefined);
+    return { erreur: messageErreurApi(corps, "Impossible de modifier le profil.") };
+  }
+  revalidatePath("/profil");
+  revalidatePath("/admin/profil");
+  return { succes: true };
 }

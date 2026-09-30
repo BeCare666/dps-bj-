@@ -4,6 +4,7 @@ import { apiFetchJson, ApiError } from "@/lib/api-server";
 import { formaterDate } from "@/lib/format";
 import { Reveal } from "@/components/motion/reveal";
 import { IconChecklist, IconVitals, IconShieldAlert, IconGraduationCap } from "@/components/icons";
+import { Badge } from "@/components/ui/badge";
 import type { AbonnementModule, Organisation, SessionEvaluationResume } from "@/lib/types";
 
 export const metadata: Metadata = {
@@ -21,26 +22,10 @@ async function silencieux<T>(promesse: Promise<T>): Promise<T | null> {
 }
 
 function StatutAbonnementBadge({ abonnement }: { abonnement: AbonnementModule | null }) {
-  if (!abonnement) {
-    return (
-      <span className="rounded-full bg-bg-subtle px-2.5 py-1 text-xs font-medium text-text-faint">
-        Non démarré
-      </span>
-    );
-  }
-  if (abonnement.statut === "ACTIF") {
-    return (
-      <span className="rounded-full bg-success-soft px-2.5 py-1 text-xs font-medium text-success">Actif</span>
-    );
-  }
-  if (abonnement.statut === "EXPIRE") {
-    return <span className="rounded-full bg-danger-soft px-2.5 py-1 text-xs font-medium text-danger">Expiré</span>;
-  }
-  return (
-    <span className="rounded-full bg-warning-soft px-2.5 py-1 text-xs font-medium text-warning">
-      Essai — jusqu&apos;au {formaterDate(abonnement.essaiFin)}
-    </span>
-  );
+  if (!abonnement) return <Badge variant="neutral">Non démarré</Badge>;
+  if (abonnement.statut === "ACTIF") return <Badge variant="success">Actif</Badge>;
+  if (abonnement.statut === "EXPIRE") return <Badge variant="danger">Expiré</Badge>;
+  return <Badge variant="warning">Essai jusqu&apos;au {formaterDate(abonnement.essaiFin)}</Badge>;
 }
 
 export default async function TableauDeBordPage() {
@@ -144,6 +129,12 @@ export default async function TableauDeBordPage() {
             <h2 className="mt-4 font-display text-lg font-semibold text-text">Formations</h2>
             <p className="mt-2 flex-1 text-sm leading-6 text-text-muted">Catalogue et réservation.</p>
             <span className="mt-4 text-sm font-medium text-primary group-hover:underline">Voir le catalogue →</span>
+          </Link>
+          <Link
+            href="/mes-reservations"
+            className="mt-3 block text-center text-xs font-medium text-text-muted hover:text-text hover:underline"
+          >
+            Mes réservations
           </Link>
         </Reveal>
       </div>

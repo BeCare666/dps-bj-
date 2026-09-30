@@ -74,7 +74,7 @@ export default async function EvenementsIndesirablesPage() {
                 <p className="truncate font-medium text-text">{e.description}</p>
                 <p className="mt-1 text-xs text-text-muted">
                   Déclaré le {formaterDate(e.dateDeclaration)}
-                  {e.typeEi ? ` — ${e.typeEi.libelle}` : ""}
+                  {e.typeEi ? ` · ${e.typeEi.libelle}` : ""}
                 </p>
               </div>
               <div className="flex shrink-0 items-center gap-2">

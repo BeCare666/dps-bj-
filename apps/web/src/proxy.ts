@@ -10,6 +10,11 @@ const PREFIXES_PROTEGES = [
   "/auto-evaluation",
   "/news",
   "/evenements-indesirables",
+  "/reserver",
+  "/mes-reservations",
+  "/organisation",
+  "/mes-sessions",
+  "/profil",
   "/admin",
 ];
 const ROUTES_AUTH = ["/login", "/inscription"];
