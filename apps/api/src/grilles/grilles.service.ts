@@ -1,6 +1,6 @@
 import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service.js";
-import { StatutGrille } from "../generated/prisma/enums.js";
+import { StatutGrille, TypeElementMesurable } from "../generated/prisma/enums.js";
 import type { Prisma } from "../generated/prisma/client.js";
 import type { CreateGrilleDto } from "./dto/create-grille.dto.js";
 import type { ListGrillesQueryDto } from "./dto/list-grilles-query.dto.js";
@@ -131,12 +131,16 @@ export class GrillesService {
                   create: norme.criteres.map((critere) => ({
                     code: critere.code,
                     libelle: critere.libelle,
+                    categorie: critere.categorie,
+                    recommandation: critere.recommandation,
                     ordre: critere.ordre,
                     elementsMesurables: {
                       create: critere.elementsMesurables.map((element) => ({
                         libelle: element.libelle,
                         typeReponse: element.typeReponse,
                         optionsChoix: element.optionsChoix ?? undefined,
+                        typeElement: element.typeElement,
+                        entreDansScore: element.entreDansScore,
                         ordre: element.ordre,
                       })),
                     },
@@ -169,14 +173,22 @@ export class GrillesService {
             create: norme.criteres.map((critere) => ({
               code: critere.code,
               libelle: critere.libelle,
+              categorie: critere.categorie?.trim() || null,
+              recommandation: critere.recommandation?.trim() || null,
               ordre: critere.ordre,
               elementsMesurables: {
-                create: critere.elementsMesurables.map((element) => ({
-                  libelle: element.libelle,
-                  typeReponse: element.typeReponse,
-                  optionsChoix: element.optionsChoix,
-                  ordre: element.ordre,
-                })),
+                create: critere.elementsMesurables.map((element) => {
+                  const typeElement = element.typeElement ?? TypeElementMesurable.DOCUMENT_A_EXAMINER;
+                  return {
+                    libelle: element.libelle,
+                    typeReponse: element.typeReponse,
+                    optionsChoix: element.optionsChoix,
+                    typeElement,
+                    // §6.6 — par défaut, seul un document à examiner entre dans le score.
+                    entreDansScore: element.entreDansScore ?? typeElement === TypeElementMesurable.DOCUMENT_A_EXAMINER,
+                    ordre: element.ordre,
+                  };
+                }),
               },
             })),
           },

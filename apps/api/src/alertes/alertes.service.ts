@@ -1,5 +1,6 @@
 import { ConflictException, ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service.js";
+import { PatientsService, SELECTION_PATIENT } from "../patients/patients.service.js";
 import { StatutAlerte } from "../generated/prisma/enums.js";
 import type { Alerte } from "../generated/prisma/client.js";
 import type { JwtAccessPayload } from "../auth/types/jwt-payload.type.js";
@@ -15,13 +16,23 @@ const ORDRE_STATUT: Record<StatutAlerte, number> = {
 
 @Injectable()
 export class AlertesService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly patients: PatientsService,
+  ) {}
 
   async lister(query: ListAlertesQueryDto, user: JwtAccessPayload) {
     const organisationId = this.exigerOrganisation(user);
+    // 7.10 — même filtrage par service que la liste des patients.
+    const serviceId = this.patients.serviceImpose(user);
     return this.prisma.alerte.findMany({
-      where: { organisationId, statut: query.statut, niveauRisque: query.niveauRisque },
-      include: { patient: true, mesure: true },
+      where: {
+        organisationId,
+        statut: query.statut,
+        niveauRisque: query.niveauRisque,
+        patient: serviceId ? { serviceId } : undefined,
+      },
+      include: { patient: { select: SELECTION_PATIENT }, mesure: true },
       orderBy: { createdAt: "desc" },
     });
   }
@@ -29,7 +40,14 @@ export class AlertesService {
   async obtenir(id: string, user: JwtAccessPayload) {
     const alerte = await this.prisma.alerte.findUnique({
       where: { id },
-      include: { patient: true, mesure: true, interventions: { orderBy: { createdAt: "asc" } } },
+      include: {
+        patient: { select: SELECTION_PATIENT },
+        mesure: true,
+        interventions: {
+          orderBy: { createdAt: "asc" },
+          include: { utilisateur: { select: { id: true, nom: true, prenom: true } } },
+        },
+      },
     });
     this.verifierAppartenance(alerte, user);
     return alerte;

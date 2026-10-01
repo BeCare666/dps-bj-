@@ -21,8 +21,8 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "dps.bj · Dispositif de Sécurité des Patients",
-    template: "%s · dps.bj",
+    default: "DSP · Dispositif de Sécurité des Patients",
+    template: "%s · DSP",
   },
   description:
     "Plateforme de sécurité des patients pour les établissements de santé au Bénin : auto-évaluation, surveillance NEWS, événements indésirables et formations.",
@@ -37,8 +37,8 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "fr_FR",
-    siteName: "dps.bj",
-    title: "dps.bj · Dispositif de Sécurité des Patients",
+    siteName: "DSP",
+    title: "DSP · Dispositif de Sécurité des Patients",
     description:
       "Auto-évaluation, surveillance NEWS, événements indésirables et formations pour les établissements de santé au Bénin.",
   },
@@ -54,7 +54,7 @@ export const viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="fr" className={`${body.variable} ${display.variable} h-full antialiased`}>
+    <html lang="fr" data-scroll-behavior="smooth" className={`${body.variable} ${display.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col font-sans bg-bg text-text">
         <ToastProvider>{children}</ToastProvider>
       </body>

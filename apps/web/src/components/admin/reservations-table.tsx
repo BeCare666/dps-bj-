@@ -1,9 +1,11 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { DataTable, type ColonneTable } from "@/components/ui/data-table";
+import { useState } from "react";
+import Link from "next/link";
+import { DataTable, type ColonneTable, type FiltreTable, type VueTable } from "@/components/ui/data-table";
 import { Modal } from "@/components/ui/modal";
 import { StatutReservationBadge } from "@/components/reservations/badges";
+import { IconCalendarClock, IconCheckCircle } from "@/components/icons";
 import { formaterDate, formaterDateHeure, formaterFcfa } from "@/lib/format";
 import { FixerDateRdvForm } from "./fixer-date-rdv-form";
 import { MarquerRealiseeForm } from "./marquer-realisee-form";
@@ -15,127 +17,172 @@ const LIBELLES_FORMULE: Record<FormuleFormation, string> = {
   GROUPE_10: "Groupe 10",
 };
 
-const OPTIONS_STATUT: { valeur: StatutReservation | ""; label: string }[] = [
-  { valeur: "", label: "Tous les statuts" },
-  { valeur: "ATTENTE_PAIEMENT", label: "En attente de paiement" },
-  { valeur: "PAYEE", label: "Payée" },
-  { valeur: "CONFIRMEE", label: "Confirmée" },
-  { valeur: "REALISEE", label: "Réalisée" },
-  { valeur: "ANNULEE", label: "Annulée" },
-];
+const LIBELLES_STATUT: Record<StatutReservation, string> = {
+  ATTENTE_PAIEMENT: "En attente de paiement",
+  PAYEE: "Payée",
+  CONFIRMEE: "Confirmée",
+  REALISEE: "Réalisée",
+  ANNULEE: "Annulée",
+};
+
+function nomPersonne(r: Reservation): string {
+  return r.utilisateur ? `${r.utilisateur.prenom} ${r.utilisateur.nom}` : "Client non renseigné";
+}
 
 function nomClient(r: Reservation): string {
-  if (!r.utilisateur) return "Client non renseigné";
-  const nomPersonne = `${r.utilisateur.prenom} ${r.utilisateur.nom}`;
-  return r.organisation ? `${r.organisation.nom} (${nomPersonne})` : nomPersonne;
+  return r.organisation ? `${r.organisation.nom} (${nomPersonne(r)})` : nomPersonne(r);
 }
 
 export function ReservationsTable({ reservations }: { reservations: Reservation[] }) {
-  const [filtreStatut, setFiltreStatut] = useState<StatutReservation | "">("");
   const [reservationDateRdv, setReservationDateRdv] = useState<Reservation | null>(null);
   const [reservationRealisation, setReservationRealisation] = useState<Reservation | null>(null);
-
-  const lignesFiltrees = useMemo(
-    () => (filtreStatut ? reservations.filter((r) => r.statut === filtreStatut) : reservations),
-    [reservations, filtreStatut],
-  );
 
   const colonnes: ColonneTable<Reservation>[] = [
     {
       cle: "formation",
       entete: "Formation",
+      masquable: false,
       render: (r) => (
-        <div>
+        <div className="min-w-0">
           <p className="font-medium text-text">{r.formation?.titre ?? "Formation non renseignée"}</p>
           <p className="text-xs text-text-faint">{LIBELLES_FORMULE[r.formule]}</p>
         </div>
       ),
       valeurTri: (r) => r.formation?.titre ?? "",
-      valeurRecherche: (r) => `${r.formation?.titre ?? ""} ${nomClient(r)}`,
+      valeurRecherche: (r) => `${r.formation?.titre ?? ""} ${nomClient(r)} ${r.utilisateur?.email ?? ""}`,
+      valeurExport: (r) => r.formation?.titre ?? "",
     },
     {
       cle: "client",
       entete: "Client",
-      render: (r) => <span className="text-text">{nomClient(r)}</span>,
+      render: (r) => (
+        <div className="min-w-0">
+          {r.organisation ? (
+            <Link href={`/admin/etablissements/${r.organisation.id}`} className="font-medium text-text hover:text-primary">
+              {r.organisation.nom}
+            </Link>
+          ) : (
+            <p className="font-medium text-text">{nomPersonne(r)}</p>
+          )}
+          <p className="text-xs text-text-faint">{r.organisation ? nomPersonne(r) : "Compte individuel"}</p>
+        </div>
+      ),
       valeurTri: (r) => nomClient(r),
-      valeurRecherche: (r) => nomClient(r),
+      valeurExport: (r) => nomClient(r),
+    },
+    {
+      cle: "formule",
+      entete: "Formule",
+      masqueeParDefaut: true,
+      render: (r) => LIBELLES_FORMULE[r.formule],
+      valeurTri: (r) => r.formule,
+      valeurExport: (r) => LIBELLES_FORMULE[r.formule],
     },
     {
       cle: "tarif",
-      entete: "Tarif",
-      render: (r) => formaterFcfa(r.tarifApplique),
+      entete: "Montant",
+      render: (r) => <span className="whitespace-nowrap font-medium text-text tabular-nums">{formaterFcfa(r.tarifApplique)}</span>,
       valeurTri: (r) => r.tarifApplique,
       alignement: "right",
+    },
+    {
+      // §12.5 — suivi des présences (session réalisée).
+      cle: "presents",
+      entete: "Présents",
+      masqueeParDefaut: true,
+      render: (r) =>
+        r.statut === "REALISEE" ? (
+          <span className="tabular-nums">{r.participantsPresents ?? (r.presenceConfirmee ? "oui" : "non")}</span>
+        ) : (
+          <span className="text-text-faint">—</span>
+        ),
+      valeurExport: (r) => (r.statut === "REALISEE" ? (r.participantsPresents ?? (r.presenceConfirmee ? "oui" : "non")) : ""),
     },
     {
       cle: "statut",
       entete: "Statut",
       render: (r) => <StatutReservationBadge statut={r.statut} />,
       valeurTri: (r) => r.statut,
-      alignement: "center",
+      valeurExport: (r) => LIBELLES_STATUT[r.statut],
     },
     {
       cle: "dateRdv",
       entete: "Rendez-vous",
-      render: (r) => (r.dateRdv ? formaterDateHeure(r.dateRdv) : "À planifier"),
+      render: (r) =>
+        r.dateRdv ? (
+          <span className="whitespace-nowrap tabular-nums">{formaterDateHeure(r.dateRdv)}</span>
+        ) : r.statut === "PAYEE" ? (
+          <span className="font-medium text-warning">À planifier</span>
+        ) : (
+          <span className="text-text-faint">Non fixé</span>
+        ),
       valeurTri: (r) => r.dateRdv ?? "",
+      valeurExport: (r) => (r.dateRdv ? formaterDateHeure(r.dateRdv) : ""),
     },
     {
       cle: "creee",
       entete: "Réservée le",
-      render: (r) => formaterDate(r.createdAt),
+      render: (r) => <span className="whitespace-nowrap text-text-muted tabular-nums">{formaterDate(r.createdAt)}</span>,
       valeurTri: (r) => r.createdAt,
+      valeurExport: (r) => formaterDate(r.createdAt),
+    },
+  ];
+
+  const filtres: FiltreTable<Reservation>[] = [
+    {
+      cle: "formule",
+      label: "Formule",
+      options: Object.entries(LIBELLES_FORMULE).map(([valeur, label]) => ({ valeur, label })),
+      valeur: (r) => r.formule,
     },
     {
-      cle: "actions",
-      entete: "Actions",
-      render: (r) => (
-        <div className="flex justify-end">
-          {r.statut === "PAYEE" && (
-            <button
-              type="button"
-              onClick={() => setReservationDateRdv(r)}
-              className="rounded-[var(--radius-md)] border border-border px-3 py-1.5 text-xs font-medium text-text transition-colors hover:border-primary/40 hover:bg-primary-soft/60"
-            >
-              Fixer la date RDV
-            </button>
-          )}
-          {r.statut === "CONFIRMEE" && (
-            <button
-              type="button"
-              onClick={() => setReservationRealisation(r)}
-              className="rounded-[var(--radius-md)] border border-success/30 px-3 py-1.5 text-xs font-medium text-success transition-colors hover:bg-success-soft"
-            >
-              Clôturer
-            </button>
-          )}
-        </div>
-      ),
-      alignement: "right",
+      cle: "client",
+      label: "Type de client",
+      options: [
+        { valeur: "etablissement", label: "Établissement" },
+        { valeur: "individuel", label: "Individuel" },
+      ],
+      valeur: (r) => (r.organisation ? "etablissement" : "individuel"),
     },
+  ];
+
+  const vues: VueTable<Reservation>[] = [
+    { cle: "toutes", label: "Toutes" },
+    { cle: "a-planifier", label: "À planifier", filtre: (r) => r.statut === "PAYEE" },
+    { cle: "confirmees", label: "Confirmées", filtre: (r) => r.statut === "CONFIRMEE" },
+    { cle: "attente", label: "En attente de paiement", filtre: (r) => r.statut === "ATTENTE_PAIEMENT" },
+    { cle: "realisees", label: "Réalisées", filtre: (r) => r.statut === "REALISEE" },
+    { cle: "annulees", label: "Annulées", filtre: (r) => r.statut === "ANNULEE" },
   ];
 
   return (
     <div>
       <DataTable
+        id="admin-reservations"
         colonnes={colonnes}
-        lignes={lignesFiltrees}
+        lignes={reservations}
         cleLigne={(r) => r.id}
-        rechercheEspaceReserve="Rechercher une formation ou un client…"
-        videMessage="Aucune réservation pour ce filtre."
-        filtres={
-          <select
-            value={filtreStatut}
-            onChange={(e) => setFiltreStatut(e.target.value as StatutReservation | "")}
-            className="rounded-[var(--radius-md)] border border-border bg-surface px-3 py-2 text-sm text-text transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary-soft"
-          >
-            {OPTIONS_STATUT.map((o) => (
-              <option key={o.valeur} value={o.valeur}>
-                {o.label}
-              </option>
-            ))}
-          </select>
-        }
+        rechercheEspaceReserve="Formation, client, email…"
+        filtres={filtres}
+        vues={vues}
+        triParDefaut={{ cle: "creee", direction: "desc" }}
+        exportCsv={{ nomFichier: "reservations-dps" }}
+        vide={{
+          titre: "Aucune réservation",
+          description: "Les réservations de formations apparaîtront ici dès le premier paiement initié.",
+        }}
+        actionsLigne={(r) => [
+          r.statut === "PAYEE" && {
+            label: "Fixer la date de RDV",
+            icone: IconCalendarClock,
+            onSelect: () => setReservationDateRdv(r),
+          },
+          r.statut === "CONFIRMEE" && {
+            label: "Clôturer la session",
+            icone: IconCheckCircle,
+            onSelect: () => setReservationRealisation(r),
+          },
+        ]}
       />
 
       <Modal
@@ -158,6 +205,7 @@ export function ReservationsTable({ reservations }: { reservations: Reservation[
         {reservationRealisation && (
           <MarquerRealiseeForm
             reservationId={reservationRealisation.id}
+            places={{ INDIVIDUEL: 1, GROUPE_5: 5, GROUPE_10: 10 }[reservationRealisation.formule]}
             onSuccess={() => setReservationRealisation(null)}
           />
         )}

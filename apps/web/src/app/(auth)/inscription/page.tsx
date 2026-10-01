@@ -11,7 +11,7 @@ const OPTIONS = [
   {
     href: "/inscription/organisation",
     titre: "Établissement de santé",
-    description: "Hôpital (EH) ou établissement de santé primaire communautaire (ESPC).",
+    description: "Établissement hospitalier (EH) ou établissement de soins de premiers contacts (ESPC).",
   },
   {
     href: "/inscription/individuel",

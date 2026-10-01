@@ -27,6 +27,7 @@ export const GROUPES_ADMIN: GroupeNav[] = [
     liens: [
       { href: "/admin/alertes", label: "Alertes", icon: IconAlertTriangle },
       { href: "/admin/analytics", label: "Analytics", icon: IconBarChart },
+      { href: "/admin/conformite", label: "Conformité", icon: IconChecklist },
       { href: "/admin/audit", label: "Audit", icon: IconHistory },
     ],
   },

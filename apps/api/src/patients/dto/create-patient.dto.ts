@@ -1,27 +1,20 @@
-import { IsDateString, IsOptional, IsString, MinLength } from "class-validator";
+import { IsOptional, IsString, MaxLength, MinLength } from "class-validator";
 
+// §7.1 — fiche patient minimale : identifiant interne, service, numéro de lit.
+// Aucune donnée d'identité n'est acceptée (le ValidationPipe global rejette
+// tout champ non déclaré, ex. nom/prénom).
 export class CreatePatientDto {
   @IsString()
-  @MinLength(2)
-  nom!: string;
-
-  @IsString()
-  @MinLength(2)
-  prenom!: string;
-
-  @IsOptional()
-  @IsDateString()
-  dateNaissance?: string;
-
-  @IsOptional()
-  @IsString()
-  sexe?: string;
-
-  @IsOptional()
-  @IsString()
-  numeroDossier?: string;
+  @MinLength(1)
+  @MaxLength(64)
+  identifiantInterne!: string;
 
   @IsOptional()
   @IsString()
   serviceId?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(20)
+  numeroLit?: string;
 }

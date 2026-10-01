@@ -23,9 +23,11 @@ import { ChangerStatutActionDto } from "./dto/changer-statut-action.dto.js";
 import { ChangerStatutEiDto } from "./dto/changer-statut-ei.dto.js";
 import { ListEiQueryDto } from "./dto/list-ei-query.dto.js";
 import { ExportEiQueryDto } from "./dto/export-ei-query.dto.js";
+import { CorrigerEiDto } from "./dto/corriger-ei.dto.js";
 import { Roles } from "../auth/decorators/roles.decorator.js";
 import { CurrentUser } from "../auth/decorators/current-user.decorator.js";
-import { RoleUtilisateur } from "../generated/prisma/enums.js";
+import { ModuleMetier, RoleUtilisateur } from "../generated/prisma/enums.js";
+import { ModuleAbonne } from "../abonnements/acces-module.guard.js";
 import type { JwtAccessPayload } from "../auth/types/jwt-payload.type.js";
 
 const ROLES_TRAITEMENT = [RoleUtilisateur.RESP_QUALITE, RoleUtilisateur.RESPONSABLE_COMPTE] as const;
@@ -39,6 +41,8 @@ const TYPES_MIME_AUTORISES = new Set([
   "text/plain",
 ]);
 
+// §5 — accès soumis au statut d'abonnement EI (lecture / écriture).
+@ModuleAbonne(ModuleMetier.EI)
 @Controller("evenements-indesirables")
 export class EvenementsIndesirablesController {
   constructor(private readonly evenementsService: EvenementsIndesirablesService) {}
@@ -132,6 +136,13 @@ export class EvenementsIndesirablesController {
   @Patch(":id/statut")
   changerStatut(@Param("id") id: string, @Body() dto: ChangerStatutEiDto, @CurrentUser() user: JwtAccessPayload) {
     return this.evenementsService.changerStatut(id, dto, user);
+  }
+
+  // §13.4 — correction tracée de la fiche (motif obligatoire).
+  @Roles(...ROLES_TRAITEMENT)
+  @Patch(":id/corriger")
+  corriger(@Param("id") id: string, @Body() dto: CorrigerEiDto, @CurrentUser() user: JwtAccessPayload) {
+    return this.evenementsService.corriger(id, dto, user);
   }
 
   @Roles(...ROLES_TRAITEMENT)

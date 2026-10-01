@@ -5,10 +5,13 @@ import { ChangerStatutAlerteDto } from "./dto/changer-statut-alerte.dto.js";
 import { ListAlertesQueryDto } from "./dto/list-alertes-query.dto.js";
 import { Roles } from "../auth/decorators/roles.decorator.js";
 import { CurrentUser } from "../auth/decorators/current-user.decorator.js";
-import { RoleUtilisateur } from "../generated/prisma/enums.js";
+import { ModuleMetier, RoleUtilisateur } from "../generated/prisma/enums.js";
+import { ModuleAbonne } from "../abonnements/acces-module.guard.js";
 import type { JwtAccessPayload } from "../auth/types/jwt-payload.type.js";
 
 @Roles(RoleUtilisateur.PERSONNEL_SOIGNANT, RoleUtilisateur.RESP_QUALITE, RoleUtilisateur.RESPONSABLE_COMPTE)
+// §5 — accès soumis au statut d'abonnement NEWS (lecture / écriture).
+@ModuleAbonne(ModuleMetier.NEWS)
 @Controller("alertes")
 export class AlertesController {
   constructor(private readonly alertesService: AlertesService) {}

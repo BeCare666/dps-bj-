@@ -137,7 +137,7 @@ describe("Isolation multi-tenant (e2e)", () => {
     idsUtilisateurs.push(individuel.id);
 
     patientA = await prisma.patient.create({
-      data: { organisationId: organisationA.id, nom: "Doe", prenom: "Jane" },
+      data: { organisationId: organisationA.id, identifiantInterne: "MT-PATIENT-A" },
     });
   });
 

@@ -4,6 +4,8 @@ import { apiFetchJson, ApiError } from "@/lib/api-server";
 import { Reveal } from "@/components/motion/reveal";
 import { ReserverForm } from "@/components/reservations/reserver-form";
 import type { Formation } from "@/lib/types";
+import { PageContainer } from "@/components/ui/page-container";
+import { PageHeader } from "@/components/ui/page-header";
 
 export const metadata: Metadata = {
   title: "Réserver une formation",
@@ -22,16 +24,18 @@ export default async function ReserverPage({ params }: { params: Promise<{ forma
   }
 
   return (
-    <div className="mx-auto max-w-xl px-5 py-12 sm:px-8">
+    <PageContainer largeur="formulaire">
       <Reveal>
-        <span className="text-xs font-medium uppercase tracking-wide text-text-faint">Réservation</span>
-        <h1 className="mt-2 font-display text-2xl font-bold text-text">{formation.titre}</h1>
-        <p className="mt-2 text-text-muted">Choisissez la formule qui vous convient. Le paiement se fait à l'étape suivante.</p>
+        <PageHeader
+          filAriane={[{ label: "Formations", href: "/formations" }, { label: formation.titre }]}
+          surtitre="Réservation"
+          titre={formation.titre}
+          description="Choisissez la formule qui vous convient. Le paiement se fait à l'étape suivante."
+        />
       </Reveal>
-
-      <Reveal delay={0.05} className="mt-8">
+      <Reveal delay={0.05}>
         <ReserverForm formation={formation} />
       </Reveal>
-    </div>
+    </PageContainer>
   );
 }

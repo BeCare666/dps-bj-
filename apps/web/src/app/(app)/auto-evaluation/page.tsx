@@ -1,9 +1,14 @@
 import type { Metadata } from "next";
+import type { ReactNode } from "react";
 import Link from "next/link";
-import { apiFetchJson, ApiError } from "@/lib/api-server";
+import { apiFetchJson, silencieux } from "@/lib/api-server";
 import { formaterDate } from "@/lib/format";
 import { Reveal } from "@/components/motion/reveal";
+import { PageContainer } from "@/components/ui/page-container";
+import { PageHeader } from "@/components/ui/page-header";
+import { IconArrowRight, IconChecklist } from "@/components/icons";
 import { DemarrerSessionButton } from "@/components/auto-evaluation/demarrer-session-button";
+import { HistoriqueTable } from "@/components/auto-evaluation/historique-table";
 import type { Grille, Organisation, SessionEvaluationResume } from "@/lib/types";
 
 export const metadata: Metadata = {
@@ -11,13 +16,15 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-async function silencieux<T>(promesse: Promise<T>, repli: T): Promise<T> {
-  try {
-    return await promesse;
-  } catch (erreur) {
-    if (erreur instanceof ApiError) return repli;
-    throw erreur;
-  }
+function TitreSection({ children, compteur }: { children: ReactNode; compteur?: number }) {
+  return (
+    <h2 className="mb-3 flex items-center gap-2 font-display text-base font-semibold text-text">
+      {children}
+      {compteur !== undefined && (
+        <span className="rounded-full bg-bg-subtle px-2 py-0.5 text-xs font-medium text-text-muted tabular-nums">{compteur}</span>
+      )}
+    </h2>
+  );
 }
 
 export default async function AutoEvaluationPage() {
@@ -31,83 +38,74 @@ export default async function AutoEvaluationPage() {
   const soumises = sessions.filter((s) => s.statut === "SOUMISE");
 
   return (
-    <div className="mx-auto max-w-4xl px-5 py-12 sm:px-8">
+    <PageContainer>
       <Reveal>
-        <span className="text-xs font-medium uppercase tracking-wide text-text-faint">Module gratuit</span>
-        <h1 className="mt-2 font-display text-3xl font-bold text-text">Auto-évaluation</h1>
-        <p className="mt-2 text-text-muted">
-          Grille{organisation ? ` ${organisation.type}` : ""}. Répondez critère par critère : le score est calculé
-          automatiquement à la soumission.
-        </p>
+        <PageHeader
+          surtitre="Module gratuit"
+          titre="Auto-évaluation"
+          description={`Grille${organisation ? ` ${organisation.type}` : ""}. Répondez critère par critère : le score est calculé automatiquement à la soumission.`}
+        />
       </Reveal>
 
       {enCours.length > 0 && (
-        <Reveal delay={0.05} className="mt-8">
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-text-faint">Sessions en cours</h2>
-          <div className="mt-3 flex flex-col gap-3">
+        <Reveal delay={0.05} className="mb-10">
+          <TitreSection compteur={enCours.length}>Sessions en cours</TitreSection>
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
             {enCours.map((s) => (
               <Link
                 key={s.id}
                 href={`/auto-evaluation/${s.id}`}
-                className="flex items-center justify-between rounded-[var(--radius-lg)] border border-border bg-surface p-5 transition-colors hover:border-primary/30"
+                className="group flex flex-col rounded-[var(--radius-lg)] border border-primary/25 bg-surface p-5 shadow-[var(--shadow-card)] transition-[border-color,box-shadow] hover:border-primary/50 hover:shadow-[var(--shadow-soft)]"
               >
-                <div>
-                  <p className="font-medium text-text">{s.grille.nom}</p>
-                  <p className="text-xs text-text-muted">Démarrée le {formaterDate(s.dateDebut)}</p>
-                </div>
-                <span className="text-sm font-medium text-primary">Continuer →</span>
+                <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-primary-soft px-2.5 py-1 text-xs font-medium text-primary">
+                  <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+                  En cours
+                </span>
+                <p className="mt-3 font-medium text-text">{s.grille.nom}</p>
+                <p className="mt-0.5 text-xs text-text-muted">Démarrée le {formaterDate(s.dateDebut)}</p>
+                <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-primary">
+                  Continuer
+                  <IconArrowRight width={15} height={15} className="transition-transform group-hover:translate-x-0.5" />
+                </span>
               </Link>
             ))}
           </div>
         </Reveal>
       )}
 
-      <Reveal delay={0.1} className="mt-8">
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-text-faint">Démarrer une évaluation</h2>
-        <div className="mt-3 flex flex-col gap-3">
-          {grilles.length === 0 ? (
-            <p className="rounded-[var(--radius-lg)] border border-dashed border-border bg-bg-subtle px-5 py-8 text-center text-sm text-text-muted">
-              Aucune grille disponible pour votre type d&apos;établissement pour le moment.
-            </p>
-          ) : (
-            grilles.map((grille) => (
+      <Reveal delay={0.1} className="mb-10">
+        <TitreSection compteur={grilles.length}>Démarrer une évaluation</TitreSection>
+        {grilles.length === 0 ? (
+          <p className="rounded-[var(--radius-lg)] border border-dashed border-border bg-surface px-5 py-8 text-center text-sm text-text-muted">
+            Aucune grille disponible pour votre type d&apos;établissement pour le moment.
+          </p>
+        ) : (
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            {grilles.map((grille) => (
               <div
                 key={grille.id}
-                className="flex items-center justify-between rounded-[var(--radius-lg)] border border-border bg-surface p-5"
+                className="flex flex-col rounded-[var(--radius-lg)] border border-border bg-surface p-5 shadow-[var(--shadow-card)]"
               >
-                <div>
-                  <p className="font-medium text-text">{grille.nom}</p>
-                  <p className="text-xs text-text-muted">Version {grille.version}</p>
+                <span className="flex h-10 w-10 items-center justify-center rounded-[var(--radius-md)] bg-primary-soft text-primary">
+                  <IconChecklist width={20} height={20} />
+                </span>
+                <p className="mt-4 font-medium text-text">{grille.nom}</p>
+                <p className="mt-0.5 text-xs text-text-muted">Version {grille.version}</p>
+                <div className="mt-5">
+                  <DemarrerSessionButton grilleId={grille.id} />
                 </div>
-                <DemarrerSessionButton grilleId={grille.id} />
               </div>
-            ))
-          )}
-        </div>
+            ))}
+          </div>
+        )}
       </Reveal>
 
       {soumises.length > 0 && (
-        <Reveal delay={0.15} className="mt-8">
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-text-faint">Historique</h2>
-          <div className="mt-3 overflow-hidden rounded-[var(--radius-lg)] border border-border bg-surface">
-            {soumises.map((s, i) => (
-              <Link
-                key={s.id}
-                href={`/auto-evaluation/${s.id}/resultats`}
-                className={`flex items-center justify-between px-5 py-4 transition-colors hover:bg-bg-subtle ${i > 0 ? "border-t border-border" : ""}`}
-              >
-                <div>
-                  <p className="font-medium text-text">{s.grille.nom}</p>
-                  <p className="text-xs text-text-muted">
-                    {s.dateSoumission ? `Soumise le ${formaterDate(s.dateSoumission)}` : "Date de soumission non renseignée"}
-                  </p>
-                </div>
-                <span className="font-display text-lg font-bold text-primary">{s.scoreGlobal}%</span>
-              </Link>
-            ))}
-          </div>
+        <Reveal delay={0.15}>
+          <TitreSection compteur={soumises.length}>Historique</TitreSection>
+          <HistoriqueTable sessions={soumises} />
         </Reveal>
       )}
-    </div>
+    </PageContainer>
   );
 }

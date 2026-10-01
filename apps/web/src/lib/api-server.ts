@@ -49,3 +49,16 @@ export async function apiFetchJson<T>(path: string, init?: RequestInit): Promise
   }
   return body as T;
 }
+
+// Lecture tolérante pour les Server Components : une erreur API (403 module
+// non souscrit, 404, 5xx de l'API…) renvoie la valeur de repli au lieu de
+// faire échouer toute la page ; toute autre erreur (réseau, bug) remonte.
+// Remplace les copies locales identiques qui existaient dans chaque page.
+export async function silencieux<T>(promesse: Promise<T>, repli: T): Promise<T> {
+  try {
+    return await promesse;
+  } catch (erreur) {
+    if (erreur instanceof ApiError) return repli;
+    throw erreur;
+  }
+}

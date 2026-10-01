@@ -4,6 +4,7 @@ import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 import { modifierMonOrganisationAction, type EtatAction } from "@/lib/organisation-actions";
 import type { Organisation } from "@/lib/types";
+import { LIBELLES_TYPE_STRUCTURE } from "@/lib/libelles-comptes";
 
 const ETAT_INITIAL: EtatAction = {};
 
@@ -35,10 +36,43 @@ export function OrganisationForm({ organisation }: { organisation: Organisation 
         <input id="nom" name="nom" type="text" defaultValue={organisation.nom} required minLength={2} className={styleChamp} />
       </div>
       <div className="flex flex-col gap-1.5">
+        <label htmlFor="raisonSociale" className="text-sm font-medium text-text">
+          Raison sociale
+        </label>
+        <input id="raisonSociale" name="raisonSociale" type="text" defaultValue={organisation.raisonSociale ?? ""} className={styleChamp} />
+      </div>
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor="typeStructure" className="text-sm font-medium text-text">
+          Type d&apos;établissement
+        </label>
+        <select id="typeStructure" name="typeStructure" defaultValue={organisation.typeStructure ?? ""} className={styleChamp}>
+          <option value="">Non renseigné</option>
+          {Object.entries(LIBELLES_TYPE_STRUCTURE).map(([valeur, label]) => (
+            <option key={valeur} value={valeur}>
+              {label}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div className="flex flex-col gap-1.5">
         <label htmlFor="adresse" className="text-sm font-medium text-text">
           Adresse
         </label>
         <input id="adresse" name="adresse" type="text" defaultValue={organisation.adresse ?? ""} className={styleChamp} />
+      </div>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor="ville" className="text-sm font-medium text-text">
+            Ville
+          </label>
+          <input id="ville" name="ville" type="text" defaultValue={organisation.ville ?? ""} className={styleChamp} />
+        </div>
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor="pays" className="text-sm font-medium text-text">
+            Pays
+          </label>
+          <input id="pays" name="pays" type="text" defaultValue={organisation.pays ?? ""} className={styleChamp} />
+        </div>
       </div>
       <div className="flex flex-col gap-1.5">
         <label htmlFor="telephone" className="text-sm font-medium text-text">

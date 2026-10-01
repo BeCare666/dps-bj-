@@ -1,11 +1,12 @@
 "use client";
 
-import { useActionState } from "react";
-import { useFormStatus } from "react-dom";
 import Link from "next/link";
-import { DataTable, type ColonneTable } from "@/components/ui/data-table";
+import { DataTable, type ColonneTable, type FiltreTable, type VueTable } from "@/components/ui/data-table";
+import { Badge } from "@/components/ui/badge";
+import { IconBan, IconCheckCircle, IconEye } from "@/components/icons";
 import { formaterDate } from "@/lib/format";
-import { basculerUtilisateurAction, type EtatAction } from "@/lib/admin-actions";
+import { basculerUtilisateurAction } from "@/lib/admin-actions";
+import { useActionConfirmee } from "./use-action-confirmee";
 import type { UtilisateurAdmin } from "@/lib/types";
 
 const LIBELLES_ROLE: Record<string, string> = {
@@ -16,114 +17,166 @@ const LIBELLES_ROLE: Record<string, string> = {
   ADMIN_PLATEFORME: "Admin plateforme",
 };
 
-function BoutonBasculer({ utilisateurId, actif }: { utilisateurId: string; actif: boolean }) {
-  const [etat, action] = useActionState(async (_prevState: EtatAction): Promise<EtatAction> => {
-    return basculerUtilisateurAction(utilisateurId, actif);
-  }, {});
+const LIBELLES_TYPE_COMPTE: Record<UtilisateurAdmin["typeCompte"], string> = {
+  ORGANISATION: "Établissement",
+  INDIVIDUEL: "Individuel",
+  ADMIN_PLATEFORME: "Administration",
+};
 
+export function Initiales({ prenom, nom }: { prenom: string; nom: string }) {
   return (
-    <form action={action} className="inline-block" onClick={(e) => e.stopPropagation()}>
-      <BoutonInterne actif={actif} />
-      {etat.erreur && <p className="mt-1 text-xs text-danger">{etat.erreur}</p>}
-    </form>
+    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary-soft to-accent-soft text-xs font-semibold text-primary">
+      {`${prenom.charAt(0)}${nom.charAt(0)}`.toUpperCase()}
+    </span>
   );
 }
 
-function BoutonInterne({ actif }: { actif: boolean }) {
-  const { pending } = useFormStatus();
-  return (
-    <button
-      type="submit"
-      disabled={pending}
-      className={`rounded-[var(--radius-md)] border px-3 py-1.5 text-xs font-medium transition-colors disabled:opacity-50 ${
-        actif
-          ? "border-border text-text-muted hover:border-danger/40 hover:text-danger"
-          : "border-success/30 text-success hover:bg-success-soft"
-      }`}
-    >
-      {pending ? "…" : actif ? "Désactiver" : "Réactiver"}
-    </button>
-  );
-}
+export function UtilisateursTable({
+  utilisateurs,
+  idTable = "admin-utilisateurs",
+  synchroniserUrl = true,
+}: {
+  utilisateurs: UtilisateurAdmin[];
+  // Réutilisation dans une fiche (ex. utilisateurs d'un établissement) :
+  // préférences séparées et pas d'état dans l'URL de la fiche.
+  idTable?: string;
+  synchroniserUrl?: boolean;
+}) {
+  const { lancer, dialogue } = useActionConfirmee();
 
-export function UtilisateursTable({ utilisateurs }: { utilisateurs: UtilisateurAdmin[] }) {
   const colonnes: ColonneTable<UtilisateurAdmin>[] = [
     {
       cle: "nom",
       entete: "Utilisateur",
+      masquable: false,
       render: (u) => (
-        <div>
-          <Link
-            href={`/admin/utilisateurs/${u.id}`}
-            className="font-medium text-text hover:text-primary hover:underline"
-          >
-            {u.prenom} {u.nom}
-          </Link>
-          <p className="text-xs text-text-faint">{u.email}</p>
+        <div className="flex items-center gap-3">
+          <Initiales prenom={u.prenom} nom={u.nom} />
+          <div className="min-w-0">
+            <Link href={`/admin/utilisateurs/${u.id}`} className="block truncate font-medium text-text hover:text-primary">
+              {u.prenom} {u.nom}
+            </Link>
+            <p className="truncate text-xs text-text-faint">{u.email}</p>
+          </div>
         </div>
       ),
       valeurTri: (u) => `${u.prenom} ${u.nom}`,
       valeurRecherche: (u) => `${u.prenom} ${u.nom} ${u.email} ${u.organisation?.nom ?? ""}`,
+      valeurExport: (u) => `${u.prenom} ${u.nom}`,
+    },
+    {
+      cle: "email",
+      entete: "Email",
+      masqueeParDefaut: true,
+      render: (u) => <span className="text-text-muted">{u.email}</span>,
+      valeurTri: (u) => u.email,
     },
     {
       cle: "organisation",
       entete: "Établissement",
-      render: (u) => u.organisation?.nom ?? <span className="text-text-faint">Aucun établissement</span>,
+      render: (u) =>
+        u.organisation ? (
+          <Link href={`/admin/etablissements/${u.organisation.id}`} className="text-text hover:text-primary">
+            {u.organisation.nom}
+          </Link>
+        ) : (
+          <span className="text-text-faint">{LIBELLES_TYPE_COMPTE[u.typeCompte]}</span>
+        ),
       valeurTri: (u) => u.organisation?.nom ?? "",
+      valeurExport: (u) => u.organisation?.nom ?? LIBELLES_TYPE_COMPTE[u.typeCompte],
     },
     {
       cle: "roles",
       entete: "Rôle(s)",
-      render: (u) => (
-        <div className="flex flex-wrap gap-1">
-          {u.roles.map((r) => (
-            <span key={r.role} className="rounded-full bg-primary-soft px-2 py-0.5 text-xs text-primary">
-              {LIBELLES_ROLE[r.role] ?? r.role}
-            </span>
-          ))}
-        </div>
-      ),
+      render: (u) =>
+        u.roles.length === 0 ? (
+          <span className="text-text-faint">Aucun rôle</span>
+        ) : (
+          <div className="flex flex-wrap gap-1">
+            {u.roles.map((r) => (
+              <Badge key={r.role} variant="primary" className="font-medium">
+                {LIBELLES_ROLE[r.role] ?? r.role}
+              </Badge>
+            ))}
+          </div>
+        ),
+      valeurExport: (u) => u.roles.map((r) => LIBELLES_ROLE[r.role] ?? r.role).join(", "),
     },
     {
       cle: "statut",
       entete: "Statut",
-      render: (u) => (
-        <span
-          className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
-            u.actif ? "bg-success-soft text-success" : "bg-bg-subtle text-text-faint"
-          }`}
-        >
-          {u.actif ? "Actif" : "Désactivé"}
-        </span>
-      ),
+      render: (u) =>
+        u.actif ? <Badge variant="success">Actif</Badge> : <Badge variant="neutral">Désactivé</Badge>,
       valeurTri: (u) => (u.actif ? 1 : 0),
-      alignement: "center",
+      valeurExport: (u) => (u.actif ? "Actif" : "Désactivé"),
     },
     {
       cle: "createdAt",
       entete: "Inscrit le",
-      render: (u) => formaterDate(u.createdAt),
+      render: (u) => <span className="whitespace-nowrap text-text-muted tabular-nums">{formaterDate(u.createdAt)}</span>,
       valeurTri: (u) => u.createdAt,
-    },
-    {
-      cle: "actions",
-      entete: "Actions",
-      render: (u) => (
-        <div className="flex justify-end">
-          <BoutonBasculer utilisateurId={u.id} actif={u.actif} />
-        </div>
-      ),
-      alignement: "right",
+      valeurExport: (u) => formaterDate(u.createdAt),
     },
   ];
 
+  const filtres: FiltreTable<UtilisateurAdmin>[] = [
+    {
+      cle: "role",
+      label: "Rôle",
+      options: Object.entries(LIBELLES_ROLE).map(([valeur, label]) => ({ valeur, label })),
+      valeur: (u) => u.roles.map((r) => r.role),
+    },
+    {
+      cle: "type",
+      label: "Type de compte",
+      options: Object.entries(LIBELLES_TYPE_COMPTE).map(([valeur, label]) => ({ valeur, label })),
+      valeur: (u) => u.typeCompte,
+    },
+  ];
+
+  const vues: VueTable<UtilisateurAdmin>[] = [
+    { cle: "tous", label: "Tous" },
+    { cle: "actifs", label: "Actifs", filtre: (u) => u.actif },
+    { cle: "desactives", label: "Désactivés", filtre: (u) => !u.actif },
+  ];
+
   return (
-    <DataTable
-      colonnes={colonnes}
-      lignes={utilisateurs}
-      cleLigne={(u) => u.id}
-      rechercheEspaceReserve="Rechercher un utilisateur…"
-      videMessage="Aucun utilisateur pour l'instant."
-    />
+    <>
+      <DataTable
+        id={idTable}
+        synchroniserUrl={synchroniserUrl}
+        colonnes={colonnes}
+        lignes={utilisateurs}
+        cleLigne={(u) => u.id}
+        rechercheEspaceReserve="Nom, email, établissement…"
+        filtres={filtres}
+        vues={vues}
+        triParDefaut={{ cle: "createdAt", direction: "desc" }}
+        lienLigne={(u) => `/admin/utilisateurs/${u.id}`}
+        exportCsv={{ nomFichier: "utilisateurs-dps" }}
+        vide={{ titre: "Aucun utilisateur", description: "Les comptes apparaîtront ici dès les premières inscriptions." }}
+        actionsLigne={(u) => [
+          { label: "Voir la fiche", icone: IconEye, href: `/admin/utilisateurs/${u.id}` },
+          u.actif
+            ? {
+                label: "Désactiver",
+                icone: IconBan,
+                danger: true,
+                onSelect: () =>
+                  lancer(() => basculerUtilisateurAction(u.id, true), "Utilisateur désactivé.", {
+                    titre: "Désactiver cet utilisateur ?",
+                    description: "Il ne pourra plus se connecter à la plateforme tant que son compte n'est pas réactivé.",
+                    confirmLabel: "Désactiver",
+                  }),
+              }
+            : {
+                label: "Réactiver",
+                icone: IconCheckCircle,
+                onSelect: () => lancer(() => basculerUtilisateurAction(u.id, false), "Utilisateur réactivé."),
+              },
+        ]}
+      />
+      {dialogue}
+    </>
   );
 }

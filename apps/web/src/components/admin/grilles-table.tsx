@@ -1,15 +1,11 @@
 "use client";
 
-import { useActionState } from "react";
-import { useFormStatus } from "react-dom";
 import Link from "next/link";
-import { DataTable, type ColonneTable } from "@/components/ui/data-table";
-import {
-  publierGrilleAction,
-  archiverGrilleAction,
-  nouvelleVersionGrilleAction,
-  type EtatAction,
-} from "@/lib/grilles-actions";
+import { DataTable, type ColonneTable, type FiltreTable, type VueTable } from "@/components/ui/data-table";
+import { Badge, type BadgeVariant } from "@/components/ui/badge";
+import { IconArchive, IconChecklist, IconCopy, IconEye, IconSend } from "@/components/icons";
+import { publierGrilleAction, archiverGrilleAction, nouvelleVersionGrilleAction } from "@/lib/grilles-actions";
+import { useActionConfirmee } from "./use-action-confirmee";
 import type { Grille } from "@/lib/types";
 
 const LIBELLES_TYPE = {
@@ -23,63 +19,29 @@ const LIBELLES_STATUT: Record<Grille["statut"], string> = {
   ARCHIVEE: "Archivée",
 };
 
-const STYLES_STATUT: Record<Grille["statut"], string> = {
-  BROUILLON: "bg-bg-subtle text-text-faint",
-  PUBLIEE: "bg-success-soft text-success",
-  ARCHIVEE: "bg-warning-soft text-warning",
+const VARIANTES_STATUT: Record<Grille["statut"], BadgeVariant> = {
+  BROUILLON: "neutral",
+  PUBLIEE: "success",
+  ARCHIVEE: "warning",
 };
 
-function BoutonAction({
-  action,
-  grilleId,
-  libelle,
-  libellePending,
-  className,
-}: {
-  action: (grilleId: string) => Promise<EtatAction>;
-  grilleId: string;
-  libelle: string;
-  libellePending: string;
-  className: string;
-}) {
-  const [etat, dispatch] = useActionState(async (_prevState: EtatAction): Promise<EtatAction> => {
-    return action(grilleId);
-  }, {});
-
-  return (
-    <form action={dispatch} className="inline-block" onClick={(e) => e.stopPropagation()}>
-      <BoutonInterne libelle={libelle} libellePending={libellePending} className={className} />
-      {etat.erreur && <p className="mt-1 text-xs text-danger">{etat.erreur}</p>}
-    </form>
-  );
-}
-
-function BoutonInterne({
-  libelle,
-  libellePending,
-  className,
-}: {
-  libelle: string;
-  libellePending: string;
-  className: string;
-}) {
-  const { pending } = useFormStatus();
-  return (
-    <button type="submit" disabled={pending} className={`${className} disabled:opacity-50`}>
-      {pending ? libellePending : libelle}
-    </button>
-  );
-}
-
 export function GrillesTable({ grilles }: { grilles: Grille[] }) {
+  const { lancer, dialogue } = useActionConfirmee();
+
   const colonnes: ColonneTable<Grille>[] = [
     {
       cle: "nom",
       entete: "Grille",
+      masquable: false,
       render: (g) => (
-        <Link href={`/admin/grilles/${g.id}`} className="font-medium text-text hover:text-primary hover:underline">
-          {g.nom}
-        </Link>
+        <div className="flex items-center gap-3">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--radius-md)] bg-primary-soft text-primary">
+            <IconChecklist width={18} height={18} />
+          </span>
+          <Link href={`/admin/grilles/${g.id}`} className="min-w-0 truncate font-medium text-text hover:text-primary">
+            {g.nom}
+          </Link>
+        </div>
       ),
       valeurTri: (g) => g.nom,
       valeurRecherche: (g) => `${g.nom} ${LIBELLES_TYPE[g.type]}`,
@@ -89,70 +51,93 @@ export function GrillesTable({ grilles }: { grilles: Grille[] }) {
       entete: "Type d'établissement",
       render: (g) => LIBELLES_TYPE[g.type],
       valeurTri: (g) => g.type,
+      valeurExport: (g) => LIBELLES_TYPE[g.type],
     },
     {
       cle: "version",
       entete: "Version",
-      render: (g) => `v${g.version}`,
+      render: (g) => (
+        <span className="rounded-[var(--radius-sm)] border border-border px-1.5 py-0.5 font-mono text-xs text-text-muted">
+          v{g.version}
+        </span>
+      ),
       valeurTri: (g) => g.version,
-      alignement: "center",
     },
     {
       cle: "statut",
       entete: "Statut",
-      render: (g) => (
-        <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${STYLES_STATUT[g.statut]}`}>
-          {LIBELLES_STATUT[g.statut]}
-        </span>
-      ),
+      render: (g) => <Badge variant={VARIANTES_STATUT[g.statut]}>{LIBELLES_STATUT[g.statut]}</Badge>,
       valeurTri: (g) => g.statut,
-      alignement: "center",
-    },
-    {
-      cle: "actions",
-      entete: "Actions",
-      render: (g) => (
-        <div className="flex flex-wrap items-center justify-end gap-2">
-          {g.statut === "BROUILLON" && (
-            <BoutonAction
-              action={publierGrilleAction}
-              grilleId={g.id}
-              libelle="Publier"
-              libellePending="…"
-              className="rounded-[var(--radius-md)] border border-success/30 px-3 py-1.5 text-xs font-medium text-success transition-colors hover:bg-success-soft"
-            />
-          )}
-          {g.statut === "PUBLIEE" && (
-            <BoutonAction
-              action={archiverGrilleAction}
-              grilleId={g.id}
-              libelle="Archiver"
-              libellePending="…"
-              className="rounded-[var(--radius-md)] border border-border px-3 py-1.5 text-xs font-medium text-text-muted transition-colors hover:border-danger/40 hover:text-danger"
-            />
-          )}
-          {g.statut !== "BROUILLON" && (
-            <BoutonAction
-              action={nouvelleVersionGrilleAction}
-              grilleId={g.id}
-              libelle="Nouvelle version"
-              libellePending="…"
-              className="rounded-[var(--radius-md)] border border-border px-3 py-1.5 text-xs font-medium text-text transition-colors hover:border-primary/40 hover:bg-primary-soft/60"
-            />
-          )}
-        </div>
-      ),
-      alignement: "right",
+      valeurExport: (g) => LIBELLES_STATUT[g.statut],
     },
   ];
 
+  const filtres: FiltreTable<Grille>[] = [
+    {
+      cle: "type",
+      label: "Type",
+      options: Object.entries(LIBELLES_TYPE).map(([valeur, label]) => ({ valeur, label })),
+      valeur: (g) => g.type,
+    },
+  ];
+
+  const vues: VueTable<Grille>[] = [
+    { cle: "toutes", label: "Toutes" },
+    { cle: "publiees", label: "Publiées", filtre: (g) => g.statut === "PUBLIEE" },
+    { cle: "brouillons", label: "Brouillons", filtre: (g) => g.statut === "BROUILLON" },
+    { cle: "archivees", label: "Archivées", filtre: (g) => g.statut === "ARCHIVEE" },
+  ];
+
   return (
-    <DataTable
-      colonnes={colonnes}
-      lignes={grilles}
-      cleLigne={(g) => g.id}
-      rechercheEspaceReserve="Rechercher une grille…"
-      videMessage="Aucune grille d'auto-évaluation pour l'instant."
-    />
+    <>
+      <DataTable
+        id="admin-grilles"
+        colonnes={colonnes}
+        lignes={grilles}
+        cleLigne={(g) => g.id}
+        rechercheEspaceReserve="Rechercher une grille…"
+        filtres={filtres}
+        vues={vues}
+        triParDefaut={{ cle: "nom", direction: "asc" }}
+        lienLigne={(g) => `/admin/grilles/${g.id}`}
+        vide={{
+          titre: "Aucune grille d'auto-évaluation",
+          description: "Créez une grille pour la proposer ensuite aux établissements.",
+        }}
+        actionsLigne={(g) => [
+          { label: "Ouvrir", icone: IconEye, href: `/admin/grilles/${g.id}` },
+          g.statut === "BROUILLON" && {
+            label: "Publier",
+            icone: IconSend,
+            onSelect: () =>
+              lancer(() => publierGrilleAction(g.id), "Grille publiée.", {
+                titre: "Publier cette grille ?",
+                description:
+                  "Une grille publiée n'est plus modifiable. Elle devient disponible pour les auto-évaluations des établissements de ce type.",
+                confirmLabel: "Publier",
+                danger: false,
+              }),
+          },
+          g.statut !== "BROUILLON" && {
+            label: "Nouvelle version",
+            icone: IconCopy,
+            onSelect: () => lancer(() => nouvelleVersionGrilleAction(g.id), "Nouvelle version créée en brouillon."),
+          },
+          g.statut === "PUBLIEE" && {
+            label: "Archiver",
+            icone: IconArchive,
+            danger: true,
+            onSelect: () =>
+              lancer(() => archiverGrilleAction(g.id), "Grille archivée.", {
+                titre: "Archiver cette grille ?",
+                description:
+                  "Elle ne pourra plus servir à démarrer une auto-évaluation. Cette action est définitive ; une nouvelle version reste possible.",
+                confirmLabel: "Archiver",
+              }),
+          },
+        ]}
+      />
+      {dialogue}
+    </>
   );
 }

@@ -1,5 +1,5 @@
 import type { SVGProps } from "react";
-import type { ReseauSocial } from "@/lib/site-config";
+import { RESEAUX_SOCIAUX, SITE, type ReseauSocial } from "@/lib/site-config";
 
 type Props = SVGProps<SVGSVGElement>;
 
@@ -38,4 +38,35 @@ const ICONES: Record<ReseauSocial, (props: Props) => React.JSX.Element> = {
 export function SocialIcon({ reseau, ...props }: Props & { reseau: ReseauSocial }) {
   const Icone = ICONES[reseau];
   return <Icone aria-hidden="true" {...props} />;
+}
+
+// Boutons ronds des réseaux sociaux, pour une surface bleu nuit : footer de la
+// vitrine et pied du tiroir de navigation mobile (même rendu aux deux endroits).
+export function ListeReseauxSociaux({ className = "" }: { className?: string }) {
+  return (
+    <ul className={`flex flex-wrap gap-3 ${className}`} aria-label="Réseaux sociaux">
+      {RESEAUX_SOCIAUX.map(({ reseau, label, href }) => (
+        <li key={reseau}>
+          <a
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`${SITE.nom} sur ${label}`}
+            className="group relative flex h-11 w-11 items-center justify-center overflow-hidden rounded-full border border-white/15 bg-white/[0.04] text-white/75 transition-all duration-500 hover:-translate-y-0.5 hover:border-white/40 hover:text-navy"
+          >
+            {/* Remplissage qui monte au survol, avec un fin reflet. */}
+            <span
+              aria-hidden="true"
+              className="absolute inset-0 translate-y-full rounded-full bg-gradient-to-t from-white to-white/90 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-y-0"
+            />
+            <span
+              aria-hidden="true"
+              className="absolute inset-0 rounded-full ring-1 ring-inset ring-white/10 [background:radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.18),transparent_60%)]"
+            />
+            <SocialIcon reseau={reseau} width={18} height={18} className="relative" />
+          </a>
+        </li>
+      ))}
+    </ul>
+  );
 }

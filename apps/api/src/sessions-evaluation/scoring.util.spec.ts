@@ -127,3 +127,75 @@ describe("calculerScore", () => {
     expect(resultat.criteresNonValides.map((c) => c.critereId)).toEqual(["crit-vide"]);
   });
 });
+
+// §6.2 / §6.3 / §6.4 — seuls les éléments « document à examiner » (entreDansScore)
+// comptent ; les documents manquants et la recommandation sont restitués.
+describe("calculerScore — documents à examiner (§6.3)", () => {
+  function grilleMixte(): GrilleStructure {
+    return {
+      domaines: [
+        {
+          id: "dom-1",
+          nom: "Organisation",
+          normes: [
+            {
+              criteres: [
+                {
+                  id: "crit-1",
+                  code: "C1",
+                  libelle: "Procédure de prévention des chutes",
+                  recommandation: "Rédiger et diffuser la procédure.",
+                  elementsMesurables: [
+                    { id: "doc-1", libelle: "Procédure écrite", typeReponse: TypeReponse.OUI_NON, entreDansScore: true },
+                    { id: "doc-2", libelle: "Registre des chutes", typeReponse: TypeReponse.OUI_NON, entreDansScore: true },
+                    { id: "ent-1", libelle: "Entretien cadre", typeReponse: TypeReponse.OUI_NON, entreDansScore: false },
+                  ],
+                },
+                {
+                  id: "crit-2",
+                  code: "C2",
+                  libelle: "Observation seule",
+                  elementsMesurables: [
+                    { id: "obs-1", libelle: "Observation", typeReponse: TypeReponse.OUI_NON, entreDansScore: false },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    };
+  }
+
+  it("un entretien négatif n'invalide pas un critère dont tous les documents sont présents", () => {
+    const reponses = new Map<string, unknown>([
+      ["doc-1", true],
+      ["doc-2", true],
+      ["ent-1", false],
+    ]);
+    const resultat = calculerScore(grilleMixte(), reponses);
+    expect(resultat.criteresNonValides.map((c) => c.critereId)).not.toContain("crit-1");
+  });
+
+  it("un seul document manquant invalide le critère ; documents manquants et recommandation restitués", () => {
+    const reponses = new Map<string, unknown>([["doc-1", false]]);
+    const resultat = calculerScore(grilleMixte(), reponses);
+    const ecart = resultat.criteresNonValides.find((c) => c.critereId === "crit-1")!;
+    expect(ecart.documentsNonValides).toEqual([
+      { elementMesurableId: "doc-1", libelle: "Procédure écrite", reponse: "NON" },
+      { elementMesurableId: "doc-2", libelle: "Registre des chutes", reponse: "SANS_REPONSE" },
+    ]);
+    expect(ecart.recommandation).toBe("Rédiger et diffuser la procédure.");
+  });
+
+  it("un critère sans aucun document à examiner n'est pas validé (compté au total)", () => {
+    const reponses = new Map<string, unknown>([
+      ["doc-1", true],
+      ["doc-2", true],
+      ["obs-1", true],
+    ]);
+    const resultat = calculerScore(grilleMixte(), reponses);
+    expect(resultat.scoreGlobal).toBe(50);
+    expect(resultat.criteresNonValides.map((c) => c.critereId)).toEqual(["crit-2"]);
+  });
+});

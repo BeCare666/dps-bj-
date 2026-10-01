@@ -3,6 +3,7 @@ import { JwtService } from "@nestjs/jwt";
 import * as bcrypt from "bcrypt";
 import { PrismaService } from "../prisma/prisma.service.js";
 import { MailerService } from "../notifications/mailer.service.js";
+import { NotificationsInternesService } from "../notifications-internes/notifications-internes.service.js";
 import { RoleUtilisateur, TypeCompte } from "../generated/prisma/enums.js";
 import type { Utilisateur, UtilisateurRole } from "../generated/prisma/client.js";
 import type { RegisterOrganisationDto } from "./dto/register-organisation.dto.js";
@@ -34,15 +35,18 @@ export class AuthService {
     private readonly prisma: PrismaService,
     private readonly jwt: JwtService,
     private readonly mailer: MailerService,
+    private readonly notifications: NotificationsInternesService,
   ) {}
 
   async registerOrganisation(dto: RegisterOrganisationDto): Promise<CompteEnregistre> {
-    const [ifuExistant, emailExistant] = await Promise.all([
+    const [ifuExistant, emailExistant, emailOrganisationExistant] = await Promise.all([
       this.prisma.organisation.findUnique({ where: { ifu: dto.organisationIfu } }),
       this.prisma.utilisateur.findUnique({ where: { email: dto.responsableEmail } }),
+      this.prisma.organisation.findUnique({ where: { email: dto.organisationEmail } }),
     ]);
     if (ifuExistant) throw new ConflictException("Une organisation avec cet IFU existe déjà");
     if (emailExistant) throw new ConflictException("Un compte existe déjà avec cet email");
+    if (emailOrganisationExistant) throw new ConflictException("Un établissement utilise déjà cet email");
 
     const motDePasseHash = await bcrypt.hash(dto.motDePasse, BCRYPT_ROUNDS);
 
@@ -50,9 +54,13 @@ export class AuthService {
       const organisation = await tx.organisation.create({
         data: {
           nom: dto.organisationNom,
+          raisonSociale: dto.organisationRaisonSociale,
+          typeStructure: dto.organisationTypeStructure,
           ifu: dto.organisationIfu,
           type: dto.organisationType,
           adresse: dto.organisationAdresse,
+          ville: dto.organisationVille,
+          pays: dto.organisationPays,
           telephone: dto.organisationTelephone,
           email: dto.organisationEmail,
         },
@@ -62,6 +70,7 @@ export class AuthService {
         data: {
           organisationId: organisation.id,
           typeCompte: TypeCompte.ORGANISATION,
+          civilite: dto.responsableCivilite,
           email: dto.responsableEmail,
           motDePasseHash,
           nom: dto.responsableNom,
@@ -105,7 +114,7 @@ export class AuthService {
   async obtenirProfil(userId: string) {
     const utilisateur = await this.prisma.utilisateur.findUnique({
       where: { id: userId },
-      select: { id: true, nom: true, prenom: true, email: true, telephone: true, typeCompte: true },
+      select: { id: true, civilite: true, nom: true, prenom: true, email: true, telephone: true, typeCompte: true },
     });
     return utilisateur;
   }
@@ -142,7 +151,7 @@ export class AuthService {
   async login(dto: LoginDto): Promise<TokensEtUtilisateur> {
     const utilisateur = await this.prisma.utilisateur.findUnique({
       where: { email: dto.email },
-      include: { roles: true },
+      include: { roles: true, organisation: { select: { actif: true } } },
     });
     if (!utilisateur || !utilisateur.actif) {
       throw new UnauthorizedException("Identifiants invalides");
@@ -157,6 +166,10 @@ export class AuthService {
     // du mot de passe (ne pas aider un attaquant à distinguer les comptes).
     if (!utilisateur.emailVerifieLe) {
       throw new ForbiddenException("Veuillez confirmer votre adresse email avant de vous connecter");
+    }
+    // §12.1 — un établissement désactivé par l'administrateur ne peut plus se connecter.
+    if (utilisateur.organisation && !utilisateur.organisation.actif) {
+      throw new ForbiddenException("L'accès de votre établissement est suspendu. Contactez l'équipe DSP.");
     }
 
     await this.prisma.journalAudit.create({
@@ -182,9 +195,9 @@ export class AuthService {
 
     const utilisateur = await this.prisma.utilisateur.findUnique({
       where: { id: tokenEnBase.utilisateurId },
-      include: { roles: true },
+      include: { roles: true, organisation: { select: { actif: true } } },
     });
-    if (!utilisateur || !utilisateur.actif) {
+    if (!utilisateur || !utilisateur.actif || (utilisateur.organisation && !utilisateur.organisation.actif)) {
       throw new UnauthorizedException("Session expirée, veuillez vous reconnecter");
     }
 
@@ -244,12 +257,15 @@ export class AuthService {
       throw new BadRequestException("Lien de réinitialisation invalide ou expiré");
     }
 
+    const utilisateur = await this.prisma.utilisateur.findUniqueOrThrow({ where: { id: tokenEnBase.utilisateurId } });
     const motDePasseHash = await bcrypt.hash(nouveauMotDePasse, BCRYPT_ROUNDS);
 
     await this.prisma.$transaction([
+      // Le lien a été reçu à cette adresse : elle est donc vérifiée. C'est ce qui
+      // active un utilisateur interne invité par son établissement (§4.2).
       this.prisma.utilisateur.update({
         where: { id: tokenEnBase.utilisateurId },
-        data: { motDePasseHash },
+        data: { motDePasseHash, emailVerifieLe: utilisateur.emailVerifieLe ?? new Date() },
       }),
       this.prisma.passwordResetToken.update({
         where: { id: tokenEnBase.id },
@@ -280,6 +296,20 @@ export class AuthService {
         data: { usedAt: new Date() },
       }),
     ]);
+
+    // §11.2 — confirmation d'inscription : email + notification dans l'espace personnel.
+    const utilisateur = await this.prisma.utilisateur.findUnique({
+      where: { id: tokenEnBase.utilisateurId },
+      select: { id: true, email: true, prenom: true },
+    });
+    if (utilisateur) {
+      await this.mailer.sendInscriptionConfirmee(utilisateur.email, utilisateur.prenom);
+      await this.notifications.creerPour([utilisateur.id], {
+        type: "INSCRIPTION_CONFIRMEE",
+        titre: "Inscription confirmée",
+        message: "Bienvenue sur DSP : votre compte est actif.",
+      });
+    }
   }
 
   // Réponse volontairement identique que l'email existe/soit déjà vérifié ou

@@ -6,7 +6,7 @@ import { PHOTOS, SITE } from "@/lib/site-config";
 export const metadata: Metadata = {
   title: "Conditions générales d'utilisation",
   description:
-    "Conditions générales d'utilisation de dps.bj, la plateforme de sécurité des patients des établissements de santé du Bénin.",
+    "Conditions générales d'utilisation de DSP, la plateforme de sécurité des patients des établissements de santé du Bénin.",
 };
 
 const CREDITS = [

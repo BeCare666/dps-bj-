@@ -42,6 +42,28 @@ enum TypeEtablissement {
   @@map("type_etablissement")
 }
 
+// §4.1 — civilité du responsable / des utilisateurs internes.
+enum Civilite {
+  M
+  MME
+
+  @@map("civilite")
+}
+
+// §4.1 — type d'établissement (distinct de la catégorie ARS EH/ESPC, portée par
+// Organisation.type). Liste reprise du CDC ("hôpital, clinique, laboratoire,
+// pharmacie, cabinet médical, etc.") + AUTRE pour le "etc.".
+enum TypeStructure {
+  HOPITAL
+  CLINIQUE
+  LABORATOIRE
+  PHARMACIE
+  CABINET_MEDICAL
+  AUTRE
+
+  @@map("type_structure")
+}
+
 enum StatutGrille {
   BROUILLON
   PUBLIEE
@@ -65,6 +87,15 @@ enum TypeReponse {
   @@map("type_reponse")
 }
 
+// §6.2 / §6.6 — nature d'un élément mesurable de la grille officielle.
+enum TypeElementMesurable {
+  DOCUMENT_A_EXAMINER
+  ENTRETIEN
+  OBSERVATION
+
+  @@map("type_element_mesurable")
+}
+
 enum StatutRapportPdf {
   EN_COURS
   DISPONIBLE
@@ -84,8 +115,18 @@ enum StatutAbonnement {
   ESSAI
   ACTIF
   EXPIRE
+  // §12.1 — suspendu manuellement par l'administrateur.
+  SUSPENDU
 
   @@map("statut_abonnement")
+}
+
+// §5 / §10.4 — demande de paiement d'un abonnement NEWS / EI.
+enum StatutPaiementAbonnement {
+  EN_ATTENTE
+  PAYE
+
+  @@map("statut_paiement_abonnement")
 }
 
 enum StatutPatient {
@@ -122,20 +163,24 @@ enum StatutAlerte {
   @@map("statut_alerte")
 }
 
-enum GraviteEi {
-  FAIBLE
-  MODEREE
-  ELEVEE
-
-  @@map("gravite_ei")
-}
-
+// §8.2 / §8.5 — circuit de traitement d'un EI.
 enum StatutEi {
   DECLARE
-  EN_TRAITEMENT
+  QUALIFIE
+  EN_ANALYSE
+  PLAN_ACTION
   CLOTURE
 
   @@map("statut_ei")
+}
+
+// §8.2 — priorisation à la qualification.
+enum PrioriteEi {
+  BASSE
+  NORMALE
+  HAUTE
+
+  @@map("priorite_ei")
 }
 
 enum TypeCause {
@@ -178,9 +223,16 @@ enum StatutReservation {
 model Organisation {
   id        String            @id @default(cuid())
   nom       String
+  // §4.1 — raison sociale, type de structure, ville et pays. Nullables : les
+  // organisations inscrites avant cette migration n'en ont pas.
+  raisonSociale String?        @map("raison_sociale")
+  typeStructure TypeStructure? @map("type_structure")
   ifu       String            @unique
+  // Catégorie ARS (EH / ESPC).
   type      TypeEtablissement
   adresse   String?
+  ville     String?
+  pays      String?
   telephone String?
   email     String?           @unique
   actif     Boolean           @default(true)
@@ -192,6 +244,7 @@ model Organisation {
   journalAudit       JournalAudit[]
   sessionsEvaluation SessionEvaluation[]
   abonnementsModule  AbonnementModule[]
+  paiementsAbonnement PaiementAbonnement[]
   patients           Patient[]
   alertes            Alerte[]
   evenementsIndesirables EvenementIndesirable[]
@@ -205,6 +258,7 @@ model Utilisateur {
   organisationId String?     @map("organisation_id")
   serviceId      String?     @map("service_id")
   typeCompte     TypeCompte  @map("type_compte")
+  civilite       Civilite?
   email          String      @unique
   motDePasseHash String      @map("mot_de_passe_hash")
   nom            String
@@ -228,6 +282,9 @@ model Utilisateur {
   passwordResetTokens  PasswordResetToken[]
 
   mesuresSaisies MesureNews[]
+  correctionsMesures CorrectionMesureNews[]
+  correctionsEi      CorrectionEi[]
+  paiementsAbonnement PaiementAbonnement[]
   interventions  Intervention[]
 
   evenementsDeclares      EvenementIndesirable[] @relation("EiDeclarePar")
@@ -303,6 +360,8 @@ model Service {
   organisationId String   @map("organisation_id")
   nom            String
   description    String?
+  // Un service référencé par des patients/EI n'est jamais supprimé, seulement désactivé.
+  actif          Boolean  @default(true)
   createdAt      DateTime @default(now()) @map("created_at")
   updatedAt      DateTime @updatedAt @map("updated_at")
 
@@ -398,6 +457,10 @@ model Critere {
   code      String
   libelle   String
   ordre     Int
+  // §6.6 — catégorie du critère (ex. « essentiel »), libre faute de liste fermée dans le CDC.
+  categorie      String?
+  // §6.4 — recommandation synthétique affichée quand le critère est en écart.
+  recommandation String?  @db.Text
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
@@ -415,6 +478,9 @@ model ElementMesurable {
   libelle   String
   typeReponse TypeReponse @default(OUI_NON) @map("type_reponse")
   optionsChoix Json?      @map("options_choix")
+  // §6.2 / §6.6 — seuls les éléments « document à examiner » entrent dans le score.
+  typeElement    TypeElementMesurable @default(DOCUMENT_A_EXAMINER) @map("type_element")
+  entreDansScore Boolean              @default(true) @map("entre_dans_score")
   ordre     Int
   createdAt DateTime    @default(now()) @map("created_at")
   updatedAt DateTime    @updatedAt @map("updated_at")
@@ -475,11 +541,17 @@ model Reponse {
   @@map("reponses")
 }
 
+// §6.4 / §6.6 — rapport de synthèse généré en tâche asynchrone : la ligne
+// EN_COURS sert de file d'attente, traitée par RapportsPdfScheduler. Le PDF
+// est conservé en base (accès authentifié, jamais une URL publique).
 model RapportPdf {
   id         String           @id @default(cuid())
   sessionId  String           @unique @map("session_id")
   statut     StatutRapportPdf @default(EN_COURS)
   url        String?
+  contenu    Bytes?           @db.LongBlob
+  tentatives Int              @default(0)
+  erreur     String?          @db.Text
   genereLe   DateTime?        @map("genere_le")
   createdAt  DateTime         @default(now()) @map("created_at")
   updatedAt  DateTime         @updatedAt @map("updated_at")
@@ -502,6 +574,11 @@ model AbonnementModule {
   essaiDebut     DateTime         @map("essai_debut")
   essaiFin       DateTime         @map("essai_fin")
   activeLe       DateTime?        @map("active_le")
+  // §7.5 — date d'expiration de l'abonnement payant.
+  expireLe       DateTime?        @map("expire_le")
+  // §11.2 — rappel avant expiration de l'essai déjà envoyé (remis à zéro si prolongé).
+  rappelExpirationEnvoyeLe DateTime? @map("rappel_expiration_envoye_le")
+  statutAvantSuspension StatutAbonnement? @map("statut_avant_suspension")
   createdAt      DateTime         @default(now()) @map("created_at")
   updatedAt      DateTime         @updatedAt @map("updated_at")
 
@@ -511,12 +588,42 @@ model AbonnementModule {
   @@map("abonnements_module")
 }
 
+// §5 / §10.4 — paiement d'un abonnement : tarif et durée figés à la demande
+// (comme RM5), confirmé après vérification serveur KKiaPay (RM11).
+model PaiementAbonnement {
+  id                   String                   @id @default(cuid())
+  organisationId       String                   @map("organisation_id")
+  module               ModuleMetier
+  montant              Int
+  dureeJours           Int                      @map("duree_jours")
+  devise               String                   @default("XOF")
+  statut               StatutPaiementAbonnement @default(EN_ATTENTE)
+  kkiapayTransactionId String?                  @unique @map("kkiapay_transaction_id")
+  demandeParId         String                   @map("demande_par_id")
+  payeLe               DateTime?                @map("paye_le")
+  createdAt            DateTime                 @default(now()) @map("created_at")
+  updatedAt            DateTime                 @updatedAt @map("updated_at")
+
+  organisation Organisation @relation(fields: [organisationId], references: [id], onDelete: Cascade)
+  demandePar   Utilisateur  @relation(fields: [demandeParId], references: [id])
+  facture      Facture?
+
+  @@index([organisationId])
+  @@map("paiements_abonnement")
+}
+
+// §7.1 / §3.3 — fiche patient minimale : identifiant interne, service, n° de
+// lit. Les colonnes d'identité (nom, prénom, date de naissance, sexe, n° de
+// dossier) sont conservées en base pour ne détruire aucune donnée existante,
+// mais ne sont plus ni saisies ni renvoyées par l'API (SELECTION_PATIENT).
 model Patient {
-  id             String        @id @default(cuid())
-  organisationId String        @map("organisation_id")
-  serviceId      String?       @map("service_id")
-  nom            String
-  prenom         String
+  id                 String        @id @default(cuid())
+  organisationId     String        @map("organisation_id")
+  serviceId          String?       @map("service_id")
+  identifiantInterne String        @map("identifiant_interne")
+  numeroLit          String?       @map("numero_lit")
+  nom            String?
+  prenom         String?
   dateNaissance  DateTime?     @map("date_naissance")
   sexe           String?
   numeroDossier  String?       @map("numero_dossier")
@@ -532,6 +639,7 @@ model Patient {
   alertes      Alerte[]
 
   @@index([organisationId])
+  @@index([organisationId, identifiantInterne])
   @@index([serviceId])
   @@map("patients")
 }
@@ -552,15 +660,36 @@ model MesureNews {
   niveauConscience             NiveauConscience @map("niveau_conscience")
   scoreTotal                   Int              @map("score_total")
   niveauRisque                 NiveauRisqueNews @map("niveau_risque")
+  // §7.3 — fréquence de surveillance suggérée au moment de la mesure (figée).
+  frequenceSurveillance        String?          @map("frequence_surveillance")
   dateMesure                   DateTime         @default(now()) @map("date_mesure")
   createdAt                    DateTime         @default(now()) @map("created_at")
 
-  patient   Patient     @relation(fields: [patientId], references: [id], onDelete: Cascade)
-  saisiePar Utilisateur @relation(fields: [saisieParId], references: [id])
-  alerte    Alerte?
+  patient     Patient                @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  saisiePar   Utilisateur            @relation(fields: [saisieParId], references: [id])
+  alerte      Alerte?
+  corrections CorrectionMesureNews[]
 
   @@index([patientId])
   @@map("mesures_news")
+}
+
+// §13.4 — correction tracée d'une mesure NEWS : horodatage, motif, auteur,
+// valeurs avant/après. La mesure n'est jamais supprimée.
+model CorrectionMesureNews {
+  id           String   @id @default(cuid())
+  mesureId     String   @map("mesure_id")
+  auteurId     String   @map("auteur_id")
+  motif        String   @db.Text
+  valeursAvant Json     @map("valeurs_avant")
+  valeursApres Json     @map("valeurs_apres")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  mesure MesureNews  @relation(fields: [mesureId], references: [id], onDelete: Cascade)
+  auteur Utilisateur @relation(fields: [auteurId], references: [id])
+
+  @@index([mesureId])
+  @@map("corrections_mesures_news")
 }
 
 // RM9 — alerte automatique si niveau de risque MOYEN ou ELEVE.
@@ -605,6 +734,23 @@ model Intervention {
 // auto-évaluation optionnel et sans effet sur le score)
 // ---------------------------------------------------------------------------
 
+// §8.1 / §12.4 — échelle de gravité paramétrable par l'administrateur.
+// `critique` = gravité élevée : déclenche l'alerte immédiate (§8.3). Un niveau
+// déjà utilisé n'est jamais modifié ni supprimé, seulement désactivé (§13.5).
+model NiveauGraviteEi {
+  id        String   @id @default(cuid())
+  libelle   String   @unique
+  ordre     Int
+  critique  Boolean  @default(false)
+  actif     Boolean  @default(true)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  evenements EvenementIndesirable[]
+
+  @@map("niveaux_gravite_ei")
+}
+
 // Référentiel global (comme les grilles), géré par l'admin plateforme (8.17).
 model TypeEi {
   id        String   @id @default(cuid())
@@ -625,8 +771,15 @@ model EvenementIndesirable {
   serviceId       String?   @map("service_id")
   critereId       String?   @map("critere_id")
   declareParId    String    @map("declare_par_id")
+  // §8.1 — date et heure de survenue, lieu (si pas de service), personnes
+  // impliquées ou témoins (obligatoire), gravité dès la déclaration.
+  dateSurvenue        DateTime    @map("date_survenue")
+  lieu                String?
+  personnesImpliquees String      @db.Text @map("personnes_impliquees")
+  niveauGraviteId     String?     @map("niveau_gravite_id")
+  // §8.2 — priorisation à la qualification.
+  priorite            PrioriteEi?
   description     String    @db.Text
-  gravite         GraviteEi?
   statut          StatutEi  @default(DECLARE)
   dateDeclaration DateTime  @default(now()) @map("date_declaration")
   dateCloture     DateTime? @map("date_cloture")
@@ -638,7 +791,9 @@ model EvenementIndesirable {
   service      Service?     @relation(fields: [serviceId], references: [id])
   critere      Critere?     @relation(fields: [critereId], references: [id])
   declarePar   Utilisateur  @relation("EiDeclarePar", fields: [declareParId], references: [id])
+  niveauGravite NiveauGraviteEi? @relation(fields: [niveauGraviteId], references: [id])
 
+  corrections        CorrectionEi[]
   causes             Cause[]
   actionsCorrectives ActionCorrective[]
   transitions        EvenementTransition[]
@@ -647,7 +802,25 @@ model EvenementIndesirable {
   @@index([organisationId])
   @@index([serviceId])
   @@index([statut])
+  @@index([niveauGraviteId])
   @@map("evenements_indesirables")
+}
+
+// §13.4 — correction tracée d'une fiche EI (jamais de suppression).
+model CorrectionEi {
+  id           String   @id @default(cuid())
+  evenementId  String   @map("evenement_id")
+  auteurId     String   @map("auteur_id")
+  motif        String   @db.Text
+  valeursAvant Json     @map("valeurs_avant")
+  valeursApres Json     @map("valeurs_apres")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  evenement EvenementIndesirable @relation(fields: [evenementId], references: [id], onDelete: Cascade)
+  auteur    Utilisateur          @relation(fields: [auteurId], references: [id])
+
+  @@index([evenementId])
+  @@map("corrections_ei")
 }
 
 // RM8 — chaque transition de statut est historisée (qui/quand).
@@ -671,7 +844,10 @@ model Cause {
   id          String    @id @default(cuid())
   evenementId String    @map("evenement_id")
   type        TypeCause
+  // Cause identifiée (synthèse).
   description String    @db.Text
+  // §8.2 — méthode guidée des « 5 pourquoi » : réponses successives.
+  pourquois   Json?
   createdAt   DateTime  @default(now()) @map("created_at")
 
   evenement EvenementIndesirable @relation(fields: [evenementId], references: [id], onDelete: Cascade)
@@ -723,6 +899,8 @@ model Formation {
   id             String   @id @default(cuid())
   titre          String
   description    String   @db.Text
+  // §9 — objectifs de la formation (présentés au catalogue).
+  objectifs      String?  @db.Text
   dureeHeures    Int?     @map("duree_heures")
   prixIndividuel Int      @map("prix_individuel")
   prixGroupe5    Int      @map("prix_groupe_5")
@@ -750,6 +928,10 @@ model Reservation {
   kkiapayTransactionId String?           @unique @map("kkiapay_transaction_id")
   dateRdv              DateTime?         @map("date_rdv")
   presenceConfirmee    Boolean           @default(false) @map("presence_confirmee")
+  // §12.5 — suivi des présences : nombre de participants présents à la session.
+  participantsPresents Int?              @map("participants_presents")
+  // §11.2 — rappel avant la session déjà envoyé.
+  rappelEnvoyeLe       DateTime?         @map("rappel_envoye_le")
   createdAt            DateTime          @default(now()) @map("created_at")
   updatedAt            DateTime          @updatedAt @map("updated_at")
 
@@ -764,15 +946,19 @@ model Reservation {
   @@map("reservations")
 }
 
+// §9.3 / §11.1 — facture d'une réservation OU d'un abonnement.
 model Facture {
-  id            String   @id @default(cuid())
-  reservationId String   @unique @map("reservation_id")
-  numero        String   @unique
-  montant       Int
-  emiseLe       DateTime @default(now()) @map("emise_le")
-  createdAt     DateTime @default(now()) @map("created_at")
+  id                   String   @id @default(cuid())
+  reservationId        String?  @unique @map("reservation_id")
+  paiementAbonnementId String?  @unique @map("paiement_abonnement_id")
+  numero               String   @unique
+  montant              Int
+  devise               String   @default("XOF")
+  emiseLe              DateTime @default(now()) @map("emise_le")
+  createdAt            DateTime @default(now()) @map("created_at")
 
-  reservation Reservation @relation(fields: [reservationId], references: [id])
+  reservation        Reservation?        @relation(fields: [reservationId], references: [id])
+  paiementAbonnement PaiementAbonnement? @relation(fields: [paiementAbonnementId], references: [id])
 
   @@map("factures")
 }

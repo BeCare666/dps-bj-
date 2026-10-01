@@ -38,7 +38,7 @@ export class BrevoService {
         accept: "application/json",
       },
       body: JSON.stringify({
-        sender: { email: senderEmail, name: process.env.BREVO_SENDER_NAME ?? "dps.bj" },
+        sender: { email: senderEmail, name: process.env.BREVO_SENDER_NAME ?? "DSP" },
         to: [{ email: params.destinataire.email, name: params.destinataire.name }],
         subject: params.sujet,
         htmlContent: params.contenuHtml,

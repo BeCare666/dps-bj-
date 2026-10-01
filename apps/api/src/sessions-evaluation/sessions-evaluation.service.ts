@@ -1,7 +1,7 @@
 import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service.js";
 import { grilleStructureInclude } from "../grilles/grilles.service.js";
-import { StatutGrille, StatutSessionEvaluation } from "../generated/prisma/enums.js";
+import { StatutGrille, StatutRapportPdf, StatutSessionEvaluation } from "../generated/prisma/enums.js";
 import type { Prisma, SessionEvaluation } from "../generated/prisma/client.js";
 import { calculerScore } from "./scoring.util.js";
 import type { JwtAccessPayload } from "../auth/types/jwt-payload.type.js";
@@ -96,15 +96,22 @@ export class SessionsEvaluationService {
     const reponsesParElement = new Map(session.reponses.map((r) => [r.elementMesurableId, r.valeur]));
     const { scoreGlobal } = calculerScore(session.grille, reponsesParElement);
 
-    return this.prisma.sessionEvaluation.update({
-      where: { id: sessionId },
-      data: {
-        statut: StatutSessionEvaluation.SOUMISE,
-        dateSoumission: new Date(),
-        soumiseParId: user.sub,
-        scoreGlobal,
-      },
-    });
+    // §6.6 — soumission (immuable ensuite) et mise en file d'attente du rapport
+    // PDF dans la même transaction ; la génération est asynchrone
+    // (RapportsPdfScheduler), l'interface n'est jamais bloquée.
+    const [soumise] = await this.prisma.$transaction([
+      this.prisma.sessionEvaluation.update({
+        where: { id: sessionId },
+        data: {
+          statut: StatutSessionEvaluation.SOUMISE,
+          dateSoumission: new Date(),
+          soumiseParId: user.sub,
+          scoreGlobal,
+        },
+      }),
+      this.prisma.rapportPdf.create({ data: { sessionId, statut: StatutRapportPdf.EN_COURS } }),
+    ]);
+    return soumise;
   }
 
   async resultats(sessionId: string, user: JwtAccessPayload) {
@@ -118,7 +125,39 @@ export class SessionsEvaluationService {
     }
 
     const reponsesParElement = new Map(session.reponses.map((r) => [r.elementMesurableId, r.valeur]));
-    return calculerScore(session.grille, reponsesParElement);
+    const score = calculerScore(session.grille, reponsesParElement);
+    const [eiLies, rapport] = await Promise.all([
+      this.eiLiesAuxCriteres(session.organisationId, score.criteresNonValides.map((c) => c.critereId)),
+      this.prisma.rapportPdf.findUnique({ where: { sessionId }, select: { statut: true, genereLe: true } }),
+    ]);
+    return { ...score, eiLies, rapport };
+  }
+
+  // §8.4 — exemples concrets d'écarts terrain : EI de l'établissement rattachés
+  // aux critères en écart. Sans effet sur le score (RM10).
+  async eiLiesAuxCriteres(organisationId: string, critereIds: string[]) {
+    if (critereIds.length === 0) return [];
+    return this.prisma.evenementIndesirable.findMany({
+      where: { organisationId, critereId: { in: critereIds } },
+      select: {
+        id: true,
+        critereId: true,
+        description: true,
+        dateSurvenue: true,
+        statut: true,
+        niveauGravite: { select: { libelle: true, critique: true } },
+      },
+      orderBy: { dateSurvenue: "desc" },
+    });
+  }
+
+  // §6.4 — rapport PDF : contenu servi uniquement après contrôle d'appartenance.
+  async rapportPdf(sessionId: string, user: JwtAccessPayload) {
+    const session = await this.prisma.sessionEvaluation.findUnique({ where: { id: sessionId } });
+    this.verifierAppartenance(session, user);
+    const rapport = await this.prisma.rapportPdf.findUnique({ where: { sessionId } });
+    if (!rapport) throw new NotFoundException("Aucun rapport pour cette session");
+    return rapport;
   }
 
   async evolution(query: EvolutionQueryDto, user: JwtAccessPayload) {

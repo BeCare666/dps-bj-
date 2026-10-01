@@ -1,9 +1,14 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { apiFetchJson, ApiError } from "@/lib/api-server";
-import { formaterDateHeure } from "@/lib/format";
+import Link from "next/link";
+import { formaterDate, formaterDateHeure } from "@/lib/format";
+import { RapportPdf } from "@/components/auto-evaluation/rapport-pdf";
 import { Reveal } from "@/components/motion/reveal";
+import { Card, CardHeader, StatCard } from "@/components/ui/card";
+import { PageContainer } from "@/components/ui/page-container";
+import { PageHeader } from "@/components/ui/page-header";
+import { IconAlertTriangle, IconCheckCircle, IconChecklist } from "@/components/icons";
 import type { ResultatScore, SessionEvaluation } from "@/lib/types";
 
 export const metadata: Metadata = {
@@ -28,64 +33,144 @@ export default async function ResultatsPage({ params }: { params: Promise<{ id: 
     throw erreur;
   }
 
+  const criteresValides = resultats.parDomaine.reduce((s, d) => s + d.criteresValides, 0);
+  const criteresTotal = resultats.parDomaine.reduce((s, d) => s + d.criteresTotal, 0);
+
+  // Regroupement des écarts par domaine (ordre des domaines conservé).
+  const ecartsParDomaine = new Map<string, typeof resultats.criteresNonValides>();
+  for (const c of resultats.criteresNonValides) {
+    ecartsParDomaine.set(c.domaineNom, [...(ecartsParDomaine.get(c.domaineNom) ?? []), c]);
+  }
+
   return (
-    <div className="mx-auto max-w-3xl px-5 py-12 sm:px-8">
+    <PageContainer>
       <Reveal>
-        <Link href="/auto-evaluation" className="text-sm font-medium text-primary hover:underline">
-          ← Retour à l&apos;auto-évaluation
-        </Link>
-        <h1 className="mt-4 font-display text-2xl font-bold text-text">{session.grille.nom}</h1>
-        {session.dateSoumission && (
-          <p className="mt-1 text-sm text-text-muted">Soumise le {formaterDateHeure(session.dateSoumission)}</p>
-        )}
+        <PageHeader
+          filAriane={[{ label: "Auto-évaluation", href: "/auto-evaluation" }, { label: "Résultats" }]}
+          surtitre="Résultats de l'auto-évaluation"
+          titre={session.grille.nom}
+          description={session.dateSoumission ? `Soumise le ${formaterDateHeure(session.dateSoumission)}` : undefined}
+          actions={<RapportPdf sessionId={session.id} rapport={resultats.rapport ?? null} />}
+        />
       </Reveal>
 
-      <Reveal delay={0.05} className="mt-6">
-        <div className="rounded-[var(--radius-lg)] border border-border bg-surface p-8 text-center">
-          <span className="text-xs font-medium uppercase tracking-wide text-text-faint">Score global</span>
-          <p className="mt-2 font-display text-6xl font-bold text-primary">{resultats.scoreGlobal}%</p>
-        </div>
+      <Reveal delay={0.05} className="grid gap-4 sm:grid-cols-3">
+        <StatCard label="Score global" valeur={`${resultats.scoreGlobal}%`} sousTexte="calculé à la soumission" icone={IconChecklist} />
+        <StatCard
+          label="Critères validés"
+          valeur={`${criteresValides} / ${criteresTotal}`}
+          sousTexte="tous domaines confondus"
+          icone={IconCheckCircle}
+          ton="success"
+        />
+        <StatCard
+          label="Écarts à corriger"
+          valeur={`${resultats.criteresNonValides.length}`}
+          sousTexte="critères non validés"
+          icone={IconAlertTriangle}
+          ton={resultats.criteresNonValides.length > 0 ? "warning" : "neutral"}
+        />
       </Reveal>
 
-      <Reveal delay={0.1} className="mt-8">
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-text-faint">Score par domaine</h2>
-        <div className="mt-3 flex flex-col gap-4">
-          {resultats.parDomaine.map((domaine) => (
-            <div key={domaine.domaineId}>
-              <div className="flex items-center justify-between text-sm">
-                <span className="font-medium text-text">{domaine.nom}</span>
-                <span className="text-text-muted">
-                  {domaine.criteresValides} / {domaine.criteresTotal} critères
-                </span>
-              </div>
-              <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-border">
-                <div className="h-full rounded-full bg-primary" style={{ width: `${domaine.scorePct}%` }} />
-              </div>
-            </div>
-          ))}
-        </div>
-      </Reveal>
-
-      {resultats.criteresNonValides.length > 0 && (
-        <Reveal delay={0.15} className="mt-8">
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-text-faint">
-            Écarts à corriger ({resultats.criteresNonValides.length})
-          </h2>
-          <div className="mt-3 overflow-hidden rounded-[var(--radius-lg)] border border-border bg-surface">
-            {resultats.criteresNonValides.map((critere, i) => (
-              <div
-                key={critere.critereId}
-                className={`px-5 py-4 ${i > 0 ? "border-t border-border" : ""}`}
-              >
-                <p className="text-xs font-medium uppercase tracking-wide text-text-faint">{critere.domaineNom}</p>
-                <p className="mt-1 text-sm text-text">
-                  <span className="font-medium">{critere.code}</span> · {critere.libelle}
-                </p>
-              </div>
-            ))}
-          </div>
+      <div className="mt-6 grid gap-6 xl:grid-cols-5">
+        <Reveal delay={0.1} className="xl:col-span-2">
+          <Card className="h-full">
+            <CardHeader titre="Score par domaine" />
+            <ul className="flex flex-col gap-4">
+              {resultats.parDomaine.map((domaine) => (
+                <li key={domaine.domaineId}>
+                  <div className="flex items-baseline justify-between gap-3 text-sm">
+                    <span className="min-w-0 font-medium text-text">{domaine.nom}</span>
+                    <span className="shrink-0 font-display font-bold text-text tabular-nums">{domaine.scorePct}%</span>
+                  </div>
+                  <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-bg-subtle">
+                    <div className="h-full rounded-full bg-primary" style={{ width: `${domaine.scorePct}%` }} />
+                  </div>
+                  <p className="mt-1 text-xs text-text-faint tabular-nums">
+                    {domaine.criteresValides} / {domaine.criteresTotal} critères
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </Card>
         </Reveal>
-      )}
-    </div>
+
+        <Reveal delay={0.15} className="xl:col-span-3">
+          <Card className="h-full">
+            <CardHeader
+              titre="Écarts à corriger"
+              description="Critères non validés : au moins un document à examiner manquant"
+            />
+            {resultats.criteresNonValides.length === 0 ? (
+              <div className="flex items-center gap-3 rounded-[var(--radius-md)] bg-success-soft/60 px-4 py-4 text-sm text-success">
+                <IconCheckCircle width={18} height={18} />
+                Tous les critères sont validés.
+              </div>
+            ) : (
+              <div className="flex flex-col gap-5">
+                {[...ecartsParDomaine.entries()].map(([domaine, criteres]) => (
+                  <div key={domaine}>
+                    <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-text-faint">
+                      {domaine} · {criteres.length}
+                    </p>
+                    <ul className="divide-y divide-border overflow-hidden rounded-[var(--radius-md)] border border-border">
+                      {criteres.map((critere) => {
+                        const exemples = (resultats.eiLies ?? []).filter((ei) => ei.critereId === critere.critereId);
+                        return (
+                          <li key={critere.critereId} className="flex flex-col gap-2 px-4 py-3 text-sm">
+                            <div className="flex gap-3">
+                              <span className="shrink-0 rounded-[var(--radius-sm)] bg-warning-soft px-1.5 py-0.5 font-mono text-xs font-medium text-warning">
+                                {critere.code}
+                              </span>
+                              <span className="font-medium text-text">{critere.libelle}</span>
+                            </div>
+                            {/* §6.4 — documents non validés */}
+                            {critere.documentsNonValides.length > 0 ? (
+                              <ul className="ml-1 flex flex-col gap-0.5 text-text-muted">
+                                {critere.documentsNonValides.map((d) => (
+                                  <li key={d.elementMesurableId}>
+                                    • {d.libelle}
+                                    {d.reponse === "SANS_REPONSE" && <span className="text-text-faint"> (sans réponse)</span>}
+                                  </li>
+                                ))}
+                              </ul>
+                            ) : (
+                              <p className="text-xs text-text-faint">Aucun document à examiner n&apos;est défini pour ce critère.</p>
+                            )}
+                            {/* §6.4 — recommandation synthétique */}
+                            <p className="rounded-[var(--radius-md)] bg-bg-subtle px-3 py-2 text-xs text-text">
+                              <span className="font-medium">Recommandation : </span>
+                              {critere.recommandation ??
+                                (critere.documentsNonValides.length > 0
+                                  ? `mettre à disposition ${critere.documentsNonValides.map((d) => `« ${d.libelle} »`).join(", ")}.`
+                                  : "aucune recommandation n'a été définie pour ce critère.")}
+                            </p>
+                            {/* §8.4 — exemples concrets d'écarts terrain */}
+                            {exemples.length > 0 && (
+                              <div className="text-xs text-text-muted">
+                                <p className="font-medium text-text">Événements indésirables liés ({exemples.length})</p>
+                                <ul className="mt-1 flex flex-col gap-0.5">
+                                  {exemples.slice(0, 5).map((ei) => (
+                                    <li key={ei.id}>
+                                      <Link href={`/evenements-indesirables/${ei.id}`} className="text-primary hover:underline">
+                                        {formaterDate(ei.dateSurvenue)} — {ei.description.slice(0, 120)}
+                                      </Link>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            )}
+          </Card>
+        </Reveal>
+      </div>
+    </PageContainer>
   );
 }

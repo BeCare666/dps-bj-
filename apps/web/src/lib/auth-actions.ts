@@ -43,11 +43,16 @@ export async function inscrireOrganisationAction(
 
   const payload = {
     organisationNom: valeur(formData, "organisationNom"),
+    organisationRaisonSociale: valeur(formData, "organisationRaisonSociale"),
+    organisationTypeStructure: valeur(formData, "organisationTypeStructure"),
     organisationIfu: valeur(formData, "organisationIfu"),
     organisationType: valeur(formData, "organisationType"),
     organisationAdresse: valeurOptionnelle(formData, "organisationAdresse"),
-    organisationTelephone: valeurOptionnelle(formData, "organisationTelephone"),
-    organisationEmail: valeurOptionnelle(formData, "organisationEmail"),
+    organisationVille: valeur(formData, "organisationVille"),
+    organisationPays: valeur(formData, "organisationPays"),
+    organisationTelephone: valeur(formData, "organisationTelephone"),
+    organisationEmail: valeur(formData, "organisationEmail"),
+    responsableCivilite: valeur(formData, "responsableCivilite"),
     responsableNom: valeur(formData, "responsableNom"),
     responsablePrenom: valeur(formData, "responsablePrenom"),
     responsableEmail: valeur(formData, "responsableEmail"),
@@ -144,7 +149,9 @@ export async function reinitialiserMotDePasseAction(
     return { erreur: messageErreurApi(corps, "Lien invalide ou expiré.") };
   }
 
-  redirect("/login?reset=true");
+  // Même endpoint pour l'activation d'un utilisateur interne invité (§4.2) :
+  // seul le message affiché après redirection change.
+  redirect(valeur(formData, "origine") === "activation" ? "/login?active=true" : "/login?reset=true");
 }
 
 export async function deconnexionAction(): Promise<void> {

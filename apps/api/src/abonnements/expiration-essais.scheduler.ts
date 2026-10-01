@@ -10,9 +10,9 @@ export class ExpirationEssaisScheduler {
 
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
   async handleCron() {
-    const nombre = await this.abonnements.expirerEssaisEchus();
+    const nombre = await this.abonnements.expirerEchus();
     if (nombre > 0) {
-      this.logger.log(`${nombre} abonnement(s) d'essai expiré(s) basculé(s) en EXPIRE`);
+      this.logger.log(`${nombre} essai(s) ou abonnement(s) échu(s) basculé(s) en EXPIRE`);
     }
   }
 }

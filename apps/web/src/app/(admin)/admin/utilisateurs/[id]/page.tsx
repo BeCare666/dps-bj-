@@ -1,12 +1,18 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { apiFetchJson, ApiError } from "@/lib/api-server";
+import { apiFetchJson, ApiError, silencieux } from "@/lib/api-server";
 import { formaterDate } from "@/lib/format";
 import { Reveal } from "@/components/motion/reveal";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardHeader } from "@/components/ui/card";
+import { ListeProprietes } from "@/components/ui/fiche";
+import { PageHeader } from "@/components/ui/page-header";
+import { Tabs } from "@/components/ui/tabs";
 import { ToggleUtilisateurButton } from "@/components/admin/toggle-utilisateur-button";
 import { SessionsList } from "@/components/comptes/sessions-list";
 import { RoleForm, RetirerRoleButton } from "@/components/admin/role-form";
-import type { SessionUtilisateur, UtilisateurAdmin } from "@/lib/types";
+import { AuditTable } from "@/components/admin/audit-table";
+import type { JournalAuditEntry, SessionUtilisateur, UtilisateurAdmin } from "@/lib/types";
 
 const LIBELLES_ROLE: Record<string, string> = {
   RESPONSABLE_COMPTE: "Responsable de compte",
@@ -14,6 +20,12 @@ const LIBELLES_ROLE: Record<string, string> = {
   PERSONNEL_SOIGNANT: "Personnel soignant",
   GESTIONNAIRE_FORMATION: "Gestionnaire formation",
   ADMIN_PLATEFORME: "Admin plateforme",
+};
+
+const LIBELLES_TYPE_COMPTE: Record<UtilisateurAdmin["typeCompte"], string> = {
+  ORGANISATION: "Compte établissement",
+  INDIVIDUEL: "Compte individuel",
+  ADMIN_PLATEFORME: "Administration de la plateforme",
 };
 
 export default async function UtilisateurDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -31,82 +43,109 @@ export default async function UtilisateurDetailPage({ params }: { params: Promis
     throw erreur;
   }
 
+  // Actions effectuées par cet utilisateur (filtre utilisateurId existant de l'API).
+  const activite = await silencieux(
+    apiFetchJson<JournalAuditEntry[]>(`/audit?utilisateurId=${encodeURIComponent(id)}`),
+    null,
+  );
+
+  const initiales = `${utilisateur.prenom.charAt(0)}${utilisateur.nom.charAt(0)}`.toUpperCase();
+
+  const onglets = [
+    {
+      id: "sessions",
+      label: "Sessions",
+      compteur: sessions.length,
+      content: <SessionsList utilisateurId={utilisateur.id} sessions={sessions} />,
+    },
+    ...(activite
+      ? [
+          {
+            id: "activite",
+            label: "Activité",
+            compteur: activite.length,
+            content: <AuditTable entrees={activite} idTable="admin-utilisateur-audit" synchroniserUrl={false} />,
+          },
+        ]
+      : []),
+  ];
+
   return (
-    <div className="mx-auto max-w-2xl">
+    <div>
       <Reveal>
-        <Link href="/admin/utilisateurs" className="text-sm font-medium text-text-muted hover:text-text">
-          ← Tous les utilisateurs
-        </Link>
-        <div className="mt-3 flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <h1 className="font-display text-2xl font-bold text-text">
+        <PageHeader
+          filAriane={[{ label: "Utilisateurs", href: "/admin/utilisateurs" }, { label: `${utilisateur.prenom} ${utilisateur.nom}` }]}
+          titre={
+            <span className="inline-flex flex-wrap items-center gap-3">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary-soft to-accent-soft text-base font-semibold text-primary">
+                {initiales}
+              </span>
               {utilisateur.prenom} {utilisateur.nom}
-            </h1>
-            <p className="mt-1 text-sm text-text-muted">{utilisateur.email}</p>
-          </div>
-          <span
-            className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
-              utilisateur.actif ? "bg-success-soft text-success" : "bg-bg-subtle text-text-faint"
-            }`}
-          >
-            {utilisateur.actif ? "Actif" : "Désactivé"}
-          </span>
-        </div>
-      </Reveal>
-
-      <Reveal delay={0.05} className="mt-6 rounded-[var(--radius-lg)] border border-border bg-surface p-6">
-        <dl className="grid gap-3 text-sm sm:grid-cols-2">
-          <div>
-            <dt className="text-text-faint">Établissement</dt>
-            <dd className="text-text">
-              {utilisateur.organisation ? (
-                <Link href={`/admin/etablissements/${utilisateur.organisation.id}`} className="text-primary hover:underline">
-                  {utilisateur.organisation.nom}
-                </Link>
-              ) : (
-                "Aucun établissement"
-              )}
-            </dd>
-          </div>
-          <div>
-            <dt className="text-text-faint">Type de compte</dt>
-            <dd className="text-text">{utilisateur.typeCompte}</dd>
-          </div>
-          <div>
-            <dt className="text-text-faint">Email vérifié</dt>
-            <dd className="text-text">{utilisateur.emailVerifieLe ? formaterDate(utilisateur.emailVerifieLe) : "Non"}</dd>
-          </div>
-          <div>
-            <dt className="text-text-faint">Inscrit le</dt>
-            <dd className="text-text">{formaterDate(utilisateur.createdAt)}</dd>
-          </div>
-        </dl>
-        <div className="mt-4 flex flex-wrap gap-1.5">
-          {utilisateur.roles.map((r) => (
-            <span
-              key={r.role}
-              className="flex items-center rounded-full bg-primary-soft px-2.5 py-1 text-xs text-primary"
-            >
-              {LIBELLES_ROLE[r.role] ?? r.role}
-              <RetirerRoleButton utilisateurId={utilisateur.id} role={r.role} />
+              {utilisateur.actif ? <Badge variant="success">Actif</Badge> : <Badge variant="neutral">Désactivé</Badge>}
             </span>
-          ))}
-        </div>
-        <div className="mt-4 border-t border-border pt-4">
-          <RoleForm utilisateurId={utilisateur.id} rolesActuels={utilisateur.roles.map((r) => r.role)} />
-        </div>
+          }
+          description={utilisateur.email}
+          actions={<ToggleUtilisateurButton utilisateurId={utilisateur.id} actif={utilisateur.actif} />}
+        />
       </Reveal>
 
-      <Reveal delay={0.1} className="mt-6">
-        <ToggleUtilisateurButton utilisateurId={utilisateur.id} actif={utilisateur.actif} />
-      </Reveal>
+      <div className="grid gap-6 xl:grid-cols-3">
+        <div className="flex flex-col gap-6 xl:order-2">
+          <Reveal delay={0.05}>
+            <Card>
+              <CardHeader titre="Informations" />
+              <ListeProprietes
+                elements={[
+                  {
+                    label: "Établissement",
+                    valeur: utilisateur.organisation ? (
+                      <Link href={`/admin/etablissements/${utilisateur.organisation.id}`} className="text-primary hover:underline">
+                        {utilisateur.organisation.nom}
+                      </Link>
+                    ) : null,
+                    vide: "Aucun établissement",
+                  },
+                  { label: "Type de compte", valeur: LIBELLES_TYPE_COMPTE[utilisateur.typeCompte] ?? utilisateur.typeCompte },
+                  {
+                    label: "Email vérifié",
+                    valeur: utilisateur.emailVerifieLe ? `Le ${formaterDate(utilisateur.emailVerifieLe)}` : null,
+                    vide: "Non vérifié",
+                  },
+                  { label: "Inscrit le", valeur: formaterDate(utilisateur.createdAt) },
+                ]}
+              />
+            </Card>
+          </Reveal>
 
-      <Reveal delay={0.15} className="mt-8">
-        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-text-faint">
-          Sessions ({sessions.length})
-        </h2>
-        <SessionsList utilisateurId={utilisateur.id} sessions={sessions} />
-      </Reveal>
+          <Reveal delay={0.1}>
+            <Card>
+              <CardHeader titre="Rôles" description="Retirer un rôle demande une confirmation" />
+              {utilisateur.roles.length === 0 ? (
+                <p className="text-sm text-text-faint">Aucun rôle attribué.</p>
+              ) : (
+                <div className="flex flex-wrap gap-1.5">
+                  {utilisateur.roles.map((r) => (
+                    <span
+                      key={r.role}
+                      className="flex items-center rounded-full bg-primary-soft py-1 pl-2.5 pr-1 text-xs font-medium text-primary"
+                    >
+                      {LIBELLES_ROLE[r.role] ?? r.role}
+                      <RetirerRoleButton utilisateurId={utilisateur.id} role={r.role} />
+                    </span>
+                  ))}
+                </div>
+              )}
+              <div className="mt-5 border-t border-border pt-5">
+                <RoleForm utilisateurId={utilisateur.id} rolesActuels={utilisateur.roles.map((r) => r.role)} />
+              </div>
+            </Card>
+          </Reveal>
+        </div>
+
+        <Reveal delay={0.15} className="min-w-0 xl:order-1 xl:col-span-2">
+          <Tabs items={onglets} />
+        </Reveal>
+      </div>
     </div>
   );
 }

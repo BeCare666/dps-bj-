@@ -10,14 +10,21 @@ export interface EtatAction {
 }
 
 export async function modifierMonOrganisationAction(_etat: EtatAction, formData: FormData): Promise<EtatAction> {
-  const nom = String(formData.get("nom") ?? "").trim();
-  const adresse = String(formData.get("adresse") ?? "").trim();
-  const telephone = String(formData.get("telephone") ?? "").trim();
-  const email = String(formData.get("email") ?? "").trim();
+  const champ = (nom: string) => String(formData.get(nom) ?? "").trim();
+  const typeStructure = champ("typeStructure");
 
   const res = await apiFetch("/organisations/me", {
     method: "PATCH",
-    body: JSON.stringify({ nom, adresse, telephone, email }),
+    body: JSON.stringify({
+      nom: champ("nom"),
+      raisonSociale: champ("raisonSociale"),
+      typeStructure: typeStructure || undefined,
+      adresse: champ("adresse"),
+      ville: champ("ville"),
+      pays: champ("pays"),
+      telephone: champ("telephone") || undefined,
+      email: champ("email") || undefined,
+    }),
   });
   if (!res.ok) {
     const corps = await res.json().catch(() => undefined);

@@ -5,7 +5,7 @@
 // de contact et les URL des réseaux sociaux ci-dessous suivent le nom de domaine
 // prévu par le CDC (dps.bj) mais n'ont pas été fournis explicitement.
 export const SITE = {
-  nom: "dps.bj",
+  nom: "DSP",
   nomComplet: "Dispositif de Sécurité des Patients",
   pays: "République du Bénin",
   emailContact: "contact@dps.bj",

@@ -47,6 +47,13 @@ export default async function FormationDetailPage({ params }: { params: Promise<
           </span>
         )}
         <p className="mt-4 max-w-xl text-base leading-7 text-text-muted">{formation.description}</p>
+        {formation.objectifs && (
+          <div className="mt-6 max-w-xl">
+            <h2 className="text-sm font-semibold uppercase tracking-wide text-text-faint">Objectifs</h2>
+            <p className="mt-2 whitespace-pre-line text-base leading-7 text-text">{formation.objectifs}</p>
+          </div>
+        )}
+        <p className="mt-4 text-sm text-text-faint">Formation dispensée en présentiel.</p>
       </Reveal>
 
       <Reveal delay={0.05} className="mt-10 rounded-[var(--radius-lg)] border border-border bg-surface p-6">

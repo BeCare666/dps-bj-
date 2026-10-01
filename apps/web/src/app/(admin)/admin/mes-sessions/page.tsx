@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { apiFetchJson } from "@/lib/api-server";
 import { SessionsList } from "@/components/comptes/sessions-list";
 import type { SessionUtilisateur } from "@/lib/types";
+import { PageHeader } from "@/components/ui/page-header";
+import { SectionReglage } from "@/components/ui/section-reglage";
 
 export const metadata: Metadata = {
   title: "Mes sessions",
@@ -13,15 +15,14 @@ export default async function AdminMesSessionsPage() {
   const sessions = await apiFetchJson<SessionUtilisateur[]>("/auth/me/sessions");
 
   return (
-    <div className="mx-auto max-w-2xl">
-      <h1 className="font-display text-2xl font-bold text-text">Mes sessions</h1>
-      <p className="mt-2 text-sm text-text-muted">
-        Appareils et navigateurs actuellement connectés à votre compte administrateur.
-      </p>
-
-      <div className="mt-6">
+    <div className="mx-auto max-w-5xl">
+      <PageHeader surtitre="Compte" titre="Mes sessions" description="Sécurité et accès à votre compte administrateur." />
+      <SectionReglage
+        titre="Sessions actives"
+        description="Appareils et navigateurs actuellement connectés à votre compte administrateur. Révoquez toute session que vous ne reconnaissez pas."
+      >
         <SessionsList sessions={sessions} />
-      </div>
+      </SectionReglage>
     </div>
   );
 }

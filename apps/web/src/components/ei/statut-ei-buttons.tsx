@@ -18,34 +18,37 @@ function Bouton({ label }: { label: string }) {
   );
 }
 
-const ETAPES: { statut: StatutEi; label: string }[] = [
-  { statut: "EN_TRAITEMENT", label: "Passer en traitement" },
-  { statut: "CLOTURE", label: "Clôturer" },
-];
+// §8.2 / §8.5 — étape suivante du circuit (la qualification a son propre formulaire).
+const ETAPE_SUIVANTE: Partial<Record<StatutEi, { statut: StatutEi; label: string; aide: string }>> = {
+  QUALIFIE: {
+    statut: "EN_ANALYSE",
+    label: "Démarrer l'analyse des causes",
+    aide: "Documentez ensuite les causes immédiates et profondes.",
+  },
+  EN_ANALYSE: {
+    statut: "PLAN_ACTION",
+    label: "Passer au plan d'action",
+    aide: "Au moins une cause doit avoir été documentée.",
+  },
+  PLAN_ACTION: {
+    statut: "CLOTURE",
+    label: "Clôturer l'événement",
+    aide: "Possible uniquement quand toutes les actions correctives sont réalisées.",
+  },
+};
 
 export function StatutEiButtons({ eiId, statutActuel }: { eiId: string; statutActuel: StatutEi }) {
-  const ordre: Record<StatutEi, number> = { DECLARE: 0, EN_TRAITEMENT: 1, CLOTURE: 2 };
-  const suivantes = ETAPES.filter((e) => ordre[e.statut] > ordre[statutActuel]);
-
-  if (suivantes.length === 0) return null;
-
-  return (
-    <div className="flex flex-wrap gap-3">
-      {suivantes.map((e) => (
-        <BoutonUnitaire key={e.statut} eiId={eiId} statut={e.statut} label={e.label} />
-      ))}
-    </div>
-  );
-}
-
-function BoutonUnitaire({ eiId, statut, label }: { eiId: string; statut: StatutEi; label: string }) {
-  const [etat, action] = useActionState(async (_prevState: EtatAction): Promise<EtatAction> => {
-    return changerStatutEiAction(eiId, statut);
+  const etape = ETAPE_SUIVANTE[statutActuel];
+  const [etat, action] = useActionState(async (): Promise<EtatAction> => {
+    return etape ? changerStatutEiAction(eiId, etape.statut) : {};
   }, {});
+
+  if (!etape) return null;
 
   return (
     <form action={action}>
-      <Bouton label={label} />
+      <Bouton label={etape.label} />
+      <p className="mt-2 text-xs text-text-muted">{etape.aide}</p>
       {etat.erreur && <p className="mt-2 text-xs text-danger">{etat.erreur}</p>}
     </form>
   );

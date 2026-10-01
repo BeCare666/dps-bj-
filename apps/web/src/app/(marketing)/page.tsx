@@ -21,7 +21,7 @@ import { PHOTOS } from "@/lib/site-config";
 export const metadata: Metadata = {
   title: "Accueil",
   description:
-    "dps.bj outille les établissements de santé du Bénin pour l'auto-évaluation qualité, la surveillance NEWS, la déclaration des événements indésirables et la formation continue.",
+    "DSP outille les établissements de santé du Bénin pour l'auto-évaluation qualité, la surveillance NEWS, la déclaration des événements indésirables et la formation continue.",
 };
 
 // Chiffres issus du fonctionnement réel de la plateforme (aucune statistique
@@ -177,7 +177,7 @@ export default function AccueilPage() {
             </h1>
 
             <p className="mt-7 max-w-xl text-lg leading-8 text-text-muted">
-              dps.bj réunit l&apos;auto-évaluation qualité, la surveillance clinique NEWS, la gestion des événements
+              DSP réunit l&apos;auto-évaluation qualité, la surveillance clinique NEWS, la gestion des événements
               indésirables et la formation continue des équipes, pour les hôpitaux et centres de santé du Bénin.
             </p>
 

@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { apiFetchJson } from "@/lib/api-server";
 import { SessionsList } from "@/components/comptes/sessions-list";
 import type { SessionUtilisateur } from "@/lib/types";
+import { PageContainer } from "@/components/ui/page-container";
+import { PageHeader } from "@/components/ui/page-header";
+import { SectionReglage } from "@/components/ui/section-reglage";
 
 export const metadata: Metadata = {
   title: "Paramètres",
@@ -12,19 +15,16 @@ export default async function MesSessionsPage() {
   const sessions = await apiFetchJson<SessionUtilisateur[]>("/auth/me/sessions");
 
   return (
-    <div className="mx-auto max-w-2xl px-5 py-12 sm:px-8">
-      <span className="text-xs font-medium uppercase tracking-wide text-text-faint">Compte</span>
-      <h1 className="mt-2 font-display text-3xl font-bold text-text">Paramètres</h1>
-      <p className="mt-2 text-text-muted">Sécurité et accès à votre compte.</p>
-
-      <h2 className="mt-10 font-display text-lg font-semibold text-text">Sessions actives</h2>
-      <p className="mt-1 text-sm text-text-muted">
-        Appareils et navigateurs actuellement connectés à votre compte. Révoquez toute session que vous ne reconnaissez pas.
-      </p>
-
-      <div className="mt-5">
-        <SessionsList sessions={sessions} />
+    <PageContainer>
+      <div className="mx-auto max-w-5xl">
+        <PageHeader surtitre="Compte" titre="Paramètres" description="Sécurité et accès à votre compte." />
+        <SectionReglage
+          titre="Sessions actives"
+          description="Appareils et navigateurs actuellement connectés à votre compte. Révoquez toute session que vous ne reconnaissez pas."
+        >
+          <SessionsList sessions={sessions} />
+        </SectionReglage>
       </div>
-    </div>
+    </PageContainer>
   );
 }

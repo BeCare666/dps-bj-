@@ -1,4 +1,5 @@
-import { IsEmail, IsOptional, IsString, MaxLength, MinLength } from "class-validator";
+import { IsEmail, IsEnum, IsOptional, IsString, MaxLength, MinLength } from "class-validator";
+import { TypeStructure } from "../../generated/prisma/enums.js";
 
 // D8.1 — auto-édition des coordonnées de sa propre organisation par
 // RESPONSABLE_COMPTE. Uniquement les champs déjà existants sur Organisation
@@ -18,7 +19,27 @@ export class ModifierOrganisationDto {
   @IsOptional()
   @IsString()
   @MaxLength(191)
+  raisonSociale?: string;
+
+  @IsOptional()
+  @IsEnum(TypeStructure)
+  typeStructure?: TypeStructure;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(191)
   adresse?: string;
+
+  // §4.1 — ville et pays font partie des coordonnées de l'établissement.
+  @IsOptional()
+  @IsString()
+  @MaxLength(191)
+  ville?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(191)
+  pays?: string;
 
   @IsOptional()
   @IsString()

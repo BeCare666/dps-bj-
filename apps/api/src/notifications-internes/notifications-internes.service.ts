@@ -30,6 +30,14 @@ export class NotificationsInternesService {
     });
   }
 
+  // §11.2 — notification visible dans l'espace personnel des destinataires désignés.
+  async creerPour(destinataireIds: string[], dto: CreerNotificationDto): Promise<void> {
+    if (destinataireIds.length === 0) return;
+    await this.prisma.notification.createMany({
+      data: destinataireIds.map((destinataireId) => ({ destinataireId, ...dto })),
+    });
+  }
+
   async lister(utilisateurId: string) {
     return this.prisma.notification.findMany({
       where: { destinataireId: utilisateurId },

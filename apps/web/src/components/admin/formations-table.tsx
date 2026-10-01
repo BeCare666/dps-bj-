@@ -1,63 +1,35 @@
 "use client";
 
-import { useActionState, useState } from "react";
-import { useFormStatus } from "react-dom";
-import { DataTable, type ColonneTable } from "@/components/ui/data-table";
+import { useState } from "react";
+import { DataTable, type ColonneTable, type VueTable } from "@/components/ui/data-table";
 import { Modal } from "@/components/ui/modal";
 import { Button } from "@/components/ui/button";
-import { IconPlus } from "@/components/icons";
+import { Badge } from "@/components/ui/badge";
+import { IconBan, IconCheckCircle, IconPencil, IconPlus } from "@/components/icons";
 import { formaterFcfa } from "@/lib/format";
-import {
-  basculerFormationAction,
-  creerFormationAction,
-  modifierFormationAction,
-  type EtatAction,
-} from "@/lib/admin-actions";
+import { basculerFormationAction, creerFormationAction, modifierFormationAction } from "@/lib/admin-actions";
 import { FormationForm } from "./formation-form";
+import { useActionConfirmee } from "./use-action-confirmee";
 import type { Formation } from "@/lib/types";
 
-function BoutonBasculer({ formationId, actif }: { formationId: string; actif: boolean }) {
-  const [etat, action] = useActionState(async (_prevState: EtatAction): Promise<EtatAction> => {
-    return basculerFormationAction(formationId, actif);
-  }, {});
-
-  return (
-    <form action={action} className="inline-block">
-      <BoutonBasculerInterne actif={actif} />
-      {etat.erreur && <p className="mt-1 text-xs text-danger">{etat.erreur}</p>}
-    </form>
-  );
-}
-
-function BoutonBasculerInterne({ actif }: { actif: boolean }) {
-  const { pending } = useFormStatus();
-  return (
-    <button
-      type="submit"
-      disabled={pending}
-      className={`rounded-[var(--radius-md)] border px-3 py-1.5 text-xs font-medium transition-colors disabled:opacity-50 ${
-        actif
-          ? "border-border text-text-muted hover:border-danger/40 hover:text-danger"
-          : "border-success/30 text-success hover:bg-success-soft"
-      }`}
-    >
-      {pending ? "…" : actif ? "Désactiver" : "Réactiver"}
-    </button>
-  );
+function Prix({ montant }: { montant: number }) {
+  return <span className="whitespace-nowrap font-medium text-text tabular-nums">{formaterFcfa(montant)}</span>;
 }
 
 export function FormationsTable({ formations }: { formations: Formation[] }) {
   const [modalCreation, setModalCreation] = useState(false);
   const [formationEnEdition, setFormationEnEdition] = useState<Formation | null>(null);
+  const { lancer, dialogue } = useActionConfirmee();
 
   const colonnes: ColonneTable<Formation>[] = [
     {
       cle: "titre",
-      entete: "Titre",
+      entete: "Formation",
+      masquable: false,
       render: (f) => (
-        <div>
+        <div className="min-w-0">
           <p className="font-medium text-text">{f.titre}</p>
-          {f.dureeHeures && <p className="text-xs text-text-faint">{f.dureeHeures} heures</p>}
+          <p className="text-xs text-text-faint">{f.dureeHeures ? `${f.dureeHeures} heures` : "Durée non renseignée"}</p>
         </div>
       ),
       valeurTri: (f) => f.titre,
@@ -66,74 +38,82 @@ export function FormationsTable({ formations }: { formations: Formation[] }) {
     {
       cle: "prixIndividuel",
       entete: "Individuel",
-      render: (f) => formaterFcfa(f.prixIndividuel),
+      render: (f) => <Prix montant={f.prixIndividuel} />,
       valeurTri: (f) => f.prixIndividuel,
       alignement: "right",
     },
     {
       cle: "prixGroupe5",
       entete: "Groupe 5",
-      render: (f) => formaterFcfa(f.prixGroupe5),
+      render: (f) => <Prix montant={f.prixGroupe5} />,
       valeurTri: (f) => f.prixGroupe5,
       alignement: "right",
     },
     {
       cle: "prixGroupe10",
       entete: "Groupe 10",
-      render: (f) => formaterFcfa(f.prixGroupe10),
+      render: (f) => <Prix montant={f.prixGroupe10} />,
       valeurTri: (f) => f.prixGroupe10,
       alignement: "right",
     },
     {
       cle: "statut",
       entete: "Statut",
-      render: (f) => (
-        <span
-          className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
-            f.actif ? "bg-success-soft text-success" : "bg-bg-subtle text-text-faint"
-          }`}
-        >
-          {f.actif ? "Active" : "Inactive"}
-        </span>
-      ),
+      render: (f) => (f.actif ? <Badge variant="success">Active</Badge> : <Badge variant="neutral">Inactive</Badge>),
       valeurTri: (f) => (f.actif ? 1 : 0),
-      alignement: "center",
+      valeurExport: (f) => (f.actif ? "Active" : "Inactive"),
     },
-    {
-      cle: "actions",
-      entete: "Actions",
-      render: (f) => (
-        <div className="flex items-center justify-end gap-2">
-          <button
-            type="button"
-            onClick={() => setFormationEnEdition(f)}
-            className="rounded-[var(--radius-md)] border border-border px-3 py-1.5 text-xs font-medium text-text transition-colors hover:border-primary/40 hover:bg-primary-soft/60"
-          >
-            Modifier
-          </button>
-          <BoutonBasculer formationId={f.id} actif={f.actif} />
-        </div>
-      ),
-      alignement: "right",
-    },
+  ];
+
+  const vues: VueTable<Formation>[] = [
+    { cle: "toutes", label: "Toutes" },
+    { cle: "actives", label: "Actives", filtre: (f) => f.actif },
+    { cle: "inactives", label: "Inactives", filtre: (f) => !f.actif },
   ];
 
   return (
     <div>
-      <div className="mb-4 flex justify-end">
-        <Button onClick={() => setModalCreation(true)} className="gap-1.5">
-          <IconPlus width={16} height={16} />
-          Nouvelle formation
-        </Button>
-      </div>
-
       <DataTable
+        id="admin-formations"
         colonnes={colonnes}
         lignes={formations}
         cleLigne={(f) => f.id}
         rechercheEspaceReserve="Rechercher une formation…"
-        videMessage="Aucune formation pour l'instant."
+        vues={vues}
+        triParDefaut={{ cle: "titre", direction: "asc" }}
+        exportCsv={{ nomFichier: "formations-dps" }}
+        barreOutils={
+          <Button onClick={() => setModalCreation(true)} className="h-9 gap-1.5 px-3.5">
+            <IconPlus width={16} height={16} />
+            <span className="hidden sm:inline">Nouvelle formation</span>
+          </Button>
+        }
+        vide={{
+          titre: "Aucune formation au catalogue",
+          description: "Créez la première formation pour l'ouvrir à la réservation.",
+        }}
+        actionsLigne={(f) => [
+          { label: "Modifier", icone: IconPencil, onSelect: () => setFormationEnEdition(f) },
+          f.actif
+            ? {
+                label: "Désactiver",
+                icone: IconBan,
+                danger: true,
+                onSelect: () =>
+                  lancer(() => basculerFormationAction(f.id, true), "Formation désactivée.", {
+                    titre: "Désactiver cette formation ?",
+                    description: "Elle ne sera plus proposée à la réservation tant qu'elle n'est pas réactivée.",
+                    confirmLabel: "Désactiver",
+                  }),
+              }
+            : {
+                label: "Réactiver",
+                icone: IconCheckCircle,
+                onSelect: () => lancer(() => basculerFormationAction(f.id, false), "Formation réactivée."),
+              },
+        ]}
       />
+      {dialogue}
 
       <Modal open={modalCreation} onClose={() => setModalCreation(false)} title="Nouvelle formation">
         <FormationForm action={creerFormationAction} libelleBouton="Créer" onSuccess={() => setModalCreation(false)} />

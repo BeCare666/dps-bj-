@@ -21,6 +21,7 @@ function dtoFormation(formData: FormData) {
   return {
     titre: valeur(formData, "titre"),
     description: valeur(formData, "description"),
+    objectifs: valeurOptionnelle(formData, "objectifs"),
     dureeHeures: dureeHeures ? Number(dureeHeures) : undefined,
     prixIndividuel: Number(valeur(formData, "prixIndividuel")),
     prixGroupe5: Number(valeur(formData, "prixGroupe5")),
@@ -175,15 +176,43 @@ export async function retirerRoleAction(utilisateurId: string, role: string): Pr
   return { succes: true };
 }
 
-export async function marquerRealiseeAction(reservationId: string, presenceConfirmee: boolean): Promise<EtatAction> {
+export async function marquerRealiseeAction(reservationId: string, participantsPresents: number): Promise<EtatAction> {
   const res = await apiFetch(`/reservations/${reservationId}/realiser`, {
     method: "POST",
-    body: JSON.stringify({ presenceConfirmee }),
+    body: JSON.stringify({ participantsPresents, presenceConfirmee: participantsPresents > 0 }),
   });
   if (!res.ok) {
     const corps = await res.json().catch(() => undefined);
     return { erreur: messageErreurApi(corps, "Impossible de clôturer la session.") };
   }
   revalidatePath("/admin/reservations");
+  return { succes: true };
+}
+
+// §12.4 — échelle de gravité des EI.
+export async function creerNiveauGraviteAction(_etat: EtatAction, formData: FormData): Promise<EtatAction> {
+  const res = await apiFetch("/niveaux-gravite-ei", {
+    method: "POST",
+    body: JSON.stringify({
+      libelle: valeur(formData, "libelle"),
+      ordre: Number(valeur(formData, "ordre")),
+      critique: formData.get("critique") === "on",
+    }),
+  });
+  if (!res.ok) {
+    const corps = await res.json().catch(() => undefined);
+    return { erreur: messageErreurApi(corps, "Impossible de créer le niveau de gravité.") };
+  }
+  revalidatePath("/admin/types-ei");
+  return { succes: true };
+}
+
+export async function basculerNiveauGraviteAction(id: string, actif: boolean): Promise<EtatAction> {
+  const res = await apiFetch(`/niveaux-gravite-ei/${id}/${actif ? "desactiver" : "reactiver"}`, { method: "POST" });
+  if (!res.ok) {
+    const corps = await res.json().catch(() => undefined);
+    return { erreur: messageErreurApi(corps, "Action impossible.") };
+  }
+  revalidatePath("/admin/types-ei");
   return { succes: true };
 }

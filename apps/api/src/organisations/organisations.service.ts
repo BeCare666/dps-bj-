@@ -19,6 +19,8 @@ export class OrganisationsService {
     const actif = query.actif === "true" ? true : query.actif === "false" ? false : undefined;
     return this.prisma.organisation.findMany({
       where: { type: query.type, actif },
+      // §12.1 — statut de chacun des modules de l'établissement.
+      include: { abonnementsModule: { select: { id: true, module: true, statut: true, essaiDebut: true, essaiFin: true, activeLe: true, expireLe: true } } },
       orderBy: { nom: "asc" },
     });
   }
@@ -32,10 +34,47 @@ export class OrganisationsService {
         _count: {
           select: { utilisateurs: true, patients: true, evenementsIndesirables: true, reservations: true },
         },
+        abonnementsModule: { select: { id: true, module: true, statut: true, essaiDebut: true, essaiFin: true, activeLe: true, expireLe: true } },
+        // §6.5 / §12.1 — historique des évaluations (scores uniquement).
+        sessionsEvaluation: {
+          where: { statut: "SOUMISE" },
+          select: {
+            id: true,
+            scoreGlobal: true,
+            dateSoumission: true,
+            grille: { select: { nom: true, version: true } },
+          },
+          orderBy: { dateSoumission: "desc" },
+        },
       },
     });
     if (!organisation) throw new NotFoundException("Organisation introuvable");
-    return organisation;
+
+    // §12.1 / §12.3 — alertes cliniques et EI : agrégats uniquement (aucune
+    // donnée patient ni description d'EI), réservations de formation.
+    const [alertes, evenements, reservations] = await Promise.all([
+      this.prisma.alerte.groupBy({ by: ["niveauRisque", "statut"], where: { organisationId }, _count: { _all: true } }),
+      this.prisma.evenementIndesirable.groupBy({ by: ["statut"], where: { organisationId }, _count: { _all: true } }),
+      this.prisma.reservation.findMany({
+        where: { organisationId },
+        select: {
+          id: true,
+          formule: true,
+          statut: true,
+          tarifApplique: true,
+          dateRdv: true,
+          createdAt: true,
+          formation: { select: { titre: true } },
+        },
+        orderBy: { createdAt: "desc" },
+      }),
+    ]);
+    return {
+      ...organisation,
+      alertesNews: alertes.map((a) => ({ niveauRisque: a.niveauRisque, statut: a.statut, nombre: a._count._all })),
+      evenementsParStatut: Object.fromEntries(evenements.map((e) => [e.statut, e._count._all])),
+      reservationsFormations: reservations,
+    };
   }
 
   async activer(organisationId: string, acteurId: string) {
@@ -47,7 +86,14 @@ export class OrganisationsService {
 
   async desactiver(organisationId: string, acteurId: string) {
     const avant = await this.obtenir(organisationId);
-    const apres = await this.prisma.organisation.update({ where: { id: organisationId }, data: { actif: false } });
+    const [apres] = await this.prisma.$transaction([
+      this.prisma.organisation.update({ where: { id: organisationId }, data: { actif: false } }),
+      // §12.1 — désactivation effective : les sessions en cours sont fermées.
+      this.prisma.refreshToken.updateMany({
+        where: { revokedAt: null, utilisateur: { organisationId } },
+        data: { revokedAt: new Date() },
+      }),
+    ]);
     await this.tracer(acteurId, organisationId, "etablissement.desactiver", avant.actif, apres.actif);
     return apres;
   }
@@ -68,10 +114,24 @@ export class OrganisationsService {
       where: { id: organisationId },
       data: {
         nom: dto.nom,
+        raisonSociale: dto.raisonSociale,
+        typeStructure: dto.typeStructure,
         adresse: dto.adresse,
+        ville: dto.ville,
+        pays: dto.pays,
         telephone: dto.telephone,
         email: dto.email,
       },
+    });
+    const champs = (o: typeof avant) => ({
+      nom: o.nom,
+      raisonSociale: o.raisonSociale,
+      typeStructure: o.typeStructure,
+      adresse: o.adresse,
+      ville: o.ville,
+      pays: o.pays,
+      telephone: o.telephone,
+      email: o.email,
     });
 
     await this.prisma.journalAudit.create({
@@ -81,8 +141,8 @@ export class OrganisationsService {
         action: "etablissement.modifier_coordonnees",
         entite: "Organisation",
         entiteId: organisationId,
-        donneesAvant: { nom: avant.nom, adresse: avant.adresse, telephone: avant.telephone, email: avant.email },
-        donneesApres: { nom: apres.nom, adresse: apres.adresse, telephone: apres.telephone, email: apres.email },
+        donneesAvant: champs(avant),
+        donneesApres: champs(apres),
       },
     });
 

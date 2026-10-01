@@ -1,4 +1,4 @@
-import { calculerScoreNews, type ParametresNews } from "./news-scoring.util.js";
+import { calculerScoreNews, SEUILS_NEWS_DEFAUT, type ParametresNews } from "./news-scoring.util.js";
 import { NiveauConscience, NiveauRisqueNews } from "../generated/prisma/enums.js";
 
 function base(overrides: Partial<ParametresNews> = {}): ParametresNews {
@@ -136,5 +136,32 @@ describe("calculerScoreNews — niveau de risque global", () => {
     );
     expect(resultat.scoreTotal).toBe(9);
     expect(resultat.niveauRisque).toBe(NiveauRisqueNews.ELEVE);
+  });
+});
+
+// §12.3 — seuils de niveau de risque paramétrés par l'administrateur.
+describe("calculerScoreNews — seuils paramétrables (§12.3)", () => {
+  // 21-24 resp (2) + 92-93 SpO2 (2) + PAS 101-110 (1) = 5, aucun paramètre à 3
+  const scoreCinq = () => base({ frequenceRespiratoire: 22, saturationOxygene: 93, pressionArterielleSystolique: 105 });
+
+  it("seuils par défaut = CDC (moyen 5, élevé 7)", () => {
+    expect(SEUILS_NEWS_DEFAUT).toEqual({ moyen: 5, eleve: 7 });
+  });
+
+  it("un seuil moyen relevé à 6 fait passer un score de 5 en risque BAS", () => {
+    const resultat = calculerScoreNews(scoreCinq(), { moyen: 6, eleve: 8 });
+    expect(resultat.scoreTotal).toBe(5);
+    expect(resultat.niveauRisque).toBe(NiveauRisqueNews.BAS);
+  });
+
+  it("un seuil élevé abaissé à 5 fait passer un score de 5 en risque ELEVE", () => {
+    const resultat = calculerScoreNews(scoreCinq(), { moyen: 3, eleve: 5 });
+    expect(resultat.niveauRisque).toBe(NiveauRisqueNews.ELEVE);
+  });
+
+  it("la règle « un paramètre isolé à 3 » reste appliquée quels que soient les seuils", () => {
+    const resultat = calculerScoreNews(base({ frequenceCardiaque: 35 }), { moyen: 9, eleve: 12 });
+    expect(resultat.scoreTotal).toBe(3);
+    expect(resultat.niveauRisque).toBe(NiveauRisqueNews.MOYEN);
   });
 });

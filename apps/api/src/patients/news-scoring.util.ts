@@ -14,6 +14,15 @@ export interface ParametresNews {
   niveauConscience: NiveauConscience;
 }
 
+// §7.3 / §12.3 — seuils de niveau de risque (paramétrables par l'admin).
+// Valeurs par défaut = CDC : moyen à partir de 5, élevé à partir de 7.
+export interface SeuilsNews {
+  moyen: number;
+  eleve: number;
+}
+
+export const SEUILS_NEWS_DEFAUT: SeuilsNews = { moyen: 5, eleve: 7 };
+
 export interface ResultatNews {
   scoreTotal: number;
   niveauRisque: NiveauRisqueNews;
@@ -68,7 +77,7 @@ function scoreNiveauConscience(v: NiveauConscience): number {
   return v === NiveauConscience.ALERTE ? 0 : 3;
 }
 
-export function calculerScoreNews(parametres: ParametresNews): ResultatNews {
+export function calculerScoreNews(parametres: ParametresNews, seuils: SeuilsNews = SEUILS_NEWS_DEFAUT): ResultatNews {
   const detailParParametre: Record<keyof ParametresNews, number> = {
     frequenceRespiratoire: scoreFrequenceRespiratoire(parametres.frequenceRespiratoire),
     saturationOxygene: scoreSaturationOxygene(parametres.saturationOxygene),
@@ -83,9 +92,9 @@ export function calculerScoreNews(parametres: ParametresNews): ResultatNews {
   const unParametreATrois = Object.values(detailParParametre).some((v) => v === 3);
 
   let niveauRisque: NiveauRisqueNews;
-  if (scoreTotal >= 7) {
+  if (scoreTotal >= seuils.eleve) {
     niveauRisque = NiveauRisqueNews.ELEVE;
-  } else if (scoreTotal >= 5 || unParametreATrois) {
+  } else if (scoreTotal >= seuils.moyen || unParametreATrois) {
     niveauRisque = NiveauRisqueNews.MOYEN;
   } else {
     niveauRisque = NiveauRisqueNews.BAS;

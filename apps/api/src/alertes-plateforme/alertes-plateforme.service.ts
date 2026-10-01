@@ -1,9 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service.js";
-import { StatutAlerte, StatutEi, GraviteEi } from "../generated/prisma/enums.js";
+import { StatutAlerte, StatutEi } from "../generated/prisma/enums.js";
 
 // D5 — couche de lecture agrégée au-dessus des sources d'alertes RÉELLEMENT
-// existantes (Alerte NEWS, EI qualifiés gravité ELEVEE non clôturés). Aucune
+// existantes (Alerte NEWS, EI de gravité critique non clôturés). Aucune
 // nouvelle table. Volontairement agrégé par (organisation, catégorie, statut)
 // — jamais au niveau du patient/de l'incident individuel : RM7 interdit
 // d'exposer des données patient à un compte ADMIN_PLATEFORME, même agrégées
@@ -32,7 +32,7 @@ export class AlertesPlateformeService {
       }),
       this.prisma.evenementIndesirable.groupBy({
         by: ["organisationId", "statut"],
-        where: { gravite: GraviteEi.ELEVEE, statut: { not: StatutEi.CLOTURE } },
+        where: { niveauGravite: { critique: true }, statut: { not: StatutEi.CLOTURE } },
         _count: { _all: true },
         _min: { dateDeclaration: true },
       }),
@@ -61,7 +61,7 @@ export class AlertesPlateformeService {
         organisationId: g.organisationId,
         organisationNom: nomOrganisation.get(g.organisationId) ?? "Établissement inconnu",
         source: "EI" as const,
-        niveau: GraviteEi.ELEVEE,
+        niveau: "ELEVE",
         statut: g.statut,
         nombre: g._count._all,
         depuisLe: (g._min.dateDeclaration ?? new Date()).toISOString(),

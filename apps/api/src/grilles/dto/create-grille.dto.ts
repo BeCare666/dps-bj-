@@ -1,6 +1,6 @@
 import { Type } from "class-transformer";
-import { ArrayMinSize, IsArray, IsEnum, IsInt, IsOptional, IsString, MinLength, ValidateNested } from "class-validator";
-import { TypeEtablissement, TypeReponse } from "../../generated/prisma/enums.js";
+import { ArrayMinSize, IsArray, IsBoolean, IsEnum, IsInt, IsOptional, IsString, MaxLength, MinLength, ValidateNested } from "class-validator";
+import { TypeElementMesurable, TypeEtablissement, TypeReponse } from "../../generated/prisma/enums.js";
 
 export class CreateElementMesurableDto {
   @IsString()
@@ -16,6 +16,16 @@ export class CreateElementMesurableDto {
   @IsString({ each: true })
   optionsChoix?: string[];
 
+  // §6.2 / §6.6 — nature de l'élément (défaut : document à examiner).
+  @IsOptional()
+  @IsEnum(TypeElementMesurable)
+  typeElement?: TypeElementMesurable;
+
+  // §6.6 — défaut : vrai pour un document à examiner, faux sinon.
+  @IsOptional()
+  @IsBoolean()
+  entreDansScore?: boolean;
+
   @IsInt()
   ordre!: number;
 }
@@ -27,6 +37,16 @@ export class CreateCritereDto {
   @IsString()
   @MinLength(2)
   libelle!: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(191)
+  categorie?: string;
+
+  // §6.4 — recommandation synthétique affichée si le critère est en écart.
+  @IsOptional()
+  @IsString()
+  recommandation?: string;
 
   @IsInt()
   ordre!: number;

@@ -7,13 +7,15 @@ import {
   modifierGrilleAction,
   type GrillePayload,
 } from "@/lib/grilles-actions";
-import type { Grille, TypeEtablissement, TypeReponse } from "@/lib/types";
+import type { Grille, TypeElementMesurable, TypeEtablissement, TypeReponse } from "@/lib/types";
 
 interface EtatElement {
   id: string;
   libelle: string;
   typeReponse: TypeReponse;
   optionsChoix: string;
+  typeElement: TypeElementMesurable;
+  entreDansScore: boolean;
   ordre: number;
 }
 
@@ -21,6 +23,8 @@ interface EtatCritere {
   id: string;
   code: string;
   libelle: string;
+  categorie: string;
+  recommandation: string;
   ordre: number;
   elements: EtatElement[];
 }
@@ -39,6 +43,14 @@ interface EtatDomaine {
   ordre: number;
   normes: EtatNorme[];
 }
+
+// §6.2 / §6.6 — nature de l'élément ; seul un document à examiner entre
+// normalement dans le score.
+const LIBELLES_TYPE_ELEMENT: Record<TypeElementMesurable, string> = {
+  DOCUMENT_A_EXAMINER: "Document à examiner",
+  ENTRETIEN: "Entretien",
+  OBSERVATION: "Observation",
+};
 
 const LIBELLES_TYPE_REPONSE: Record<TypeReponse, string> = {
   OUI_NON: "Oui / Non",
@@ -59,11 +71,19 @@ function normeVide(): EtatNorme {
 }
 
 function critereVide(): EtatCritere {
-  return { id: idLocal(), code: "", libelle: "", ordre: 0, elements: [] };
+  return { id: idLocal(), code: "", libelle: "", categorie: "", recommandation: "", ordre: 0, elements: [] };
 }
 
 function elementVide(): EtatElement {
-  return { id: idLocal(), libelle: "", typeReponse: "OUI_NON", optionsChoix: "", ordre: 0 };
+  return {
+    id: idLocal(),
+    libelle: "",
+    typeReponse: "OUI_NON",
+    optionsChoix: "",
+    typeElement: "DOCUMENT_A_EXAMINER",
+    entreDansScore: true,
+    ordre: 0,
+  };
 }
 
 function depuisGrille(grille: Grille): { nom: string; type: TypeEtablissement; domaines: EtatDomaine[] } {
@@ -83,12 +103,16 @@ function depuisGrille(grille: Grille): { nom: string; type: TypeEtablissement; d
           id: idLocal(),
           code: c.code,
           libelle: c.libelle,
+          categorie: c.categorie ?? "",
+          recommandation: c.recommandation ?? "",
           ordre: c.ordre,
           elements: c.elementsMesurables.map((e) => ({
             id: idLocal(),
             libelle: e.libelle,
             typeReponse: e.typeReponse,
             optionsChoix: (e.optionsChoix ?? []).join(", "),
+            typeElement: e.typeElement ?? "DOCUMENT_A_EXAMINER",
+            entreDansScore: e.entreDansScore ?? true,
             ordre: e.ordre,
           })),
         })),
@@ -111,10 +135,14 @@ function versPayload(nom: string, type: TypeEtablissement, domaines: EtatDomaine
         criteres: n.criteres.map((c, ci) => ({
           code: c.code,
           libelle: c.libelle,
+          categorie: c.categorie.trim() || undefined,
+          recommandation: c.recommandation.trim() || undefined,
           ordre: ci,
           elementsMesurables: c.elements.map((e, ei) => ({
             libelle: e.libelle,
             typeReponse: e.typeReponse,
+            typeElement: e.typeElement,
+            entreDansScore: e.entreDansScore,
             ordre: ei,
             ...(e.typeReponse === "CHOIX"
               ? {
@@ -148,6 +176,45 @@ export function GrilleEditeur({ grille, grilleId }: { grille?: Grille; grilleId?
   const [erreur, setErreur] = useState<string | undefined>();
   const [isPending, startTransition] = useTransition();
 
+  function majCritere(domaineId: string, normeId: string, critereId: string, patch: Partial<EtatCritere>) {
+    setDomaines((prev) =>
+      prev.map((d) =>
+        d.id !== domaineId
+          ? d
+          : {
+              ...d,
+              normes: d.normes.map((n) =>
+                n.id !== normeId ? n : { ...n, criteres: n.criteres.map((c) => (c.id === critereId ? { ...c, ...patch } : c)) },
+              ),
+            },
+      ),
+    );
+  }
+
+  function majElement(domaineId: string, normeId: string, critereId: string, elementId: string, patch: Partial<EtatElement>) {
+    setDomaines((prev) =>
+      prev.map((d) =>
+        d.id !== domaineId
+          ? d
+          : {
+              ...d,
+              normes: d.normes.map((n) =>
+                n.id !== normeId
+                  ? n
+                  : {
+                      ...n,
+                      criteres: n.criteres.map((c) =>
+                        c.id !== critereId
+                          ? c
+                          : { ...c, elements: c.elements.map((el) => (el.id === elementId ? { ...el, ...patch } : el)) },
+                      ),
+                    },
+              ),
+            },
+      ),
+    );
+  }
+
   function enregistrer() {
     setErreur(undefined);
     const payload = versPayload(nom, type, domaines);
@@ -175,7 +242,7 @@ export function GrilleEditeur({ grille, grilleId }: { grille?: Grille; grilleId?
             <span className="text-xs font-medium uppercase tracking-wide text-text-faint">Type d&apos;établissement</span>
             <select value={type} onChange={(e) => setType(e.target.value as TypeEtablissement)} className={styleChamp}>
               <option value="EH">Hôpital (EH)</option>
-              <option value="ESPC">Établissement de santé primaire communautaire (ESPC)</option>
+              <option value="ESPC">Établissement de soins de premiers contacts (ESPC)</option>
             </select>
           </label>
         </div>
@@ -344,6 +411,22 @@ export function GrilleEditeur({ grille, grilleId }: { grille?: Grille; grilleId?
                           </button>
                         </div>
 
+                        <div className="mt-2 grid gap-2 sm:grid-cols-[12rem_1fr]">
+                          <input
+                            value={critere.categorie}
+                            onChange={(e) => majCritere(domaine.id, norme.id, critere.id, { categorie: e.target.value })}
+                            placeholder="Catégorie (ex. essentiel)"
+                            className={styleChamp}
+                          />
+                          <textarea
+                            value={critere.recommandation}
+                            onChange={(e) => majCritere(domaine.id, norme.id, critere.id, { recommandation: e.target.value })}
+                            placeholder="Recommandation affichée si le critère n'est pas validé (§6.4)"
+                            rows={2}
+                            className={styleChamp}
+                          />
+                        </div>
+
                         <div className="mt-2 flex flex-col gap-2 border-l-2 border-border pl-4">
                           {critere.elements.map((element, ei) => (
                             <div key={element.id} className="flex flex-wrap items-start gap-2">
@@ -423,6 +506,34 @@ export function GrilleEditeur({ grille, grilleId }: { grille?: Grille; grilleId?
                                   </option>
                                 ))}
                               </select>
+                              <select
+                                value={element.typeElement}
+                                onChange={(e) => {
+                                  const typeElement = e.target.value as TypeElementMesurable;
+                                  majElement(domaine.id, norme.id, critere.id, element.id, {
+                                    typeElement,
+                                    entreDansScore: typeElement === "DOCUMENT_A_EXAMINER",
+                                  });
+                                }}
+                                className={`${styleChamp} max-w-[11rem]`}
+                              >
+                                {Object.entries(LIBELLES_TYPE_ELEMENT).map(([valeur, libelle]) => (
+                                  <option key={valeur} value={valeur}>
+                                    {libelle}
+                                  </option>
+                                ))}
+                              </select>
+                              <label className="mt-1.5 flex shrink-0 items-center gap-1.5 text-xs text-text-muted">
+                                <input
+                                  type="checkbox"
+                                  checked={element.entreDansScore}
+                                  onChange={(e) =>
+                                    majElement(domaine.id, norme.id, critere.id, element.id, { entreDansScore: e.target.checked })
+                                  }
+                                  className="h-4 w-4 rounded border-border"
+                                />
+                                Entre dans le score
+                              </label>
                               {element.typeReponse === "CHOIX" && (
                                 <input
                                   value={element.optionsChoix}

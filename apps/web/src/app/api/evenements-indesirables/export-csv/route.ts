@@ -8,7 +8,13 @@ import { apiFetch } from "@/lib/api-server";
 // supplémentaire n'est chargée ou transformée ici.
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const qs = searchParams.toString();
+  // Un champ de date laissé vide dans le formulaire n'est pas transmis.
+  const filtres = new URLSearchParams();
+  for (const cle of ["debut", "fin"]) {
+    const v = searchParams.get(cle);
+    if (v) filtres.set(cle, v);
+  }
+  const qs = filtres.toString();
   const res = await apiFetch(`/evenements-indesirables/export.csv${qs ? `?${qs}` : ""}`);
 
   if (!res.ok) {

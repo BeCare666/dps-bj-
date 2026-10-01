@@ -50,7 +50,7 @@ export function rendreEmailVerification({ prenom, lienVerification }: DonneesEma
           <tr>
             <td align="center" style="padding: 36px 40px 8px 40px;">
               <div style="font-family: -apple-system, Helvetica, Arial, sans-serif; font-weight: 700; letter-spacing: 0.5px; font-size: 20px; color: ${bleuFonce};">
-                dps<span style="color:${rose};">.</span>bj
+                DSP
               </div>
               <div style="font-family: -apple-system, Helvetica, Arial, sans-serif; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: ${texteAttenue}; margin-top: 6px;">
                 Dispositif de Sécurité des Patients
@@ -65,7 +65,7 @@ export function rendreEmailVerification({ prenom, lienVerification }: DonneesEma
                 Bienvenue, ${escapeHtml(prenom)}
               </h1>
               <p style="margin: 0 0 20px 0; font-family: -apple-system, Helvetica, Arial, sans-serif; font-size: 15px; line-height: 1.7; color: ${texteAttenue};">
-                Votre espace dps.bj est prêt. Il ne reste qu'une étape : confirmer votre adresse email
+                Votre espace DSP est prêt. Il ne reste qu'une étape : confirmer votre adresse email
                 pour activer votre compte et sécuriser l'accès à la plateforme.
               </p>
             </td>

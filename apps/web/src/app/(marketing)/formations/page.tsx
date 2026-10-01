@@ -7,7 +7,7 @@ import type { Formation } from "@/lib/types";
 
 export const metadata: Metadata = {
   title: "Formations",
-  description: "Catalogue des formations à la sécurité des patients proposées par dps.bj, en réservation individuelle ou en groupe.",
+  description: "Catalogue des formations à la sécurité des patients proposées par DSP, en réservation individuelle ou en groupe.",
 };
 
 async function obtenirFormations(): Promise<Formation[]> {

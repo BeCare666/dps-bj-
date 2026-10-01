@@ -6,7 +6,7 @@ import { SITE } from "@/lib/site-config";
 export const metadata: Metadata = {
   title: "Politique de confidentialité",
   description:
-    "Comment dps.bj collecte, protège et traite les données personnelles et les données de santé des établissements, de leurs équipes et de leurs patients.",
+    "Comment DSP collecte, protège et traite les données personnelles et les données de santé des établissements, de leurs équipes et de leurs patients.",
 };
 
 const DONNEES = [

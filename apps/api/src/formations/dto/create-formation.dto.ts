@@ -9,6 +9,11 @@ export class CreateFormationDto {
   @MinLength(10)
   description!: string;
 
+  // §9 — objectifs de la formation.
+  @IsOptional()
+  @IsString()
+  objectifs?: string;
+
   @IsOptional()
   @IsInt()
   @Min(1)

@@ -1,31 +1,37 @@
 import type { Metadata } from "next";
-import { apiFetchJson, ApiError } from "@/lib/api-server";
+import { apiFetchJson, silencieux } from "@/lib/api-server";
 import { TypesEiTable } from "@/components/admin/types-ei-table";
-import type { TypeEi } from "@/lib/types";
+import type { NiveauGraviteEi, TypeEi } from "@/lib/types";
+import { NiveauxGraviteTable } from "@/components/admin/niveaux-gravite-table";
+import { PageHeader } from "@/components/ui/page-header";
 
 export const metadata: Metadata = {
   title: "Administration · Types d'EI",
   robots: { index: false, follow: false },
 };
 
-async function silencieux<T>(promesse: Promise<T>, repli: T): Promise<T> {
-  try {
-    return await promesse;
-  } catch (erreur) {
-    if (erreur instanceof ApiError) return repli;
-    throw erreur;
-  }
-}
-
 export default async function AdminTypesEiPage() {
-  const types = await silencieux(apiFetchJson<TypeEi[]>("/types-ei?inclureInactifs=true"), []);
+  const [types, niveaux] = await Promise.all([
+    silencieux(apiFetchJson<TypeEi[]>("/types-ei?inclureInactifs=true"), []),
+    silencieux(apiFetchJson<NiveauGraviteEi[]>("/niveaux-gravite-ei?inclureInactifs=true"), []),
+  ]);
 
   return (
     <div>
-      <p className="mb-6 text-sm text-text-muted">
-        Catalogue des types d&apos;événements indésirables proposés à la déclaration.
-      </p>
+      <PageHeader
+        surtitre="Opérations"
+        titre="Événements indésirables : référentiels"
+        description="Catalogue des types d'événements indésirables proposés à la déclaration."
+      />
       <TypesEiTable types={types} />
+
+      <div className="mt-10">
+        <PageHeader
+          titre="Échelle de gravité"
+          description="Niveaux de gravité proposés à la déclaration et à la qualification. Un niveau déjà utilisé ne se modifie pas : désactivez-le et créez-en un nouveau."
+        />
+        <NiveauxGraviteTable niveaux={niveaux} />
+      </div>
     </div>
   );
 }

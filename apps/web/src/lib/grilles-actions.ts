@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { apiFetch, apiFetchJson, ApiError } from "./api-server";
 import { messageErreurApi } from "./api-error";
-import type { Grille, TypeEtablissement, TypeReponse } from "./types";
+import type { Grille, TypeEtablissement, TypeElementMesurable, TypeReponse } from "./types";
 
 export interface EtatAction {
   erreur?: string;
@@ -15,12 +15,16 @@ export interface ElementMesurablePayload {
   libelle: string;
   typeReponse: TypeReponse;
   optionsChoix?: string[];
+  typeElement: TypeElementMesurable;
+  entreDansScore: boolean;
   ordre: number;
 }
 
 export interface CriterePayload {
   code: string;
   libelle: string;
+  categorie?: string;
+  recommandation?: string;
   ordre: number;
   elementsMesurables: ElementMesurablePayload[];
 }

@@ -1,21 +1,42 @@
 import { Badge, type BadgeVariant } from "@/components/ui/badge";
-import type { GraviteEi, StatutActionCorrective, StatutEi } from "@/lib/types";
+import type { NiveauGraviteEi, PrioriteEi, StatutActionCorrective, StatutEi } from "@/lib/types";
 
-export function GraviteBadge({ gravite }: { gravite: GraviteEi | null }) {
-  if (!gravite) return <Badge variant="neutral">Non qualifié</Badge>;
-  const variants: Record<GraviteEi, BadgeVariant> = { ELEVEE: "danger", MODEREE: "warning", FAIBLE: "success" };
-  const libelles: Record<GraviteEi, string> = {
-    ELEVEE: "Gravité élevée",
-    MODEREE: "Gravité modérée",
-    FAIBLE: "Gravité faible",
-  };
-  return <Badge variant={variants[gravite]}>{libelles[gravite]}</Badge>;
+// §8.2 / §8.5 — libellés du circuit de traitement, dans l'ordre.
+export const LIBELLES_STATUT_EI: Record<StatutEi, string> = {
+  DECLARE: "Déclaré",
+  QUALIFIE: "Qualifié",
+  EN_ANALYSE: "En analyse",
+  PLAN_ACTION: "Plan d'action",
+  CLOTURE: "Clôturé",
+};
+
+export const LIBELLES_PRIORITE_EI: Record<PrioriteEi, string> = {
+  HAUTE: "Priorité haute",
+  NORMALE: "Priorité normale",
+  BASSE: "Priorité basse",
+};
+
+// Gravité paramétrable (§12.4) : un niveau « critique » = gravité élevée.
+export function GraviteBadge({ niveau }: { niveau: NiveauGraviteEi | null | undefined }) {
+  if (!niveau) return <Badge variant="neutral">Gravité non renseignée</Badge>;
+  return <Badge variant={niveau.critique ? "danger" : "warning"}>{niveau.libelle}</Badge>;
 }
 
 export function StatutEiBadge({ statut }: { statut: StatutEi }) {
-  const variants: Record<StatutEi, BadgeVariant> = { DECLARE: "primary", EN_TRAITEMENT: "warning", CLOTURE: "success" };
-  const libelles: Record<StatutEi, string> = { DECLARE: "Déclaré", EN_TRAITEMENT: "En traitement", CLOTURE: "Clôturé" };
-  return <Badge variant={variants[statut]}>{libelles[statut]}</Badge>;
+  const variants: Record<StatutEi, BadgeVariant> = {
+    DECLARE: "primary",
+    QUALIFIE: "info",
+    EN_ANALYSE: "warning",
+    PLAN_ACTION: "warning",
+    CLOTURE: "success",
+  };
+  return <Badge variant={variants[statut]}>{LIBELLES_STATUT_EI[statut]}</Badge>;
+}
+
+export function PrioriteBadge({ priorite }: { priorite: PrioriteEi | null }) {
+  if (!priorite) return null;
+  const variants: Record<PrioriteEi, BadgeVariant> = { HAUTE: "danger", NORMALE: "neutral", BASSE: "neutral" };
+  return <Badge variant={variants[priorite]}>{LIBELLES_PRIORITE_EI[priorite]}</Badge>;
 }
 
 export function StatutActionBadge({ statut }: { statut: StatutActionCorrective }) {

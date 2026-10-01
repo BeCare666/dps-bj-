@@ -19,10 +19,20 @@ function Bouton() {
   );
 }
 
-export function MarquerRealiseeForm({ reservationId, onSuccess }: { reservationId: string; onSuccess: () => void }) {
-  const [presence, setPresence] = useState(true);
+// §12.5 — clôture d'une session de formation et suivi des présences
+// (nombre de participants présents, au plus la taille de la formule).
+export function MarquerRealiseeForm({
+  reservationId,
+  places = 1,
+  onSuccess,
+}: {
+  reservationId: string;
+  places?: number;
+  onSuccess: () => void;
+}) {
+  const [presents, setPresents] = useState(places);
   const [etat, formAction] = useActionState(async (_prevState: EtatAction): Promise<EtatAction> => {
-    return marquerRealiseeAction(reservationId, presence);
+    return marquerRealiseeAction(reservationId, presents);
   }, ETAT_INITIAL);
 
   useEffect(() => {
@@ -32,14 +42,16 @@ export function MarquerRealiseeForm({ reservationId, onSuccess }: { reservationI
 
   return (
     <form action={formAction} className="flex flex-col gap-4">
-      <label className="flex items-center gap-2 text-sm text-text">
+      <label className="flex flex-col gap-1.5 text-sm text-text">
+        Participants présents (sur {places})
         <input
-          type="checkbox"
-          checked={presence}
-          onChange={(e) => setPresence(e.target.checked)}
-          className="h-4 w-4 rounded border-border"
+          type="number"
+          min={0}
+          max={places}
+          value={presents}
+          onChange={(e) => setPresents(Number(e.target.value))}
+          className="w-28 rounded-[var(--radius-md)] border border-border bg-surface px-3 py-2 text-sm"
         />
-        Présence confirmée
       </label>
       {etat.erreur && <p className="text-sm text-danger">{etat.erreur}</p>}
       <Bouton />

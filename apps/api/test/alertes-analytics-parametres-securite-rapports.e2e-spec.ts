@@ -6,7 +6,7 @@ import bcrypt from "bcrypt";
 import { randomUUID } from "node:crypto";
 import { AppModule } from "../src/app.module.js";
 import { PrismaService } from "../src/prisma/prisma.service.js";
-import { RoleUtilisateur, TypeCompte, TypeEtablissement, GraviteEi, StatutEi } from "../src/generated/prisma/enums.js";
+import { RoleUtilisateur, TypeCompte, TypeEtablissement, StatutEi } from "../src/generated/prisma/enums.js";
 
 // D5 (alertes plateforme) + D6 (analytics) + D8 (paramètres) + D9 (sécurité :
 // rate limiting réel + endpoint de lecture) + D11 (export CSV EI) — regroupés
@@ -83,14 +83,17 @@ describe("Alertes / Analytics / Paramètres / Sécurité / Export CSV — admin 
     responsableCompte = { id: responsableCree.id, email: responsableCree.email };
     idsUtilisateurs.push(responsableCree.id);
 
-    // Alimente les agrégats D5/D6 avec un EI réel (gravité ELEVEE, non clôturé)
+    // Alimente les agrégats D5/D6 avec un EI réel (gravité élevée — niveau
+    // « Événement indésirable grave », critique — non clôturé)
     // — pas de dépendance Patient/MesureNews nécessaire pour cette table.
     await prisma.evenementIndesirable.create({
       data: {
         organisationId: organisation.id,
         declareParId: responsableCompte.id,
         description: `Phase D5D12 EI ${suffixe}`,
-        gravite: GraviteEi.ELEVEE,
+        niveauGraviteId: "gravite-eig",
+        dateSurvenue: new Date(),
+        personnesImpliquees: "Donnée de test",
         statut: StatutEi.DECLARE,
       },
     });
@@ -157,7 +160,7 @@ describe("Alertes / Analytics / Paramètres / Sécurité / Export CSV — admin 
     expect(res.body.formations).toBeDefined();
     expect(res.body.autoEvaluation).toBeDefined();
     expect(res.body.evenementsIndesirables.total).toBeGreaterThan(0);
-    expect(res.body.evenementsIndesirables.parGravite.ELEVEE).toBeGreaterThan(0);
+    expect(res.body.evenementsIndesirables.parGravite["Événement indésirable grave"]).toBeGreaterThan(0);
     expect(res.body.mesuresNewsParNiveau).toBeDefined();
   });
 

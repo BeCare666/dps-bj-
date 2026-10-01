@@ -3,10 +3,26 @@ import Link from "next/link";
 import { apiFetchJson, ApiError } from "@/lib/api-server";
 import { formaterDateHeure } from "@/lib/format";
 import { Reveal } from "@/components/motion/reveal";
+import { Card, CardHeader } from "@/components/ui/card";
+import { PageContainer } from "@/components/ui/page-container";
+import { PageHeader } from "@/components/ui/page-header";
 import { RisqueBadge, StatutAlerteBadge } from "@/components/news/badges";
 import { InterventionForm } from "@/components/news/intervention-form";
 import { StatutAlerteButtons } from "@/components/news/statut-alerte-buttons";
 import type { Alerte } from "@/lib/types";
+import { libellePatient } from "@/lib/patient-libelle";
+
+function Constante({ label, valeur, unite }: { label: string; valeur: string | number; unite?: string }) {
+  return (
+    <div className="rounded-[var(--radius-md)] border border-border bg-bg-subtle/40 px-4 py-3">
+      <p className="text-xs font-medium text-text-faint">{label}</p>
+      <p className="mt-1 font-display text-lg font-bold text-text tabular-nums">
+        {valeur}
+        {unite && <span className="ml-1 text-xs font-medium text-text-faint">{unite}</span>}
+      </p>
+    </div>
+  );
+}
 
 export default async function AlerteDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -19,75 +35,110 @@ export default async function AlerteDetailPage({ params }: { params: Promise<{ i
     throw erreur;
   }
 
+  const interventions = alerte.interventions ?? [];
+  const nomPatient = alerte.patient ? libellePatient(alerte.patient) : "Alerte";
+
   return (
-    <div className="mx-auto max-w-3xl px-5 py-12 sm:px-8">
+    <PageContainer>
       <Reveal>
-        <Link href="/news/alertes" className="text-sm font-medium text-text-muted hover:text-text">
-          ← Toutes les alertes
-        </Link>
-        <div className="mt-3 flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <h1 className="font-display text-2xl font-bold text-text">
+        <PageHeader
+          filAriane={[
+            { label: "Surveillance clinique", href: "/news" },
+            { label: "Alertes", href: "/news/alertes" },
+            { label: nomPatient },
+          ]}
+          surtitre="Alerte clinique"
+          titre={
+            <span className="inline-flex flex-wrap items-center gap-3">
               {alerte.patient ? (
-                <Link href={`/news/${alerte.patient.id}`} className="hover:underline">
-                  {alerte.patient.prenom} {alerte.patient.nom}
+                <Link href={`/news/${alerte.patient.id}`} className="hover:text-primary">
+                  {nomPatient}
                 </Link>
               ) : (
-                "Alerte"
+                nomPatient
               )}
-            </h1>
-            <p className="mt-1 text-sm text-text-muted">Déclenchée le {formaterDateHeure(alerte.createdAt)}</p>
-          </div>
-          <div className="flex items-center gap-2">
-            <RisqueBadge niveau={alerte.niveauRisque} />
-            <StatutAlerteBadge statut={alerte.statut} />
-          </div>
-        </div>
+              <RisqueBadge niveau={alerte.niveauRisque} />
+              <StatutAlerteBadge statut={alerte.statut} />
+            </span>
+          }
+          description={`Déclenchée le ${formaterDateHeure(alerte.createdAt)}`}
+        />
       </Reveal>
 
-      {alerte.mesure && (
-        <Reveal delay={0.05} className="mt-6 rounded-[var(--radius-lg)] border border-border bg-surface p-5">
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-text-faint">Mesure déclencheuse</h2>
-          <div className="mt-3 flex items-center gap-3">
-            <span className="font-display text-2xl font-bold text-text">{alerte.mesure.scoreTotal}</span>
-            <span className="text-sm text-text-muted">score NEWS</span>
-          </div>
-          <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1.5 text-xs text-text-muted sm:grid-cols-3">
-            <span>FR : {alerte.mesure.frequenceRespiratoire}/min</span>
-            <span>SpO2 : {alerte.mesure.saturationOxygene}%</span>
-            <span>Temp. : {alerte.mesure.temperature}°C</span>
-            <span>PA syst. : {alerte.mesure.pressionArterielleSystolique} mmHg</span>
-            <span>FC : {alerte.mesure.frequenceCardiaque}/min</span>
-            <span>{alerte.mesure.oxygenoSupplementation ? "Sous O2" : "Air ambiant"}</span>
-          </div>
-        </Reveal>
-      )}
+      <div className="grid gap-6 xl:grid-cols-3">
+        <div className="flex min-w-0 flex-col gap-6 xl:col-span-2">
+          {alerte.mesure && (
+            <Reveal delay={0.05}>
+              <Card>
+                <CardHeader
+                  titre="Mesure déclencheuse"
+                  description={formaterDateHeure(alerte.mesure.dateMesure)}
+                  action={
+                    <span className="text-right">
+                      <span className="block font-display text-3xl font-bold leading-none text-text tabular-nums">
+                        {alerte.mesure.scoreTotal}
+                      </span>
+                      <span className="text-xs text-text-faint">score NEWS</span>
+                    </span>
+                  }
+                />
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                  <Constante label="Fréquence respiratoire" valeur={alerte.mesure.frequenceRespiratoire} unite="/min" />
+                  <Constante label="SpO2" valeur={alerte.mesure.saturationOxygene} unite="%" />
+                  <Constante label="Température" valeur={alerte.mesure.temperature} unite="°C" />
+                  <Constante label="PA systolique" valeur={alerte.mesure.pressionArterielleSystolique} unite="mmHg" />
+                  <Constante label="Fréquence cardiaque" valeur={alerte.mesure.frequenceCardiaque} unite="/min" />
+                  <Constante label="Oxygène" valeur={alerte.mesure.oxygenoSupplementation ? "Sous O2" : "Air ambiant"} />
+                </div>
+              </Card>
+            </Reveal>
+          )}
 
-      {alerte.statut !== "CLOTUREE" && (
-        <Reveal delay={0.1} className="mt-6">
-          <StatutAlerteButtons alerteId={alerte.id} statutActuel={alerte.statut} />
-        </Reveal>
-      )}
-
-      <Reveal delay={0.15} className="mt-8">
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-text-faint">
-          Interventions ({alerte.interventions?.length ?? 0})
-        </h2>
-        <div className="mt-3 flex flex-col gap-3">
-          {alerte.interventions?.map((i) => (
-            <div key={i.id} className="rounded-[var(--radius-lg)] border border-border bg-surface p-4">
-              <p className="text-sm text-text">{i.note}</p>
-              <p className="mt-1.5 text-xs text-text-faint">{formaterDateHeure(i.createdAt)}</p>
-            </div>
-          ))}
+          <Reveal delay={0.1}>
+            <Card>
+              <CardHeader
+                titre={
+                  <>
+                    Interventions
+                    <span className="ml-2 rounded-full bg-bg-subtle px-2 py-0.5 text-xs font-medium text-text-muted tabular-nums">
+                      {interventions.length}
+                    </span>
+                  </>
+                }
+              />
+              {interventions.length === 0 ? (
+                <p className="rounded-[var(--radius-md)] border border-dashed border-border px-4 py-5 text-center text-sm text-text-faint">
+                  Aucune intervention enregistrée pour l&apos;instant.
+                </p>
+              ) : (
+                <ol className="relative flex flex-col gap-4 before:absolute before:bottom-2 before:left-[5px] before:top-2 before:w-px before:bg-border">
+                  {interventions.map((i) => (
+                    <li key={i.id} className="relative pl-6">
+                      <span className="absolute left-0 top-1.5 h-[11px] w-[11px] rounded-full border-2 border-surface bg-primary" />
+                      <p className="text-sm leading-6 text-text">{i.note}</p>
+                      <p className="mt-0.5 text-xs text-text-faint">{formaterDateHeure(i.createdAt)}</p>
+                    </li>
+                  ))}
+                </ol>
+              )}
+              {alerte.statut !== "CLOTUREE" && (
+                <div className="mt-5 border-t border-border pt-5">
+                  <InterventionForm alerteId={alerte.id} />
+                </div>
+              )}
+            </Card>
+          </Reveal>
         </div>
 
         {alerte.statut !== "CLOTUREE" && (
-          <div className="mt-4 rounded-[var(--radius-lg)] border border-border bg-surface p-5">
-            <InterventionForm alerteId={alerte.id} />
-          </div>
+          <Reveal delay={0.1}>
+            <Card>
+              <CardHeader titre="Prise en charge" description="Faire évoluer le statut de l'alerte" />
+              <StatutAlerteButtons alerteId={alerte.id} statutActuel={alerte.statut} />
+            </Card>
+          </Reveal>
         )}
-      </Reveal>
-    </div>
+      </div>
+    </PageContainer>
   );
 }

@@ -3,6 +3,7 @@ import { PrismaService } from "../prisma/prisma.service.js";
 import { KkiapayService } from "../paiements/kkiapay.service.js";
 import { MailerService } from "../notifications/mailer.service.js";
 import { NotificationsInternesService } from "../notifications-internes/notifications-internes.service.js";
+import { FacturesService } from "../factures/factures.service.js";
 import { FormuleFormation, RoleUtilisateur, StatutReservation, TypeCompte } from "../generated/prisma/enums.js";
 import type { Reservation } from "../generated/prisma/client.js";
 import type { JwtAccessPayload } from "../auth/types/jwt-payload.type.js";
@@ -21,6 +22,7 @@ export class ReservationsService {
     private readonly kkiapay: KkiapayService,
     private readonly mailer: MailerService,
     private readonly notificationsInternes: NotificationsInternesService,
+    private readonly factures: FacturesService,
   ) {}
 
   // 9.1/9.2/9.9 — Organisation et Individuel peuvent réserver, pas l'admin plateforme.
@@ -28,6 +30,7 @@ export class ReservationsService {
     if (user.typeCompte === TypeCompte.ADMIN_PLATEFORME) {
       throw new ForbiddenException("Réservé aux comptes Organisation et Individuel");
     }
+    this.exigerAccesModuleFormation(user);
 
     const formation = await this.prisma.formation.findUnique({ where: { id: dto.formationId } });
     if (!formation || !formation.actif) {
@@ -51,6 +54,7 @@ export class ReservationsService {
 
   async lister(query: ListReservationsQueryDto, user: JwtAccessPayload) {
     const estAdmin = user.roles.includes(RoleUtilisateur.ADMIN_PLATEFORME);
+    if (!estAdmin) this.exigerAccesModuleFormation(user);
     return this.prisma.reservation.findMany({
       where: {
         statut: query.statut,
@@ -113,21 +117,24 @@ export class ReservationsService {
 
   // Point d'entrée idempotent partagé avec le webhook (voir PaiementsWebhookController).
   async confirmerPaiement(reservation: Reservation, transactionId: string) {
-    const numero = await this.genererNumeroFacture();
-
-    const [misAJour] = await this.prisma.$transaction([
-      this.prisma.reservation.update({
+    const misAJour = await this.prisma.$transaction(async (tx) => {
+      const maj = await tx.reservation.update({
         where: { id: reservation.id },
         data: { statut: StatutReservation.PAYEE, kkiapayTransactionId: transactionId },
-      }),
-      this.prisma.facture.create({
-        data: { reservationId: reservation.id, numero, montant: reservation.tarifApplique },
-      }),
-    ]);
+      });
+      // §11.1 — facture émise automatiquement (numérotation commune aux abonnements).
+      await this.factures.creerDansTransaction(tx, {
+        reservationId: reservation.id,
+        montant: reservation.tarifApplique,
+        devise: process.env.DEVISE_PAR_DEFAUT ?? "XOF",
+      });
+      return maj;
+    });
 
     await this.notifierUtilisateur(
       reservation.utilisateurId,
       "Paiement confirmé. Une date de rendez-vous vous sera communiquée sous 48 h.",
+      { titre: "Paiement de formation confirmé", lienUrl: `/mes-reservations/${reservation.id}` },
     );
 
     const formation = await this.prisma.formation.findUnique({
@@ -159,7 +166,8 @@ export class ReservationsService {
 
     await this.notifierUtilisateur(
       reservation.utilisateurId,
-      `Date de rendez-vous fixée : ${dto.dateRdv}`,
+      `Date de rendez-vous fixée : ${new Date(dto.dateRdv).toLocaleString("fr-FR", { dateStyle: "long", timeStyle: "short", timeZone: "Africa/Porto-Novo" })}`,
+      { titre: "Date de formation fixée", lienUrl: `/mes-reservations/${reservation.id}` },
     );
 
     return misAJour;
@@ -172,9 +180,18 @@ export class ReservationsService {
     if (reservation.statut !== StatutReservation.CONFIRMEE) {
       throw new ConflictException("Seule une réservation confirmée peut être marquée comme réalisée");
     }
+    const places = { [FormuleFormation.INDIVIDUEL]: 1, [FormuleFormation.GROUPE_5]: 5, [FormuleFormation.GROUPE_10]: 10 }[reservation.formule];
+    if (dto.participantsPresents !== undefined && dto.participantsPresents > places) {
+      throw new BadRequestException(`La formule réservée compte au plus ${places} participant(s)`);
+    }
+    const participantsPresents = dto.participantsPresents ?? (dto.presenceConfirmee === false ? 0 : undefined);
     return this.prisma.reservation.update({
       where: { id },
-      data: { statut: StatutReservation.REALISEE, presenceConfirmee: dto.presenceConfirmee ?? true },
+      data: {
+        statut: StatutReservation.REALISEE,
+        presenceConfirmee: dto.presenceConfirmee ?? (participantsPresents === undefined ? true : participantsPresents > 0),
+        participantsPresents,
+      },
     });
   }
 
@@ -200,16 +217,28 @@ export class ReservationsService {
     }
   }
 
-  private async genererNumeroFacture(): Promise<string> {
-    const annee = new Date().getFullYear();
-    const total = await this.prisma.facture.count();
-    return `FAC-${annee}-${String(total + 1).padStart(6, "0")}`;
-  }
-
-  private async notifierUtilisateur(utilisateurId: string, message: string): Promise<void> {
+  // §11.2 — email + notification dans l'espace personnel.
+  private async notifierUtilisateur(
+    utilisateurId: string,
+    message: string,
+    inApp: { titre: string; lienUrl: string },
+  ): Promise<void> {
     const utilisateur = await this.prisma.utilisateur.findUnique({ where: { id: utilisateurId } });
     if (utilisateur) {
       await this.mailer.sendNotificationGenerique(utilisateur.email, message);
+      await this.notificationsInternes.creerPour([utilisateur.id], { type: "FORMATION", message, ...inApp });
+    }
+  }
+
+  // §4.2 — dans un compte Organisation, le module Formation est ouvert au
+  // responsable du compte (accès complet) et au gestionnaire formation. Un
+  // compte Individuel (sans rôle) accède toujours à ses propres réservations.
+  private exigerAccesModuleFormation(user: JwtAccessPayload): void {
+    if (!user.organisationId) return;
+    const autorise =
+      user.roles.includes(RoleUtilisateur.RESPONSABLE_COMPTE) || user.roles.includes(RoleUtilisateur.GESTIONNAIRE_FORMATION);
+    if (!autorise) {
+      throw new ForbiddenException("Le module Formation est réservé au responsable du compte et au gestionnaire formation");
     }
   }
 
@@ -220,6 +249,7 @@ export class ReservationsService {
     user: JwtAccessPayload,
   ): asserts reservation is NonNullable<T> {
     if (!reservation) throw new NotFoundException("Réservation introuvable");
+    if (!user.roles.includes(RoleUtilisateur.ADMIN_PLATEFORME)) this.exigerAccesModuleFormation(user);
     const estProprietaire = user.organisationId
       ? reservation.organisationId === user.organisationId
       : reservation.utilisateurId === user.sub;

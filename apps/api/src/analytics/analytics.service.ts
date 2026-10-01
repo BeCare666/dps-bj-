@@ -38,7 +38,7 @@ export class AnalyticsService {
         select: { scoreGlobal: true, organisation: { select: { type: true } } },
       }),
       this.prisma.evenementIndesirable.findMany({
-        select: { statut: true, gravite: true, dateDeclaration: true, dateCloture: true },
+        select: { statut: true, niveauGravite: { select: { libelle: true } }, dateDeclaration: true, dateCloture: true },
       }),
       this.prisma.mesureNews.groupBy({ by: ["niveauRisque"], _count: { _all: true } }),
     ]);
@@ -93,7 +93,7 @@ export class AnalyticsService {
     let nombreClotures = 0;
     for (const e of eiBruts) {
       parStatutEi[e.statut] = (parStatutEi[e.statut] ?? 0) + 1;
-      if (e.gravite) parGraviteEi[e.gravite] = (parGraviteEi[e.gravite] ?? 0) + 1;
+      if (e.niveauGravite) parGraviteEi[e.niveauGravite.libelle] = (parGraviteEi[e.niveauGravite.libelle] ?? 0) + 1;
       if (e.dateCloture) {
         nombreClotures++;
         sommeDelaisJours += (e.dateCloture.getTime() - e.dateDeclaration.getTime()) / 86_400_000;
@@ -119,6 +119,121 @@ export class AnalyticsService {
       autoEvaluation: m5AutoEvaluation,
       evenementsIndesirables: m6EvenementsIndesirables,
       mesuresNewsParNiveau: m7MesuresNews,
+    };
+  }
+
+  // §6.5 — vue globale comparant les niveaux de conformité entre
+  // établissements : dernier score soumis par grille, score précédent et
+  // nombre d'évaluations. Scores documentaires uniquement, aucune donnée patient.
+  async conformiteParEtablissement() {
+    const sessions = await this.prisma.sessionEvaluation.findMany({
+      where: { statut: StatutSessionEvaluation.SOUMISE },
+      select: {
+        organisationId: true,
+        scoreGlobal: true,
+        dateSoumission: true,
+        organisation: { select: { nom: true, type: true } },
+        grille: { select: { nom: true, version: true } },
+      },
+      orderBy: { dateSoumission: "asc" },
+    });
+
+    const parCle = new Map<
+      string,
+      {
+        organisationId: string;
+        organisationNom: string;
+        categorie: string;
+        grille: string;
+        nombreEvaluations: number;
+        dernierScore: number | null;
+        scorePrecedent: number | null;
+        derniereSoumission: string | null;
+      }
+    >();
+    for (const s of sessions) {
+      const cle = `${s.organisationId}|${s.grille.nom}`;
+      const ligne = parCle.get(cle) ?? {
+        organisationId: s.organisationId,
+        organisationNom: s.organisation.nom,
+        categorie: s.organisation.type,
+        grille: s.grille.nom,
+        nombreEvaluations: 0,
+        dernierScore: null,
+        scorePrecedent: null,
+        derniereSoumission: null,
+      };
+      ligne.nombreEvaluations++;
+      ligne.scorePrecedent = ligne.dernierScore;
+      ligne.dernierScore = s.scoreGlobal;
+      ligne.derniereSoumission = s.dateSoumission?.toISOString() ?? null;
+      parCle.set(cle, ligne);
+    }
+    return [...parCle.values()].sort((a, b) => (b.dernierScore ?? 0) - (a.dernierScore ?? 0));
+  }
+
+  // §12.6 — nombre d'établissements inscrits, d'évaluations, d'alertes
+  // cliniques, d'EI déclarés et de réservations sur une période, avec leur
+  // évolution mois par mois ; établissements actifs par module (instantané).
+  async activite(debutIso?: string, finIso?: string) {
+    const fin = finIso ? new Date(`${finIso.slice(0, 10)}T23:59:59.999Z`) : new Date();
+    const debut = debutIso
+      ? new Date(`${debutIso.slice(0, 10)}T00:00:00.000Z`)
+      : new Date(Date.UTC(fin.getUTCFullYear() - 1, fin.getUTCMonth() + 1, 1));
+    const periode = { gte: debut, lte: fin };
+
+    const [organisations, evaluations, alertes, evenements, reservations, abonnements] = await Promise.all([
+      this.prisma.organisation.findMany({ where: { createdAt: periode }, select: { createdAt: true } }),
+      this.prisma.sessionEvaluation.findMany({
+        where: { statut: StatutSessionEvaluation.SOUMISE, dateSoumission: periode },
+        select: { dateSoumission: true },
+      }),
+      this.prisma.alerte.findMany({ where: { createdAt: periode }, select: { createdAt: true } }),
+      this.prisma.evenementIndesirable.findMany({ where: { dateDeclaration: periode }, select: { dateDeclaration: true } }),
+      this.prisma.reservation.findMany({ where: { createdAt: periode }, select: { createdAt: true } }),
+      this.prisma.abonnementModule.groupBy({ by: ["module", "statut"], _count: { _all: true } }),
+    ]);
+
+    // Mois de la période (AAAA-MM), y compris ceux sans activité.
+    const mois: string[] = [];
+    for (let d = new Date(Date.UTC(debut.getUTCFullYear(), debut.getUTCMonth(), 1)); d <= fin; d.setUTCMonth(d.getUTCMonth() + 1)) {
+      mois.push(d.toISOString().slice(0, 7));
+    }
+    const serie = (dates: (Date | null)[]) => {
+      const compte = new Map(mois.map((m) => [m, 0]));
+      for (const date of dates) {
+        if (!date) continue;
+        const cle = date.toISOString().slice(0, 7);
+        if (compte.has(cle)) compte.set(cle, compte.get(cle)! + 1);
+      }
+      return mois.map((m) => compte.get(m)!);
+    };
+
+    const actifsParModule: Record<string, Record<string, number>> = {};
+    for (const a of abonnements) {
+      actifsParModule[a.module] ??= {};
+      actifsParModule[a.module][a.statut] = a._count._all;
+    }
+
+    return {
+      periode: { debut: debut.toISOString(), fin: fin.toISOString() },
+      totaux: {
+        etablissementsInscrits: organisations.length,
+        evaluationsSoumises: evaluations.length,
+        alertesNews: alertes.length,
+        evenementsIndesirables: evenements.length,
+        reservations: reservations.length,
+      },
+      mois,
+      series: {
+        etablissementsInscrits: serie(organisations.map((o) => o.createdAt)),
+        evaluationsSoumises: serie(evaluations.map((e) => e.dateSoumission)),
+        alertesNews: serie(alertes.map((a) => a.createdAt)),
+        evenementsIndesirables: serie(evenements.map((e) => e.dateDeclaration)),
+        reservations: serie(reservations.map((r) => r.createdAt)),
+      },
+      // Statut des modules payants par établissement (essai, actif, expiré, suspendu).
+      modulesParStatut: actifsParModule,
     };
   }
 }

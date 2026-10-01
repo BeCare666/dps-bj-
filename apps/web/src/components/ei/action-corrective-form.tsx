@@ -1,22 +1,35 @@
 "use client";
 
-import { useActionState } from "react";
-import { Field } from "@/components/ui/field";
+import { useActionState, useEffect, useRef } from "react";
+import { Field, SelectField } from "@/components/ui/field";
 import { SubmitButton } from "@/components/auth/submit-button";
 import { ajouterActionCorrectiveAction, type EtatAction } from "@/lib/ei-actions";
+import type { MembreEtablissement } from "@/lib/types";
 
 const ETAT_INITIAL: EtatAction = {};
 
-// RM10 / limite connue : aucun endpoint de liste des membres de l'organisation
-// n'existe côté API pour l'instant — l'action est donc assignée à son auteur.
-// À revoir si un module de gestion d'équipe est ajouté (voir ROADMAP.md).
-export function ActionCorrectiveForm({ eiId, responsableId }: { eiId: string; responsableId: string }) {
+// §8.2 — plan d'action correctif : une action, un responsable (membre actif de
+// l'établissement, contrôlé par l'API), une échéance.
+export function ActionCorrectiveForm({
+  eiId,
+  membres,
+  moiId,
+}: {
+  eiId: string;
+  membres: MembreEtablissement[];
+  moiId: string;
+}) {
   const action = ajouterActionCorrectiveAction.bind(null, eiId);
   const [etat, formAction] = useActionState(action, ETAT_INITIAL);
+  const formulaire = useRef<HTMLFormElement>(null);
+  const actifs = membres.filter((m) => m.actif);
+
+  useEffect(() => {
+    if (etat.succes) formulaire.current?.reset();
+  }, [etat]);
 
   return (
-    <form action={formAction} className="flex flex-col gap-4">
-      <input type="hidden" name="responsableId" value={responsableId} />
+    <form ref={formulaire} action={formAction} className="flex flex-col gap-4">
       <div className="flex flex-col gap-1.5">
         <label htmlFor="action-description" className="text-sm font-medium text-text">
           Action corrective
@@ -30,8 +43,17 @@ export function ActionCorrectiveForm({ eiId, responsableId }: { eiId: string; re
           className="rounded-[var(--radius-md)] border border-border bg-surface px-3.5 py-2.5 text-sm text-text placeholder:text-text-faint transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary-soft"
         />
       </div>
-      <Field label="Échéance" name="echeance" type="date" required />
-      <p className="text-xs text-text-faint">Assignée à vous-même.</p>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <SelectField label="Responsable" name="responsableId" defaultValue={moiId} required>
+          {actifs.map((m) => (
+            <option key={m.id} value={m.id}>
+              {m.prenom} {m.nom}
+              {m.id === moiId ? " (moi)" : ""}
+            </option>
+          ))}
+        </SelectField>
+        <Field label="Échéance" name="echeance" type="date" required />
+      </div>
       {etat.erreur && <p className="text-sm text-danger">{etat.erreur}</p>}
       <div>
         <SubmitButton>Ajouter l&apos;action</SubmitButton>

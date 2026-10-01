@@ -8,6 +8,7 @@ import type { Patient } from "./types";
 
 export interface EtatAction {
   erreur?: string;
+  succes?: boolean;
 }
 
 function valeur(formData: FormData, champ: string): string {
@@ -25,11 +26,9 @@ export async function creerPatientAction(_etat: EtatAction, formData: FormData):
     patient = await apiFetchJson<Patient>("/patients", {
       method: "POST",
       body: JSON.stringify({
-        nom: valeur(formData, "nom"),
-        prenom: valeur(formData, "prenom"),
-        dateNaissance: valeurOptionnelle(formData, "dateNaissance"),
-        sexe: valeurOptionnelle(formData, "sexe"),
-        numeroDossier: valeurOptionnelle(formData, "numeroDossier"),
+        identifiantInterne: valeur(formData, "identifiantInterne"),
+        serviceId: valeurOptionnelle(formData, "serviceId"),
+        numeroLit: valeurOptionnelle(formData, "numeroLit"),
       }),
     });
   } catch (erreur) {
@@ -51,8 +50,8 @@ export async function cloturerPatientAction(patientId: string): Promise<EtatActi
   return {};
 }
 
-export async function saisirMesureAction(patientId: string, _etat: EtatAction, formData: FormData): Promise<EtatAction> {
-  const payload = {
+function valeursMesure(formData: FormData) {
+  return {
     frequenceRespiratoire: Number(valeur(formData, "frequenceRespiratoire")),
     saturationOxygene: Number(valeur(formData, "saturationOxygene")),
     oxygenoSupplementation: formData.get("oxygenoSupplementation") === "on",
@@ -61,6 +60,10 @@ export async function saisirMesureAction(patientId: string, _etat: EtatAction, f
     frequenceCardiaque: Number(valeur(formData, "frequenceCardiaque")),
     niveauConscience: valeur(formData, "niveauConscience"),
   };
+}
+
+export async function saisirMesureAction(patientId: string, _etat: EtatAction, formData: FormData): Promise<EtatAction> {
+  const payload = valeursMesure(formData);
 
   try {
     await apiFetchJson(`/patients/${patientId}/mesures`, { method: "POST", body: JSON.stringify(payload) });
@@ -71,6 +74,25 @@ export async function saisirMesureAction(patientId: string, _etat: EtatAction, f
     throw erreur;
   }
   redirect(`/news/${patientId}`);
+}
+
+// §13.4 — correction tracée d'une mesure (motif obligatoire).
+export async function corrigerMesureAction(
+  patientId: string,
+  mesureId: string,
+  _etat: EtatAction,
+  formData: FormData,
+): Promise<EtatAction> {
+  const res = await apiFetch(`/patients/${patientId}/mesures/${mesureId}`, {
+    method: "PATCH",
+    body: JSON.stringify({ ...valeursMesure(formData), motif: valeur(formData, "motif") }),
+  });
+  if (!res.ok) {
+    const corps = await res.json().catch(() => undefined);
+    return { erreur: messageErreurApi(corps, "Impossible d'enregistrer la correction.") };
+  }
+  revalidatePath(`/news/${patientId}`);
+  return { succes: true };
 }
 
 export async function ajouterInterventionAction(

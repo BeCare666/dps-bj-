@@ -56,6 +56,19 @@ export function FormationForm({
           className="rounded-[var(--radius-md)] border border-border bg-surface px-3.5 py-2.5 text-sm text-text placeholder:text-text-faint transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary-soft"
         />
       </div>
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor="objectifs" className="text-sm font-medium text-text">
+          Objectifs
+        </label>
+        <textarea
+          id="objectifs"
+          name="objectifs"
+          rows={3}
+          defaultValue={formation?.objectifs ?? ""}
+          placeholder="Ce que les participants sauront faire à l'issue de la formation"
+          className="rounded-[var(--radius-md)] border border-border bg-surface px-3.5 py-2.5 text-sm text-text placeholder:text-text-faint transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary-soft"
+        />
+      </div>
       <Field
         label="Durée (heures, optionnel)"
         name="dureeHeures"

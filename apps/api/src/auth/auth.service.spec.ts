@@ -4,7 +4,8 @@ import * as bcrypt from "bcrypt";
 import { AuthService } from "./auth.service.js";
 import { PrismaService } from "../prisma/prisma.service.js";
 import { MailerService } from "../notifications/mailer.service.js";
-import { RoleUtilisateur, TypeCompte, TypeEtablissement } from "../generated/prisma/enums.js";
+import { NotificationsInternesService } from "../notifications-internes/notifications-internes.service.js";
+import { Civilite, RoleUtilisateur, TypeCompte, TypeEtablissement, TypeStructure } from "../generated/prisma/enums.js";
 
 process.env.JWT_SECRET = "test-access-secret";
 process.env.JWT_REFRESH_SECRET = "test-refresh-secret";
@@ -17,7 +18,7 @@ function buildPrismaMock() {
 
   return {
     organisation: { findUnique: vi.fn(), create: orgTx.create },
-    utilisateur: { findUnique: vi.fn(), create: userTx.create, update: vi.fn() },
+    utilisateur: { findUnique: vi.fn(), findUniqueOrThrow: vi.fn(), create: userTx.create, update: vi.fn() },
     refreshToken: { findUnique: vi.fn(), create: vi.fn(), update: vi.fn(), updateMany: vi.fn() },
     passwordResetToken: { findUnique: vi.fn(), create: vi.fn(), update: vi.fn() },
     emailVerificationToken: { findUnique: vi.fn(), create: vi.fn(), update: vi.fn() },
@@ -46,6 +47,7 @@ describe("AuthService", () => {
         AuthService,
         { provide: PrismaService, useValue: prisma },
         { provide: MailerService, useValue: mailer },
+        { provide: NotificationsInternesService, useValue: { creerPour: vi.fn() } },
       ],
     }).compile();
 
@@ -69,8 +71,15 @@ describe("AuthService", () => {
 
       const resultat = await service.registerOrganisation({
         organisationNom: "Hôpital Test",
-        organisationIfu: "IFU123",
+        organisationRaisonSociale: "Hôpital Test SA",
+        organisationTypeStructure: TypeStructure.HOPITAL,
+        organisationIfu: "1234567890123",
         organisationType: TypeEtablissement.EH,
+        organisationVille: "Cotonou",
+        organisationPays: "Bénin",
+        organisationTelephone: "+22990000000",
+        organisationEmail: "contact@hopital-test.example",
+        responsableCivilite: Civilite.MME,
         responsableNom: "Doe",
         responsablePrenom: "Jane",
         responsableEmail: "jane@example.com",
@@ -91,8 +100,15 @@ describe("AuthService", () => {
       await expect(
         service.registerOrganisation({
           organisationNom: "Hôpital Test",
-          organisationIfu: "IFU123",
+          organisationRaisonSociale: "Hôpital Test SA",
+          organisationTypeStructure: TypeStructure.HOPITAL,
+          organisationIfu: "1234567890123",
           organisationType: TypeEtablissement.EH,
+          organisationVille: "Cotonou",
+          organisationPays: "Bénin",
+          organisationTelephone: "+22990000000",
+          organisationEmail: "contact@hopital-test.example",
+          responsableCivilite: Civilite.MME,
           responsableNom: "Doe",
           responsablePrenom: "Jane",
           responsableEmail: "jane@example.com",
@@ -269,11 +285,33 @@ describe("AuthService", () => {
         expiresAt: new Date(Date.now() + 1000 * 60 * 60),
       });
 
+      prisma.utilisateur.findUniqueOrThrow.mockResolvedValue({ id: "user-1", emailVerifieLe: new Date("2026-01-01") });
+
       await service.resetPassword("token-valide", "NouveauMdp123!");
 
       expect(prisma.$transaction).toHaveBeenCalledOnce();
       const operations = prisma.$transaction.mock.calls[0][0];
       expect(operations).toHaveLength(3);
+      // Email déjà vérifié : la date d'origine est conservée.
+      expect(prisma.utilisateur.update).toHaveBeenCalledWith(
+        expect.objectContaining({ data: expect.objectContaining({ emailVerifieLe: new Date("2026-01-01") }) }),
+      );
+    });
+
+    it("active un compte invité jamais vérifié (email marqué vérifié au premier mot de passe)", async () => {
+      prisma.passwordResetToken.findUnique.mockResolvedValue({
+        id: "prt-2",
+        utilisateurId: "user-2",
+        usedAt: null,
+        expiresAt: new Date(Date.now() + 1000 * 60 * 60),
+      });
+      prisma.utilisateur.findUniqueOrThrow.mockResolvedValue({ id: "user-2", emailVerifieLe: null });
+
+      await service.resetPassword("token-invitation", "NouveauMdp123!");
+
+      expect(prisma.utilisateur.update).toHaveBeenCalledWith(
+        expect.objectContaining({ data: expect.objectContaining({ emailVerifieLe: expect.any(Date) }) }),
+      );
     });
   });
 

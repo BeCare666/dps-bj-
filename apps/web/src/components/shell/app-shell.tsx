@@ -54,7 +54,7 @@ export function AppShell({ logoHref, groupes, storagePrefix, placeholderRecherch
 
       <footer className="fixed bottom-0 left-0 right-0 z-20 flex h-11 items-center justify-between gap-4 border-t border-border bg-surface px-4 text-xs text-text-faint sm:px-6 md:left-64 lg:px-8">
         <span className="truncate">
-          © {new Date().getFullYear()} dps.bj · Dispositif de Sécurité des Patients
+          © {new Date().getFullYear()} DSP · Dispositif de Sécurité des Patients
         </span>
         <span className="hidden shrink-0 sm:inline">Tous droits réservés</span>
       </footer>

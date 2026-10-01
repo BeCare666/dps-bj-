@@ -1,40 +1,54 @@
 import type { Metadata } from "next";
-import { apiFetchJson, ApiError } from "@/lib/api-server";
+import { apiFetchJson, silencieux } from "@/lib/api-server";
 import { Reveal } from "@/components/motion/reveal";
-import { DeclarerForm } from "@/components/ei/declarer-form";
-import type { TypeEi } from "@/lib/types";
+import { DeclarerForm, type CritereProposable } from "@/components/ei/declarer-form";
+import type { Grille, NiveauGraviteEi, Organisation, ServiceEtablissement, TypeEi } from "@/lib/types";
+import { PageContainer } from "@/components/ui/page-container";
+import { PageHeader } from "@/components/ui/page-header";
+import { Card } from "@/components/ui/card";
 
 export const metadata: Metadata = {
   title: "Déclarer un événement indésirable",
   robots: { index: false, follow: false },
 };
 
-async function silencieux<T>(promesse: Promise<T>, repli: T): Promise<T> {
-  try {
-    return await promesse;
-  } catch (erreur) {
-    if (erreur instanceof ApiError) return repli;
-    throw erreur;
-  }
+// §8.4 — critères proposables : ceux de la grille publiée la plus récente
+// correspondant à la catégorie ARS de l'établissement.
+async function chargerCriteres(): Promise<CritereProposable[]> {
+  const organisation = await silencieux(apiFetchJson<Organisation>("/organisations/me"), null);
+  if (!organisation) return [];
+  const grilles = await silencieux(apiFetchJson<Grille[]>(`/grilles?type=${organisation.type}`), []);
+  const grille = grilles.sort((a, b) => b.version - a.version).at(0);
+  if (!grille) return [];
+  const detail = await silencieux(apiFetchJson<Grille>(`/grilles/${grille.id}`), null);
+  return (detail?.domaines ?? []).flatMap((d) =>
+    d.normes.flatMap((n) => n.criteres.map((c) => ({ id: c.id, libelle: `${n.code} · ${c.code} — ${c.libelle}` }))),
+  );
 }
 
 export default async function DeclarerEiPage() {
-  const typesEi = await silencieux(apiFetchJson<TypeEi[]>("/types-ei"), []);
+  const [typesEi, niveauxGravite, services, criteres] = await Promise.all([
+    silencieux(apiFetchJson<TypeEi[]>("/types-ei"), []),
+    silencieux(apiFetchJson<NiveauGraviteEi[]>("/niveaux-gravite-ei"), []),
+    silencieux(apiFetchJson<ServiceEtablissement[]>("/organisation/services"), []),
+    chargerCriteres(),
+  ]);
 
   return (
-    <div className="mx-auto max-w-xl px-5 py-12 sm:px-8">
+    <PageContainer largeur="formulaire">
       <Reveal>
-        <span className="text-xs font-medium uppercase tracking-wide text-text-faint">Module EI</span>
-        <h1 className="mt-2 font-display text-2xl font-bold text-text">Déclarer un événement indésirable</h1>
-        <p className="mt-2 text-text-muted">
-          Toute personne de l&apos;organisation peut déclarer. La qualification de gravité sera faite par le
-          responsable qualité.
-        </p>
+        <PageHeader
+          filAriane={[{ label: "Événements indésirables", href: "/evenements-indesirables" }, { label: "Déclarer" }]}
+          surtitre="Module EI"
+          titre="Déclarer un événement indésirable"
+          description="La déclaration est transmise au responsable qualité, qui la qualifie puis en organise l'analyse et le plan d'action."
+        />
       </Reveal>
-
-      <Reveal delay={0.05} className="mt-8 rounded-[var(--radius-lg)] border border-border bg-surface p-6">
-        <DeclarerForm typesEi={typesEi} />
+      <Reveal delay={0.05}>
+        <Card>
+          <DeclarerForm typesEi={typesEi} niveauxGravite={niveauxGravite} services={services} criteres={criteres} />
+        </Card>
       </Reveal>
-    </div>
+    </PageContainer>
   );
 }

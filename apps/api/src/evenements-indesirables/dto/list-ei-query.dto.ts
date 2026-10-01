@@ -1,5 +1,5 @@
-import { IsEnum, IsOptional, IsString } from "class-validator";
-import { GraviteEi, StatutEi } from "../../generated/prisma/enums.js";
+import { IsEnum, IsIn, IsOptional, IsString } from "class-validator";
+import { StatutEi } from "../../generated/prisma/enums.js";
 
 export class ListEiQueryDto {
   @IsOptional()
@@ -7,8 +7,13 @@ export class ListEiQueryDto {
   statut?: StatutEi;
 
   @IsOptional()
-  @IsEnum(GraviteEi)
-  gravite?: GraviteEi;
+  @IsString()
+  niveauGraviteId?: string;
+
+  // "true" = uniquement les EI d'un niveau de gravité élevée (critique).
+  @IsOptional()
+  @IsIn(["true", "false"])
+  critique?: string;
 
   @IsOptional()
   @IsString()

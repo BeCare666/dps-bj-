@@ -1,44 +1,8 @@
 import Link from "next/link";
-import { SocialIcon } from "@/components/marketing/social-icons";
-import { RESEAUX_SOCIAUX, SITE } from "@/lib/site-config";
-
-const COLONNES = [
-  {
-    titre: "Plateforme",
-    liens: [
-      { href: "/#modules", label: "Auto-évaluation qualité" },
-      { href: "/#modules", label: "Score NEWS" },
-      { href: "/#modules", label: "Événements indésirables" },
-      { href: "/formations", label: "Formations" },
-    ],
-  },
-  {
-    titre: "Établissement",
-    liens: [
-      { href: "/inscription", label: "Créer un compte" },
-      { href: "/login", label: "Se connecter" },
-      { href: "/#etablissements", label: "Hôpitaux et centres de santé" },
-      { href: "/#securite", label: "Sécurité des données" },
-    ],
-  },
-  {
-    titre: "À propos",
-    liens: [
-      { href: "/a-propos", label: "Notre mission" },
-      { href: "/#fonctionnement", label: "Comment ça marche" },
-      { href: `mailto:${SITE.emailContact}`, label: "Nous contacter" },
-    ],
-  },
-  {
-    titre: "Informations légales",
-    liens: [
-      { href: "/conditions-utilisation", label: "Conditions d'utilisation" },
-      { href: "/politique-confidentialite", label: "Politique de confidentialité" },
-      { href: "/politique-confidentialite#cookies", label: "Cookies" },
-      { href: "/conditions-utilisation#credits", label: "Crédits photographiques" },
-    ],
-  },
-];
+import { ListeReseauxSociaux } from "@/components/marketing/social-icons";
+import { Logo } from "@/components/shell/logo";
+import { MENUS_VITRINE } from "@/lib/navigation-vitrine";
+import { SITE } from "@/lib/site-config";
 
 export function SiteFooter() {
   const annee = new Date().getFullYear();
@@ -55,10 +19,8 @@ export function SiteFooter() {
       <div className="relative mx-auto max-w-6xl px-5 pb-10 pt-16 sm:px-8 md:pt-20">
         <div className="grid gap-12 lg:grid-cols-[1.3fr_2fr]">
           <div>
-            <Link href="/" className="font-display text-2xl font-bold tracking-tight text-white">
-              dps<span className="text-accent">.</span>bj
-            </Link>
-            <p className="mt-2 text-xs font-medium uppercase tracking-[0.18em] text-white/50">{SITE.nomComplet}</p>
+            <Logo variante="sombre" />
+            <p className="mt-4 text-xs font-medium uppercase tracking-[0.18em] text-white/50">{SITE.nomComplet}</p>
             <p className="mt-5 max-w-sm text-sm leading-6 text-white/65">
               La plateforme qui accompagne les établissements de santé du Bénin dans l&apos;évaluation,
               la surveillance et l&apos;amélioration continue de la sécurité des soins.
@@ -77,34 +39,11 @@ export function SiteFooter() {
               {SITE.emailContact}
             </a>
 
-            <ul className="mt-8 flex flex-wrap gap-3" aria-label="Réseaux sociaux">
-              {RESEAUX_SOCIAUX.map(({ reseau, label, href }) => (
-                <li key={reseau}>
-                  <a
-                    href={href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={`${SITE.nom} sur ${label}`}
-                    className="group relative flex h-11 w-11 items-center justify-center overflow-hidden rounded-full border border-white/15 bg-white/[0.04] text-white/75 transition-all duration-500 hover:-translate-y-0.5 hover:border-white/40 hover:text-navy"
-                  >
-                    {/* Remplissage qui monte au survol, avec un fin reflet. */}
-                    <span
-                      aria-hidden="true"
-                      className="absolute inset-0 translate-y-full rounded-full bg-gradient-to-t from-white to-white/90 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-y-0"
-                    />
-                    <span
-                      aria-hidden="true"
-                      className="absolute inset-0 rounded-full ring-1 ring-inset ring-white/10 [background:radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.18),transparent_60%)]"
-                    />
-                    <SocialIcon reseau={reseau} width={18} height={18} className="relative" />
-                  </a>
-                </li>
-              ))}
-            </ul>
+            <ListeReseauxSociaux className="mt-8" />
           </div>
 
           <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-4">
-            {COLONNES.map((colonne) => (
+            {MENUS_VITRINE.map((colonne) => (
               <nav key={colonne.titre} aria-label={colonne.titre}>
                 <h2 className="text-xs font-semibold uppercase tracking-[0.16em] text-white/45">{colonne.titre}</h2>
                 <ul className="mt-5 flex flex-col gap-3">

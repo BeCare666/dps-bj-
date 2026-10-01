@@ -240,3 +240,11 @@ Vérification du code faite le 2026-09-29 : points 1, 2, 3, 4 et 6 présents dan
 - [x] Typage + build OK
 - [ ] Vérification visuelle
 - [ ] Email de contact et URL réseaux sociaux confirmés par le client
+
+---
+
+## Phase 6 — Dashboards niveau premium (tables avancées, dashboards, pages de détail)
+
+**Statut : IN_PROGRESS** (2026-09-30) : étapes 6.0 à 6.7 terminées (typage, lint, build OK), 6.8 codée et buildée, **vérification visuelle en attente** (extension Chrome + identifiants de test). Détail : `DASHBOARD_PREMIUM_ROADMAP.md` §9.
+
+Demande client du 2026-09-30 : dashboards « ultra luxueux, ultra premium, professionnels et naturels », tables et filtres avancés du niveau des meilleures plateformes, responsive, boutons d'action. Évaluation menu par menu (niveau actuel ≈ 2/5), écarts réels trouvés, standard cible, dépendances API et plan 6.0 à 6.9 : **voir `DASHBOARD_PREMIUM_ROADMAP.md`**.

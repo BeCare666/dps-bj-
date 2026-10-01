@@ -1,18 +1,9 @@
 import type { ReactNode } from "react";
 import { redirect } from "next/navigation";
 import { aRole } from "@/lib/session";
-import { apiFetchJson, ApiError } from "@/lib/api-server";
+import { apiFetchJson, silencieux } from "@/lib/api-server";
 import { AdminShell } from "@/components/admin/admin-shell";
 import type { NotificationInterne, UtilisateurProfil } from "@/lib/types";
-
-async function silencieux<T>(promesse: Promise<T>, repli: T): Promise<T> {
-  try {
-    return await promesse;
-  } catch (erreur) {
-    if (erreur instanceof ApiError) return repli;
-    throw erreur;
-  }
-}
 
 export default async function AdminLayout({ children }: { children: ReactNode }) {
   const estAdmin = await aRole("ADMIN_PLATEFORME");

@@ -10,14 +10,14 @@ export const metadata: Metadata = {
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ verified?: string; reset?: string; next?: string }>;
+  searchParams: Promise<{ verified?: string; reset?: string; active?: string; next?: string }>;
 }) {
-  const { verified, reset, next } = await searchParams;
+  const { verified, reset, active, next } = await searchParams;
 
   return (
     <AuthCard
       title="Bon retour"
-      description="Connectez-vous à votre espace dps.bj."
+      description="Connectez-vous à votre espace DSP."
       footer={
         <>
           Pas encore de compte ?{" "}
@@ -40,6 +40,11 @@ export default async function LoginPage({
       {reset === "true" && (
         <p className="mb-4 rounded-[var(--radius-md)] bg-success-soft px-3.5 py-2.5 text-sm text-success">
           Mot de passe réinitialisé. Vous pouvez maintenant vous connecter.
+        </p>
+      )}
+      {active === "true" && (
+        <p className="mb-4 rounded-[var(--radius-md)] bg-success-soft px-3.5 py-2.5 text-sm text-success">
+          Compte activé. Vous pouvez maintenant vous connecter avec votre mot de passe.
         </p>
       )}
       <LoginForm next={next} />
