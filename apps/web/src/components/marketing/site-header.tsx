@@ -188,13 +188,9 @@ export function SiteHeader() {
         </nav>
 
         <div className="hidden shrink-0 items-center gap-2 whitespace-nowrap lg:flex">
-          {/* Entre 1024 et 1280 px, la place manque : « Se connecter » reste
-              accessible dans le menu Établissement. */}
-          <span className="hidden xl:block">
-            <Button href="/login" variant="ghost">
-              Se connecter
-            </Button>
-          </span>
+          <Button href="/login" variant="ghost">
+            Se connecter
+          </Button>
           <Button href="/inscription" variant="primary">
             Créer un compte
           </Button>

@@ -1,5 +1,6 @@
 import type { SVGProps, JSX } from "react";
 import {
+  IconBarChart,
   IconCamera,
   IconChecklist,
   IconCookie,
@@ -40,7 +41,7 @@ export interface MenuVitrine {
 // quelles ; l'en-tête et le tiroir mobile les réorganisent (MENUS_EN_TETE).
 export const MENUS_VITRINE: MenuVitrine[] = [
   {
-    titre: "Plateforme",
+    titre: "Services",
     icon: IconGrid,
     liens: [
       { href: "/plateforme/auto-evaluation", label: "Auto-évaluation qualité", icon: IconChecklist },
@@ -92,10 +93,19 @@ export interface MenuEnTete {
   sections: SectionMenu[];
 }
 
-// Menus de l'en-tête et du tiroir mobile : mêmes liens que le footer, sauf que
-// « Plateforme » n'est plus un menu à part, ses liens sont placés dans « À propos »
-// (demande client du 2026-09-30 : trop de menus dans l'en-tête). « Accueil »
-// est un lien simple, rendu directement par l'en-tête.
+// Domaines de la page Statistiques : les établissements y transmettent leurs
+// statistiques au ministère (demande client du 2026-10-05).
+export const DOMAINES_STATISTIQUES = [
+  { slug: "transfusion", label: "Transfusion" },
+  { slug: "epidemiologie", label: "Épidémiologie" },
+  { slug: "pnlmnt", label: "Programme national de lutte contre les MNT (PNLMNT)" },
+  { slug: "sante-sexuelle-reproductive", label: "Santé sexuelle et reproductive" },
+] as const;
+
+// Menus de l'en-tête et du tiroir mobile (demande client du 2026-10-05) :
+// Accueil, À propos, Services, Statistiques. « Accueil » est un lien simple,
+// rendu directement par l'en-tête. « Établissement » et « Informations
+// légales » restent dans le footer ; connexion et inscription sont des boutons.
 function menu(titre: string): MenuVitrine {
   const trouve = MENUS_VITRINE.find((m) => m.titre === titre);
   if (!trouve) throw new Error(`Menu de vitrine introuvable : ${titre}`);
@@ -103,19 +113,20 @@ function menu(titre: string): MenuVitrine {
 }
 
 export const MENUS_EN_TETE: MenuEnTete[] = [
-  { titre: "Établissement", icon: menu("Établissement").icon, sections: [{ liens: menu("Établissement").liens }] },
   {
     titre: "À propos",
     icon: menu("À propos").icon,
     // Premier lien : la page À propos elle-même (présentation générale).
-    sections: [
-      { liens: [{ href: "/a-propos", label: "À propos", icon: IconInfo }, ...menu("À propos").liens] },
-      { titre: "Plateforme", liens: menu("Plateforme").liens },
-    ],
+    sections: [{ liens: [{ href: "/a-propos", label: "À propos", icon: IconInfo }, ...menu("À propos").liens] }],
   },
+  { titre: "Services", icon: menu("Services").icon, sections: [{ liens: menu("Services").liens }] },
   {
-    titre: "Informations légales",
-    icon: menu("Informations légales").icon,
-    sections: [{ liens: menu("Informations légales").liens }],
+    titre: "Statistiques",
+    icon: IconBarChart,
+    sections: [
+      {
+        liens: DOMAINES_STATISTIQUES.map((d) => ({ href: `/statistiques/${d.slug}`, label: d.label, icon: IconBarChart })),
+      },
+    ],
   },
 ];
