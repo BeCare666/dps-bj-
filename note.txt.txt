@@ -1,0 +1,638 @@
+12:54:40.207 Running build in Washington, D.C., USA (East) – iad1
+12:54:40.208 Build machine configuration: 2 cores, 8 GB
+12:54:40.408 Cloning github.com/BeCare666/dps-bj- (Branch: main, Commit: 77b2d2f)
+12:54:41.233 Cloning completed: 825.000ms
+12:54:43.637 Restored build cache from previous deployment (2DCK9x6d8XEbUTuTgyiMParesqwV)
+12:54:47.140 Running "vercel build"
+12:54:47.157 Vercel CLI 62.1.0
+12:54:49.320 Running "install" command: `cd ../.. && npm ci --include=dev`...
+12:55:03.258 npm warn deprecated jpeg-exif@1.1.4: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
+12:55:03.417 npm warn deprecated tsconfck@3.1.6: unmaintained
+12:55:03.518 npm warn deprecated crypto-js@4.2.0: Active development of CryptoJS has been discontinued. This library is no longer maintained.
+12:55:09.258 npm warn deprecated recharts@2.15.4: 1.x and 2.x branches are no longer active. Bump to Recharts v3 to receive latest features and bugfixes. See https://github.com/recharts/recharts/wiki/3.0-migration-guide
+12:55:11.697 npm warn deprecated eslint@9.39.5: This version is no longer supported. Please see https://eslint.org/version-support for other options.
+12:55:28.248 
+12:55:28.248 added 886 packages, and audited 890 packages in 39s
+12:55:28.248 
+12:55:28.248 251 packages are looking for funding
+12:55:28.249   run `npm fund` for details
+12:55:28.392 
+12:55:28.392 17 vulnerabilities (2 low, 2 moderate, 13 high)
+12:55:28.392 
+12:55:28.393 To address all issues possible (including breaking changes), run:
+12:55:28.393   npm audit fix --force
+12:55:28.393 
+12:55:28.393 Some issues need review, and may require choosing
+12:55:28.393 a different dependency.
+12:55:28.393 
+12:55:28.393 Run `npm audit` for details.
+12:55:28.394 npm warn install-scripts 5 packages have install scripts not yet covered by allowScripts:
+12:55:28.394 npm warn install-scripts   @prisma/engines@7.10.0 (postinstall: node scripts/postinstall.js)
+12:55:28.394 npm warn install-scripts   bcrypt@6.0.0 (install: node-gyp-build)
+12:55:28.394 npm warn install-scripts   esbuild@0.28.2 (postinstall: node install.js)
+12:55:28.395 npm warn install-scripts   prisma@7.10.0 (preinstall: node scripts/preinstall-entry.js)
+12:55:28.395 npm warn install-scripts   unrs-resolver@1.12.2 (postinstall: node postinstall.js)
+12:55:28.396 npm warn install-scripts
+12:55:28.396 npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.
+12:55:28.456 Detected Next.js version: 16.3.8
+12:55:28.457 Running "cd ../.. && npm run build -w @dps/shared && npm run build -w web"
+12:55:28.621 
+12:55:28.622 > @dps/shared@0.0.1 build
+12:55:28.622 > tsc -p tsconfig.json
+12:55:28.622 
+12:55:31.020 
+12:55:31.021 > web@0.1.0 build
+12:55:31.021 > next build
+12:55:31.021 
+12:55:31.548 ▲ Next.js 16.3.8 (Turbopack)
+12:55:32.202   Applying modifyConfig from Vercel
+12:55:32.204 ✓ Running next.config.ts took 659ms
+12:55:32.223 
+12:55:32.283   Creating an optimized production build ...
+12:55:42.707 
+12:55:42.708 > Build error occurred
+12:55:42.715 Error: Turbopack build failed with 16 errors:
+12:55:42.715 [next]/internal/font/google/plus_jakarta_sans_1c46a693.module.css:7:8
+12:55:42.715 Error: Module not found: Can't resolve '@vercel/turbopack-next/internal/font/google/font'
+12:55:42.715    5 |   font-weight: 500;
+12:55:42.715    6 |   font-display: swap;
+12:55:42.715 >  7 |   src: url(@vercel/turbopack-next/internal/font/google/font?{%22url%22:%22https://fonts.gs...
+12:55:42.715      |        ^
+12:55:42.716    8 |   unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+12:55:42.716    9 | }
+12:55:42.716   10 | /* vietnamese */
+12:55:42.716 
+12:55:42.716 next/font/google queries have exactly one entry
+12:55:42.716 
+12:55:42.716 Debug info:
+12:55:42.716 - Execution of *<ModuleAssetContext as AssetContext>::process_resolve_result failed
+12:55:42.716 - Execution of resolve failed
+12:55:42.716 - Execution of resolve_internal failed
+12:55:42.716 - Execution of <NextFontGoogleFontFileReplacer as ImportMappingReplacement>::result failed
+12:55:42.716 - next/font/google queries have exactly one entry
+12:55:42.716 Error while looking up import map: next/font/google queries have exactly one entry
+12:55:42.716 
+12:55:42.716 Debug info:
+12:55:42.716 - Execution of <NextFontGoogleFontFileReplacer as ImportMappingReplacement>::result failed
+12:55:42.716 - next/font/google queries have exactly one entry
+12:55:42.716 
+12:55:42.716 
+12:55:42.716 Import trace:
+12:55:42.717   Server Component:
+12:55:42.717     [next]/internal/font/google/plus_jakarta_sans_1c46a693.module.css
+12:55:42.717     [next]/internal/font/google/plus_jakarta_sans_1c46a693.js
+12:55:42.717     ./apps/web/src/app/layout.tsx
+12:55:42.717 
+12:55:42.717 https://nextjs.org/docs/messages/module-not-found
+12:55:42.717 
+12:55:42.717 
+12:55:42.717 [next]/internal/font/google/plus_jakarta_sans_1c46a693.module.css:16:8
+12:55:42.717 Error: Module not found: Can't resolve '@vercel/turbopack-next/internal/font/google/font'
+12:55:42.717   14 |   font-weight: 500;
+12:55:42.717   15 |   font-display: swap;
+12:55:42.717 > 16 |   src: url(@vercel/turbopack-next/internal/font/google/font?{%22url%22:%22https://fonts.gs...
+12:55:42.717      |        ^
+12:55:42.717   17 |   unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-0...
+12:55:42.717   18 | }
+12:55:42.717   19 | /* latin-ext */
+12:55:42.717 
+12:55:42.717 next/font/google queries have exactly one entry
+12:55:42.717 
+12:55:42.721 Debug info:
+12:55:42.722 - Execution of *<ModuleAssetContext as AssetContext>::process_resolve_result failed
+12:55:42.722 - Execution of resolve failed
+12:55:42.722 - Execution of resolve_internal failed
+12:55:42.722 - Execution of <NextFontGoogleFontFileReplacer as ImportMappingReplacement>::result failed
+12:55:42.722 - next/font/google queries have exactly one entry
+12:55:42.722 Error while looking up import map: next/font/google queries have exactly one entry
+12:55:42.722 
+12:55:42.722 Debug info:
+12:55:42.722 - Execution of <NextFontGoogleFontFileReplacer as ImportMappingReplacement>::result failed
+12:55:42.722 - next/font/google queries have exactly one entry
+12:55:42.722 
+12:55:42.722 
+12:55:42.722 Import trace:
+12:55:42.722   Server Component:
+12:55:42.722     [next]/internal/font/google/plus_jakarta_sans_1c46a693.module.css
+12:55:42.723     [next]/internal/font/google/plus_jakarta_sans_1c46a693.js
+12:55:42.723     ./apps/web/src/app/layout.tsx
+12:55:42.723 
+12:55:42.723 https://nextjs.org/docs/messages/module-not-found
+12:55:42.723 
+12:55:42.723 
+12:55:42.723 [next]/internal/font/google/plus_jakarta_sans_1c46a693.module.css:25:8
+12:55:42.723 Error: Module not found: Can't resolve '@vercel/turbopack-next/internal/font/google/font'
+12:55:42.723   23 |   font-weight: 500;
+12:55:42.726   24 |   font-display: swap;
+12:55:42.727 > 25 |   src: url(@vercel/turbopack-next/internal/font/google/font?{%22url%22:%22https://fonts.gs...
+12:55:42.727      |        ^
+12:55:42.727   26 |   unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, ...
+12:55:42.727   27 | }
+12:55:42.727   28 | /* latin */
+12:55:42.727 
+12:55:42.727 next/font/google queries have exactly one entry
+12:55:42.727 
+12:55:42.727 Debug info:
+12:55:42.727 - Execution of *<ModuleAssetContext as AssetContext>::process_resolve_result failed
+12:55:42.728 - Execution of resolve failed
+12:55:42.728 - Execution of resolve_internal failed
+12:55:42.728 - Execution of <NextFontGoogleFontFileReplacer as ImportMappingReplacement>::result failed
+12:55:42.728 - next/font/google queries have exactly one entry
+12:55:42.728 Error while looking up import map: next/font/google queries have exactly one entry
+12:55:42.728 
+12:55:42.729 Debug info:
+12:55:42.729 - Execution of <NextFontGoogleFontFileReplacer as ImportMappingReplacement>::result failed
+12:55:42.730 - next/font/google queries have exactly one entry
+12:55:42.730 
+12:55:42.730 
+12:55:42.730 Import trace:
+12:55:42.730   Server Component:
+12:55:42.730     [next]/internal/font/google/plus_jakarta_sans_1c46a693.module.css
+12:55:42.730     [next]/internal/font/google/plus_jakarta_sans_1c46a693.js
+12:55:42.730     ./apps/web/src/app/layout.tsx
+12:55:42.731 
+12:55:42.731 https://nextjs.org/docs/messages/module-not-found
+12:55:42.731 
+12:55:42.732 
+12:55:42.732 [next]/internal/font/google/plus_jakarta_sans_1c46a693.module.css:34:8
+12:55:42.732 Error: Module not found: Can't resolve '@vercel/turbopack-next/internal/font/google/font'
+12:55:42.732   32 |   font-weight: 500;
+12:55:42.732   33 |   font-display: swap;
+12:55:42.732 > 34 |   src: url(@vercel/turbopack-next/internal/font/google/font?{%22url%22:%22https://fonts.gs...
+12:55:42.732      |        ^
+12:55:42.732   35 |   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+...
+12:55:42.734   36 | }
+12:55:42.734   37 | /* cyrillic-ext */
+12:55:42.734 
+12:55:42.734 next/font/google queries have exactly one entry
+12:55:42.734 
+12:55:42.734 Debug info:
+12:55:42.735 - Execution of *<ModuleAssetContext as AssetContext>::process_resolve_result failed
+12:55:42.735 - Execution of resolve failed
+12:55:42.735 - Execution of resolve_internal failed
+12:55:42.735 - Execution of <NextFontGoogleFontFileReplacer as ImportMappingReplacement>::result failed
+12:55:42.735 - next/font/google queries have exactly one entry
+12:55:42.735 Error while looking up import map: next/font/google queries have exactly one entry
+12:55:42.735 
+12:55:42.735 Debug info:
+12:55:42.735 - Execution of <NextFontGoogleFontFileReplacer as ImportMappingReplacement>::result failed
+12:55:42.735 - next/font/google queries have exactly one entry
+12:55:42.735 
+12:55:42.735 
+12:55:42.736 Import trace:
+12:55:42.736   Server Component:
+12:55:42.736     [next]/internal/font/google/plus_jakarta_sans_1c46a693.module.css
+12:55:42.736     [next]/internal/font/google/plus_jakarta_sans_1c46a693.js
+12:55:42.736     ./apps/web/src/app/layout.tsx
+12:55:42.736 
+12:55:42.736 https://nextjs.org/docs/messages/module-not-found
+12:55:42.736 
+12:55:42.736 
+12:55:42.736 [next]/internal/font/google/plus_jakarta_sans_1c46a693.module.css:43:8
+12:55:42.736 Error: Module not found: Can't resolve '@vercel/turbopack-next/internal/font/google/font'
+12:55:42.736   41 |   font-weight: 600;
+12:55:42.736   42 |   font-display: swap;
+12:55:42.736 > 43 |   src: url(@vercel/turbopack-next/internal/font/google/font?{%22url%22:%22https://fonts.gs...
+12:55:42.736      |        ^
+12:55:42.736   44 |   unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+12:55:42.736   45 | }
+12:55:42.736   46 | /* vietnamese */
+12:55:42.736 
+12:55:42.736 next/font/google queries have exactly one entry
+12:55:42.736 
+12:55:42.736 Debug info:
+12:55:42.736 - Execution of *<ModuleAssetContext as AssetContext>::process_resolve_result failed
+12:55:42.736 - Execution of resolve failed
+12:55:42.736 - Execution of resolve_internal failed
+12:55:42.736 - Execution of <NextFontGoogleFontFileReplacer as ImportMappingReplacement>::result failed
+12:55:42.736 - next/font/google queries have exactly one entry
+12:55:42.736 Error while looking up import map: next/font/google queries have exactly one entry
+12:55:42.736 
+12:55:42.736 Debug info:
+12:55:42.736 - Execution of <NextFontGoogleFontFileReplacer as ImportMappingReplacement>::result failed
+12:55:42.736 - next/font/google queries have exactly one entry
+12:55:42.736 
+12:55:42.736 
+12:55:42.736 Import trace:
+12:55:42.736   Server Component:
+12:55:42.736     [next]/internal/font/google/plus_jakarta_sans_1c46a693.module.css
+12:55:42.737     [next]/internal/font/google/plus_jakarta_sans_1c46a693.js
+12:55:42.737     ./apps/web/src/app/layout.tsx
+12:55:42.737 
+12:55:42.737 https://nextjs.org/docs/messages/module-not-found
+12:55:42.737 
+12:55:42.737 
+12:55:42.737 [next]/internal/font/google/plus_jakarta_sans_1c46a693.module.css:52:8
+12:55:42.737 Error: Module not found: Can't resolve '@vercel/turbopack-next/internal/font/google/font'
+12:55:42.737   50 |   font-weight: 600;
+12:55:42.737   51 |   font-display: swap;
+12:55:42.737 > 52 |   src: url(@vercel/turbopack-next/internal/font/google/font?{%22url%22:%22https://fonts.gs...
+12:55:42.737      |        ^
+12:55:42.737   53 |   unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-0...
+12:55:42.737   54 | }
+12:55:42.737   55 | /* latin-ext */
+12:55:42.737 
+12:55:42.737 next/font/google queries have exactly one entry
+12:55:42.737 
+12:55:42.737 Debug info:
+12:55:42.737 - Execution of *<ModuleAssetContext as AssetContext>::process_resolve_result failed
+12:55:42.737 - Execution of resolve failed
+12:55:42.737 - Execution of resolve_internal failed
+12:55:42.737 - Execution of <NextFontGoogleFontFileReplacer as ImportMappingReplacement>::result failed
+12:55:42.737 - next/font/google queries have exactly one entry
+12:55:42.737 Error while looking up import map: next/font/google queries have exactly one entry
+12:55:42.737 
+12:55:42.737 Debug info:
+12:55:42.737 - Execution of <NextFontGoogleFontFileReplacer as ImportMappingReplacement>::result failed
+12:55:42.737 - next/font/google queries have exactly one entry
+12:55:42.737 
+12:55:42.737 
+12:55:42.737 Import trace:
+12:55:42.738   Server Component:
+12:55:42.738     [next]/internal/font/google/plus_jakarta_sans_1c46a693.module.css
+12:55:42.738     [next]/internal/font/google/plus_jakarta_sans_1c46a693.js
+12:55:42.738     ./apps/web/src/app/layout.tsx
+12:55:42.738 
+12:55:42.739 https://nextjs.org/docs/messages/module-not-found
+12:55:42.739 
+12:55:42.739 
+12:55:42.739 [next]/internal/font/google/plus_jakarta_sans_1c46a693.module.css:61:8
+12:55:42.739 Error: Module not found: Can't resolve '@vercel/turbopack-next/internal/font/google/font'
+12:55:42.739   59 |   font-weight: 600;
+12:55:42.739   60 |   font-display: swap;
+12:55:42.739 > 61 |   src: url(@vercel/turbopack-next/internal/font/google/font?{%22url%22:%22https://fonts.gs...
+12:55:42.739      |        ^
+12:55:42.739   62 |   unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, ...
+12:55:42.739   63 | }
+12:55:42.739   64 | /* latin */
+12:55:42.739 
+12:55:42.739 next/font/google queries have exactly one entry
+12:55:42.739 
+12:55:42.739 Debug info:
+12:55:42.740 - Execution of *<ModuleAssetContext as AssetContext>::process_resolve_result failed
+12:55:42.740 - Execution of resolve failed
+12:55:42.740 - Execution of resolve_internal failed
+12:55:42.740 - Execution of <NextFontGoogleFontFileReplacer as ImportMappingReplacement>::result failed
+12:55:42.740 - next/font/google queries have exactly one entry
+12:55:42.740 Error while looking up import map: next/font/google queries have exactly one entry
+12:55:42.740 
+12:55:42.740 Debug info:
+12:55:42.740 - Execution of <NextFontGoogleFontFileReplacer as ImportMappingReplacement>::result failed
+12:55:42.740 - next/font/google queries have exactly one entry
+12:55:42.740 
+12:55:42.740 
+12:55:42.740 Import trace:
+12:55:42.740   Server Component:
+12:55:42.740     [next]/internal/font/google/plus_jakarta_sans_1c46a693.module.css
+12:55:42.740     [next]/internal/font/google/plus_jakarta_sans_1c46a693.js
+12:55:42.740     ./apps/web/src/app/layout.tsx
+12:55:42.741 
+12:55:42.741 https://nextjs.org/docs/messages/module-not-found
+12:55:42.741 
+12:55:42.741 
+12:55:42.741 [next]/internal/font/google/plus_jakarta_sans_1c46a693.module.css:70:8
+12:55:42.741 Error: Module not found: Can't resolve '@vercel/turbopack-next/internal/font/google/font'
+12:55:42.741   68 |   font-weight: 600;
+12:55:42.741   69 |   font-display: swap;
+12:55:42.741 > 70 |   src: url(@vercel/turbopack-next/internal/font/google/font?{%22url%22:%22https://fonts.gs...
+12:55:42.741      |        ^
+12:55:42.741   71 |   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+...
+12:55:42.741   72 | }
+12:55:42.741   73 | /* cyrillic-ext */
+12:55:42.742 
+12:55:42.742 next/font/google queries have exactly one entry
+12:55:42.742 
+12:55:42.742 Debug info:
+12:55:42.742 - Execution of *<ModuleAssetContext as AssetContext>::process_resolve_result failed
+12:55:42.742 - Execution of resolve failed
+12:55:42.742 - Execution of resolve_internal failed
+12:55:42.742 - Execution of <NextFontGoogleFontFileReplacer as ImportMappingReplacement>::result failed
+12:55:42.742 - next/font/google queries have exactly one entry
+12:55:42.742 Error while looking up import map: next/font/google queries have exactly one entry
+12:55:42.742 
+12:55:42.742 Debug info:
+12:55:42.742 - Execution of <NextFontGoogleFontFileReplacer as ImportMappingReplacement>::result failed
+12:55:42.743 - next/font/google queries have exactly one entry
+12:55:42.743 
+12:55:42.743 
+12:55:42.743 Import trace:
+12:55:42.743   Server Component:
+12:55:42.743     [next]/internal/font/google/plus_jakarta_sans_1c46a693.module.css
+12:55:42.743     [next]/internal/font/google/plus_jakarta_sans_1c46a693.js
+12:55:42.743     ./apps/web/src/app/layout.tsx
+12:55:42.743 
+12:55:42.743 https://nextjs.org/docs/messages/module-not-found
+12:55:42.743 
+12:55:42.743 
+12:55:42.743 [next]/internal/font/google/plus_jakarta_sans_1c46a693.module.css:79:8
+12:55:42.743 Error: Module not found: Can't resolve '@vercel/turbopack-next/internal/font/google/font'
+12:55:42.743   77 |   font-weight: 700;
+12:55:42.744   78 |   font-display: swap;
+12:55:42.744 > 79 |   src: url(@vercel/turbopack-next/internal/font/google/font?{%22url%22:%22https://fonts.gs...
+12:55:42.744      |        ^
+12:55:42.744   80 |   unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+12:55:42.744   81 | }
+12:55:42.744   82 | /* vietnamese */
+12:55:42.744 
+12:55:42.744 next/font/google queries have exactly one entry
+12:55:42.744 
+12:55:42.744 Debug info:
+12:55:42.745 - Execution of *<ModuleAssetContext as AssetContext>::process_resolve_result failed
+12:55:42.745 - Execution of resolve failed
+12:55:42.745 - Execution of resolve_internal failed
+12:55:42.745 - Execution of <NextFontGoogleFontFileReplacer as ImportMappingReplacement>::result failed
+12:55:42.745 - next/font/google queries have exactly one entry
+12:55:42.745 Error while looking up import map: next/font/google queries have exactly one entry
+12:55:42.745 
+12:55:42.745 Debug info:
+12:55:42.745 - Execution of <NextFontGoogleFontFileReplacer as ImportMappingReplacement>::result failed
+12:55:42.745 - next/font/google queries have exactly one entry
+12:55:42.745 
+12:55:42.745 
+12:55:42.745 Import trace:
+12:55:42.745   Server Component:
+12:55:42.745     [next]/internal/font/google/plus_jakarta_sans_1c46a693.module.css
+12:55:42.745     [next]/internal/font/google/plus_jakarta_sans_1c46a693.js
+12:55:42.745     ./apps/web/src/app/layout.tsx
+12:55:42.745 
+12:55:42.745 https://nextjs.org/docs/messages/module-not-found
+12:55:42.745 
+12:55:42.745 
+12:55:42.745 [next]/internal/font/google/plus_jakarta_sans_1c46a693.module.css:88:8
+12:55:42.745 Error: Module not found: Can't resolve '@vercel/turbopack-next/internal/font/google/font'
+12:55:42.745   86 |   font-weight: 700;
+12:55:42.745   87 |   font-display: swap;
+12:55:42.745 > 88 |   src: url(@vercel/turbopack-next/internal/font/google/font?{%22url%22:%22https://fonts.gs...
+12:55:42.745      |        ^
+12:55:42.745   89 |   unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-0...
+12:55:42.745   90 | }
+12:55:42.745   91 | /* latin-ext */
+12:55:42.745 
+12:55:42.745 next/font/google queries have exactly one entry
+12:55:42.746 
+12:55:42.746 Debug info:
+12:55:42.746 - Execution of *<ModuleAssetContext as AssetContext>::process_resolve_result failed
+12:55:42.746 - Execution of resolve failed
+12:55:42.746 - Execution of resolve_internal failed
+12:55:42.746 - Execution of <NextFontGoogleFontFileReplacer as ImportMappingReplacement>::result failed
+12:55:42.746 - next/font/google queries have exactly one entry
+12:55:42.746 Error while looking up import map: next/font/google queries have exactly one entry
+12:55:42.746 
+12:55:42.746 Debug info:
+12:55:42.746 - Execution of <NextFontGoogleFontFileReplacer as ImportMappingReplacement>::result failed
+12:55:42.746 - next/font/google queries have exactly one entry
+12:55:42.746 
+12:55:42.746 
+12:55:42.746 Import trace:
+12:55:42.746   Server Component:
+12:55:42.746     [next]/internal/font/google/plus_jakarta_sans_1c46a693.module.css
+12:55:42.746     [next]/internal/font/google/plus_jakarta_sans_1c46a693.js
+12:55:42.746     ./apps/web/src/app/layout.tsx
+12:55:42.746 
+12:55:42.746 https://nextjs.org/docs/messages/module-not-found
+12:55:42.746 
+12:55:42.746 
+12:55:42.746 [next]/internal/font/google/plus_jakarta_sans_1c46a693.module.css:97:8
+12:55:42.746 Error: Module not found: Can't resolve '@vercel/turbopack-next/internal/font/google/font'
+12:55:42.746    95 |   font-weight: 700;
+12:55:42.746    96 |   font-display: swap;
+12:55:42.746 >  97 |   src: url(@vercel/turbopack-next/internal/font/google/font?{%22url%22:%22https://fonts.g...
+12:55:42.746       |        ^
+12:55:42.746    98 |   unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,...
+12:55:42.746    99 | }
+12:55:42.746   100 | /* latin */
+12:55:42.746 
+12:55:42.746 next/font/google queries have exactly one entry
+12:55:42.746 
+12:55:42.746 Debug info:
+12:55:42.746 - Execution of *<ModuleAssetContext as AssetContext>::process_resolve_result failed
+12:55:42.746 - Execution of resolve failed
+12:55:42.746 - Execution of resolve_internal failed
+12:55:42.746 - Execution of <NextFontGoogleFontFileReplacer as ImportMappingReplacement>::result failed
+12:55:42.746 - next/font/google queries have exactly one entry
+12:55:42.746 Error while looking up import map: next/font/google queries have exactly one entry
+12:55:42.746 
+12:55:42.746 Debug info:
+12:55:42.746 - Execution of <NextFontGoogleFontFileReplacer as ImportMappingReplacement>::result failed
+12:55:42.746 - next/font/google queries have exactly one entry
+12:55:42.746 
+12:55:42.748 
+12:55:42.748 Import trace:
+12:55:42.748   Server Component:
+12:55:42.748     [next]/internal/font/google/plus_jakarta_sans_1c46a693.module.css
+12:55:42.748     [next]/internal/font/google/plus_jakarta_sans_1c46a693.js
+12:55:42.748     ./apps/web/src/app/layout.tsx
+12:55:42.748 
+12:55:42.748 https://nextjs.org/docs/messages/module-not-found
+12:55:42.748 
+12:55:42.748 
+12:55:42.748 [next]/internal/font/google/plus_jakarta_sans_1c46a693.module.css:106:8
+12:55:42.748 Error: Module not found: Can't resolve '@vercel/turbopack-next/internal/font/google/font'
+12:55:42.748   104 |   font-weight: 700;
+12:55:42.748   105 |   font-display: swap;
+12:55:42.748 > 106 |   src: url(@vercel/turbopack-next/internal/font/google/font?{%22url%22:%22https://fonts.g...
+12:55:42.748       |        ^
+12:55:42.748   107 |   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U...
+12:55:42.748   108 | }
+12:55:42.748   109 | /* cyrillic-ext */
+12:55:42.748 
+12:55:42.748 next/font/google queries have exactly one entry
+12:55:42.748 
+12:55:42.748 Debug info:
+12:55:42.748 - Execution of *<ModuleAssetContext as AssetContext>::process_resolve_result failed
+12:55:42.748 - Execution of resolve failed
+12:55:42.748 - Execution of resolve_internal failed
+12:55:42.748 - Execution of <NextFontGoogleFontFileReplacer as ImportMappingReplacement>::result failed
+12:55:42.748 - next/font/google queries have exactly one entry
+12:55:42.748 Error while looking up import map: next/font/google queries have exactly one entry
+12:55:42.748 
+12:55:42.748 Debug info:
+12:55:42.748 - Execution of <NextFontGoogleFontFileReplacer as ImportMappingReplacement>::result failed
+12:55:42.748 - next/font/google queries have exactly one entry
+12:55:42.748 
+12:55:42.748 
+12:55:42.748 Import trace:
+12:55:42.748   Server Component:
+12:55:42.748     [next]/internal/font/google/plus_jakarta_sans_1c46a693.module.css
+12:55:42.748     [next]/internal/font/google/plus_jakarta_sans_1c46a693.js
+12:55:42.748     ./apps/web/src/app/layout.tsx
+12:55:42.749 
+12:55:42.749 https://nextjs.org/docs/messages/module-not-found
+12:55:42.749 
+12:55:42.749 
+12:55:42.749 [next]/internal/font/google/plus_jakarta_sans_1c46a693.module.css:115:8
+12:55:42.749 Error: Module not found: Can't resolve '@vercel/turbopack-next/internal/font/google/font'
+12:55:42.749   113 |   font-weight: 800;
+12:55:42.749   114 |   font-display: swap;
+12:55:42.749 > 115 |   src: url(@vercel/turbopack-next/internal/font/google/font?{%22url%22:%22https://fonts.g...
+12:55:42.749       |        ^
+12:55:42.749   116 |   unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+12:55:42.749   117 | }
+12:55:42.749   118 | /* vietnamese */
+12:55:42.749 
+12:55:42.749 next/font/google queries have exactly one entry
+12:55:42.749 
+12:55:42.749 Debug info:
+12:55:42.749 - Execution of *<ModuleAssetContext as AssetContext>::process_resolve_result failed
+12:55:42.749 - Execution of resolve failed
+12:55:42.749 - Execution of resolve_internal failed
+12:55:42.749 - Execution of <NextFontGoogleFontFileReplacer as ImportMappingReplacement>::result failed
+12:55:42.749 - next/font/google queries have exactly one entry
+12:55:42.749 Error while looking up import map: next/font/google queries have exactly one entry
+12:55:42.749 
+12:55:42.749 Debug info:
+12:55:42.749 - Execution of <NextFontGoogleFontFileReplacer as ImportMappingReplacement>::result failed
+12:55:42.749 - next/font/google queries have exactly one entry
+12:55:42.750 
+12:55:42.750 
+12:55:42.751 Import trace:
+12:55:42.751   Server Component:
+12:55:42.751     [next]/internal/font/google/plus_jakarta_sans_1c46a693.module.css
+12:55:42.751     [next]/internal/font/google/plus_jakarta_sans_1c46a693.js
+12:55:42.751     ./apps/web/src/app/layout.tsx
+12:55:42.751 
+12:55:42.751 https://nextjs.org/docs/messages/module-not-found
+12:55:42.751 
+12:55:42.751 
+12:55:42.752 [next]/internal/font/google/plus_jakarta_sans_1c46a693.module.css:124:8
+12:55:42.752 Error: Module not found: Can't resolve '@vercel/turbopack-next/internal/font/google/font'
+12:55:42.752   122 |   font-weight: 800;
+12:55:42.752   123 |   font-display: swap;
+12:55:42.752 > 124 |   src: url(@vercel/turbopack-next/internal/font/google/font?{%22url%22:%22https://fonts.g...
+12:55:42.752       |        ^
+12:55:42.752   125 |   unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-...
+12:55:42.752   126 | }
+12:55:42.752   127 | /* latin-ext */
+12:55:42.752 
+12:55:42.752 next/font/google queries have exactly one entry
+12:55:42.753 
+12:55:42.753 Debug info:
+12:55:42.753 - Execution of *<ModuleAssetContext as AssetContext>::process_resolve_result failed
+12:55:42.753 - Execution of resolve failed
+12:55:42.753 - Execution of resolve_internal failed
+12:55:42.753 - Execution of <NextFontGoogleFontFileReplacer as ImportMappingReplacement>::result failed
+12:55:42.753 - next/font/google queries have exactly one entry
+12:55:42.753 Error while looking up import map: next/font/google queries have exactly one entry
+12:55:42.753 
+12:55:42.753 Debug info:
+12:55:42.753 - Execution of <NextFontGoogleFontFileReplacer as ImportMappingReplacement>::result failed
+12:55:42.753 - next/font/google queries have exactly one entry
+12:55:42.753 
+12:55:42.754 
+12:55:42.754 Import trace:
+12:55:42.754   Server Component:
+12:55:42.754     [next]/internal/font/google/plus_jakarta_sans_1c46a693.module.css
+12:55:42.754     [next]/internal/font/google/plus_jakarta_sans_1c46a693.js
+12:55:42.754     ./apps/web/src/app/layout.tsx
+12:55:42.754 
+12:55:42.754 https://nextjs.org/docs/messages/module-not-found
+12:55:42.754 
+12:55:42.754 
+12:55:42.754 [next]/internal/font/google/plus_jakarta_sans_1c46a693.module.css:133:8
+12:55:42.754 Error: Module not found: Can't resolve '@vercel/turbopack-next/internal/font/google/font'
+12:55:42.754   131 |   font-weight: 800;
+12:55:42.755   132 |   font-display: swap;
+12:55:42.755 > 133 |   src: url(@vercel/turbopack-next/internal/font/google/font?{%22url%22:%22https://fonts.g...
+12:55:42.755       |        ^
+12:55:42.755   134 |   unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,...
+12:55:42.755   135 | }
+12:55:42.755   136 | /* latin */
+12:55:42.755 
+12:55:42.755 next/font/google queries have exactly one entry
+12:55:42.755 
+12:55:42.755 Debug info:
+12:55:42.755 - Execution of *<ModuleAssetContext as AssetContext>::process_resolve_result failed
+12:55:42.755 - Execution of resolve failed
+12:55:42.755 - Execution of resolve_internal failed
+12:55:42.757 - Execution of <NextFontGoogleFontFileReplacer as ImportMappingReplacement>::result failed
+12:55:42.757 - next/font/google queries have exactly one entry
+12:55:42.757 Error while looking up import map: next/font/google queries have exactly one entry
+12:55:42.757 
+12:55:42.757 Debug info:
+12:55:42.757 - Execution of <NextFontGoogleFontFileReplacer as ImportMappingReplacement>::result failed
+12:55:42.757 - next/font/google queries have exactly one entry
+12:55:42.757 
+12:55:42.757 
+12:55:42.757 Import trace:
+12:55:42.757   Server Component:
+12:55:42.757     [next]/internal/font/google/plus_jakarta_sans_1c46a693.module.css
+12:55:42.757     [next]/internal/font/google/plus_jakarta_sans_1c46a693.js
+12:55:42.757     ./apps/web/src/app/layout.tsx
+12:55:42.757 
+12:55:42.758 https://nextjs.org/docs/messages/module-not-found
+12:55:42.758 
+12:55:42.758 
+12:55:42.758 [next]/internal/font/google/plus_jakarta_sans_1c46a693.module.css:142:8
+12:55:42.758 Error: Module not found: Can't resolve '@vercel/turbopack-next/internal/font/google/font'
+12:55:42.758   140 |   font-weight: 800;
+12:55:42.758   141 |   font-display: swap;
+12:55:42.758 > 142 |   src: url(@vercel/turbopack-next/internal/font/google/font?{%22url%22:%22https://fonts.g...
+12:55:42.758       |        ^
+12:55:42.758   143 |   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U...
+12:55:42.758   144 | }
+12:55:42.759   145 | @font-face {
+12:55:42.759 
+12:55:42.759 next/font/google queries have exactly one entry
+12:55:42.759 
+12:55:42.759 Debug info:
+12:55:42.759 - Execution of *<ModuleAssetContext as AssetContext>::process_resolve_result failed
+12:55:42.759 - Execution of resolve failed
+12:55:42.759 - Execution of resolve_internal failed
+12:55:42.759 - Execution of <NextFontGoogleFontFileReplacer as ImportMappingReplacement>::result failed
+12:55:42.759 - next/font/google queries have exactly one entry
+12:55:42.759 Error while looking up import map: next/font/google queries have exactly one entry
+12:55:42.759 
+12:55:42.759 Debug info:
+12:55:42.759 - Execution of <NextFontGoogleFontFileReplacer as ImportMappingReplacement>::result failed
+12:55:42.759 - next/font/google queries have exactly one entry
+12:55:42.759 
+12:55:42.759 
+12:55:42.759 Import trace:
+12:55:42.759   Server Component:
+12:55:42.759     [next]/internal/font/google/plus_jakarta_sans_1c46a693.module.css
+12:55:42.759     [next]/internal/font/google/plus_jakarta_sans_1c46a693.js
+12:55:42.759     ./apps/web/src/app/layout.tsx
+12:55:42.759 
+12:55:42.759 https://nextjs.org/docs/messages/module-not-found
+12:55:42.759 
+12:55:42.759 
+12:55:42.759     at <unknown> ([next]/internal/font/google/plus_jakarta_sans_1c46a693.module.css:7:8)
+12:55:42.759     at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+12:55:42.759     at <unknown> ([next]/internal/font/google/plus_jakarta_sans_1c46a693.module.css:16:8)
+12:55:42.759     at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+12:55:42.759     at <unknown> ([next]/internal/font/google/plus_jakarta_sans_1c46a693.module.css:25:8)
+12:55:42.759     at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+12:55:42.759     at <unknown> ([next]/internal/font/google/plus_jakarta_sans_1c46a693.module.css:34:8)
+12:55:42.760     at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+12:55:42.760     at <unknown> ([next]/internal/font/google/plus_jakarta_sans_1c46a693.module.css:43:8)
+12:55:42.760     at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+12:55:42.760     at <unknown> ([next]/internal/font/google/plus_jakarta_sans_1c46a693.module.css:52:8)
+12:55:42.760     at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+12:55:42.760     at <unknown> ([next]/internal/font/google/plus_jakarta_sans_1c46a693.module.css:61:8)
+12:55:42.760     at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+12:55:42.760     at <unknown> ([next]/internal/font/google/plus_jakarta_sans_1c46a693.module.css:70:8)
+12:55:42.760     at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+12:55:42.760     at <unknown> ([next]/internal/font/google/plus_jakarta_sans_1c46a693.module.css:79:8)
+12:55:42.760     at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+12:55:42.760     at <unknown> ([next]/internal/font/google/plus_jakarta_sans_1c46a693.module.css:88:8)
+12:55:42.760     at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+12:55:42.760     at <unknown> ([next]/internal/font/google/plus_jakarta_sans_1c46a693.module.css:97:8)
+12:55:42.760     at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+12:55:42.760     at <unknown> ([next]/internal/font/google/plus_jakarta_sans_1c46a693.module.css:106:8)
+12:55:42.760     at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+12:55:42.760     at <unknown> ([next]/internal/font/google/plus_jakarta_sans_1c46a693.module.css:115:8)
+12:55:42.760     at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+12:55:42.760     at <unknown> ([next]/internal/font/google/plus_jakarta_sans_1c46a693.module.css:124:8)
+12:55:42.760     at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+12:55:42.760     at <unknown> ([next]/internal/font/google/plus_jakarta_sans_1c46a693.module.css:133:8)
+12:55:42.760     at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+12:55:42.760     at <unknown> ([next]/internal/font/google/plus_jakarta_sans_1c46a693.module.css:142:8)
+12:55:42.760     at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+12:55:42.803 npm error Lifecycle script `build` failed with error:
+12:55:42.805 npm error code 1
+12:55:42.805 npm error path /vercel/path0/apps/web
+12:55:42.805 npm error workspace web@0.1.0
+12:55:42.805 npm error location /vercel/path0/apps/web
+12:55:42.805 npm error command failed
+12:55:42.806 npm error command sh -c next build
+12:55:42.838 Error: Command "cd ../.. && npm run build -w @dps/shared && npm run build -w web" exited with 1
