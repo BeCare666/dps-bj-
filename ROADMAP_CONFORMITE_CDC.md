@@ -368,6 +368,34 @@ Légende : `[ ]` à faire · `[~]` en cours · `[x]` fait et testé · `[!]` blo
 - Suite e2e complète : **19 fichiers, 142/142** (exit 0).
 - `next build --webpack` avec `next` 16.3.8 : **réussi** (Next.js 16.3.8, compilé en 9,2 min, 61/61 pages générées, exit 0).
 
+### Vérification de l'IFU auprès de la DGI à l'inscription (06/10/2026)
+
+**Source** : PDF « IFU API Integration » (DGI, IFUONLINE 3.1.2), §1 et §2 : `GET https://backend.impots.bj:8443/onlineifu-prod/api/contribuable/{ifu}`, en-tête `Apikey`, 200 = contribuable trouvé, 404 = inconnu.
+
+**Ce qui a été fait**
+- API : `src/ifu/` (`IfuService`). Seul le nom est extrait de la réponse : dénomination de l'entreprise, sinon nom usuel, sinon nom et prénom du contribuable. Le reste des données n'est ni conservé ni journalisé.
+- API : `GET /auth/verifier-ifu/:ifu`, public, limité à 10 requêtes par minute et par IP. La clé DGI reste côté serveur.
+- API : `registerOrganisation` revérifie l'IFU côté serveur. Un IFU introuvable donne 400, une DGI injoignable donne 503 et aucun compte n'est créé.
+- Web : l'IFU est le premier champ du formulaire d'inscription Établissement. À 13 chiffres, il est vérifié et le nom trouvé remplit « Nom de l'établissement », qui reste modifiable.
+- Dashboard admin, Intégrations : ligne « API IFU (DGI) », vérification de présence de `IFU_API_KEY` uniquement.
+
+**Décisions** (le PDF ne tranche pas)
+- Endpoint §2 (`GET {ifu}`) plutôt que §5 (`ifuForMecef`), réservé par le PDF à l'intégration des MeCEF.
+- Sans `IFU_API_KEY`, la vérification est désactivée : seuls le format et l'unicité sont contrôlés, comme avant, et le formulaire l'indique.
+- Avec clé, une DGI injoignable **bloque** l'inscription. C'est l'option prudente, mais elle est réversible.
+- Une réponse 200 sans `contribuable` ni `entreprise` vaut « introuvable ». Le sens des champs `etat` (ex. `NON_IMMATRICULE`) et `result` n'est pas documenté, ils ne sont pas interprétés.
+- Seul « Nom de l'établissement » est pré-rempli. « Raison sociale » ne l'est pas, car cela n'a pas été demandé.
+
+**[!] Bloqué côté client**
+- **Clé d'API DGI** : la clé du PDF est déclarée invalide par la DGI elle-même. Une clé est délivrée à chaque demandeur par email formel. Tant qu'elle manque, la vérification reste désactivée.
+- **Certificat HTTPS de `backend.impots.bj` expiré le 31/12/2024** (constaté le 06/10/2026). Node.js refuse donc la connexion. `IFU_API_TLS_INSECURE=true` désactive la vérification TLS pour ce seul appel, c'est un choix à faire en connaissance de cause.
+
+**Tests**
+- Unitaires : `src/ifu/ifu.service.spec.ts` (format, absence de clé, extraction du nom, 404, 401/403/500, erreur réseau, réponse non JSON) et 3 nouveaux cas dans `src/auth/auth.service.spec.ts`. `src/ifu` + `src/auth` : **59/59**.
+- `tsc --noEmit` web : OK.
+- Appel réel vers `backend.impots.bj` avec une fausse clé : en TLS strict, `certificate has expired` donne « indisponible » ; avec `IFU_API_TLS_INSECURE=true`, la DGI répond HTTP 401, ce qui donne aussi « indisponible ».
+- Non testé avec une vraie clé : la réponse 200 réelle n'a jamais été observée.
+
 ---
 
 ## Bilan après mise en conformité (01/10/2026)
@@ -403,7 +431,7 @@ Légende : `[ ]` à faire · `[~]` en cours · `[x]` fait et testé · `[!]` blo
 | 11.2 Notifications | 🟡 | ✅ | — |
 | 12.1 à 12.6 Administration | 🟡 | ✅ | — |
 | 13.1 Isolation | ✅ | ✅ | — |
-| 13.2 Sécurité d'accès | 🟡 | ✅ | Vérification de l'IFU limitée au format (13 chiffres) et à l'unicité |
+| 13.2 Sécurité d'accès | 🟡 | ✅ | Vérification IFU auprès de la DGI codée (06/10/2026), inactive tant que la clé d'API DGI n'est pas fournie |
 | 13.3 Disponibilité | ❌ | ❌ | Dépend du déploiement |
 | 13.4 Immuabilité, corrections tracées | 🟡 | ✅ | — |
 | 13.5 Évolutivité | 🟡 | ✅ (sauf grille NEWS, voir 7.2) | — |

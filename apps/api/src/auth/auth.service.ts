@@ -1,9 +1,10 @@
-import { ConflictException, ForbiddenException, Injectable, UnauthorizedException, BadRequestException } from "@nestjs/common";
+import { ConflictException, ForbiddenException, Injectable, UnauthorizedException, BadRequestException, ServiceUnavailableException } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import * as bcrypt from "bcrypt";
 import { PrismaService } from "../prisma/prisma.service.js";
 import { MailerService } from "../notifications/mailer.service.js";
 import { NotificationsInternesService } from "../notifications-internes/notifications-internes.service.js";
+import { IfuService } from "../ifu/ifu.service.js";
 import { RoleUtilisateur, TypeCompte } from "../generated/prisma/enums.js";
 import type { Utilisateur, UtilisateurRole } from "../generated/prisma/client.js";
 import type { RegisterOrganisationDto } from "./dto/register-organisation.dto.js";
@@ -36,6 +37,7 @@ export class AuthService {
     private readonly jwt: JwtService,
     private readonly mailer: MailerService,
     private readonly notifications: NotificationsInternesService,
+    private readonly ifu: IfuService,
   ) {}
 
   async registerOrganisation(dto: RegisterOrganisationDto): Promise<CompteEnregistre> {
@@ -47,6 +49,17 @@ export class AuthService {
     if (ifuExistant) throw new ConflictException("Une organisation avec cet IFU existe déjà");
     if (emailExistant) throw new ConflictException("Un compte existe déjà avec cet email");
     if (emailOrganisationExistant) throw new ConflictException("Un établissement utilise déjà cet email");
+
+    // IFU revérifié côté serveur auprès de la DGI (le formulaire le vérifie
+    // déjà, mais ne s'y fie pas). Sans clé IFU_API_KEY, la vérification est
+    // désactivée et seuls le format et l'unicité sont contrôlés.
+    const verificationIfu = await this.ifu.verifier(dto.organisationIfu);
+    if (verificationIfu.statut === "introuvable") {
+      throw new BadRequestException("Cet IFU est introuvable auprès de la DGI");
+    }
+    if (verificationIfu.statut === "indisponible") {
+      throw new ServiceUnavailableException("La vérification de l'IFU auprès de la DGI est momentanément indisponible, réessayez plus tard");
+    }
 
     const motDePasseHash = await bcrypt.hash(dto.motDePasse, BCRYPT_ROUNDS);
 

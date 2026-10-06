@@ -5,6 +5,7 @@ import { AuthService } from "./auth.service.js";
 import { PrismaService } from "../prisma/prisma.service.js";
 import { MailerService } from "../notifications/mailer.service.js";
 import { NotificationsInternesService } from "../notifications-internes/notifications-internes.service.js";
+import { IfuService } from "../ifu/ifu.service.js";
 import { Civilite, RoleUtilisateur, TypeCompte, TypeEtablissement, TypeStructure } from "../generated/prisma/enums.js";
 
 process.env.JWT_SECRET = "test-access-secret";
@@ -36,10 +37,12 @@ describe("AuthService", () => {
   let service: AuthService;
   let prisma: ReturnType<typeof buildPrismaMock>;
   let mailer: { sendPasswordResetEmail: ReturnType<typeof vi.fn>; sendVerificationEmail: ReturnType<typeof vi.fn> };
+  let ifu: { verifier: ReturnType<typeof vi.fn> };
 
   beforeEach(async () => {
     prisma = buildPrismaMock();
     mailer = { sendPasswordResetEmail: vi.fn(), sendVerificationEmail: vi.fn() };
+    ifu = { verifier: vi.fn().mockResolvedValue({ statut: "trouve", nom: "Hôpital Test" }) };
 
     const module: TestingModule = await Test.createTestingModule({
       imports: [JwtModule.register({})],
@@ -48,6 +51,7 @@ describe("AuthService", () => {
         { provide: PrismaService, useValue: prisma },
         { provide: MailerService, useValue: mailer },
         { provide: NotificationsInternesService, useValue: { creerPour: vi.fn() } },
+        { provide: IfuService, useValue: ifu },
       ],
     }).compile();
 
@@ -115,6 +119,54 @@ describe("AuthService", () => {
           motDePasse: "MotDePasse123!",
         }),
       ).rejects.toThrow("Une organisation avec cet IFU existe déjà");
+    });
+
+    const dtoOrganisation = {
+      organisationNom: "Hôpital Test",
+      organisationRaisonSociale: "Hôpital Test SA",
+      organisationTypeStructure: TypeStructure.HOPITAL,
+      organisationIfu: "1234567890123",
+      organisationType: TypeEtablissement.EH,
+      organisationVille: "Cotonou",
+      organisationPays: "Bénin",
+      organisationTelephone: "+22990000000",
+      organisationEmail: "contact@hopital-test.example",
+      responsableCivilite: Civilite.MME,
+      responsableNom: "Doe",
+      responsablePrenom: "Jane",
+      responsableEmail: "jane@example.com",
+      motDePasse: "MotDePasse123!",
+    };
+
+    it("rejette un IFU introuvable à la DGI, sans rien créer", async () => {
+      prisma.organisation.findUnique.mockResolvedValue(null);
+      prisma.utilisateur.findUnique.mockResolvedValue(null);
+      ifu.verifier.mockResolvedValue({ statut: "introuvable" });
+
+      await expect(service.registerOrganisation(dtoOrganisation)).rejects.toThrow("Cet IFU est introuvable auprès de la DGI");
+      expect(ifu.verifier).toHaveBeenCalledWith("1234567890123");
+      expect(prisma.organisation.create).not.toHaveBeenCalled();
+    });
+
+    it("refuse l'inscription si la DGI est injoignable, sans rien créer", async () => {
+      prisma.organisation.findUnique.mockResolvedValue(null);
+      prisma.utilisateur.findUnique.mockResolvedValue(null);
+      ifu.verifier.mockResolvedValue({ statut: "indisponible" });
+
+      await expect(service.registerOrganisation(dtoOrganisation)).rejects.toThrow("momentanément indisponible");
+      expect(prisma.organisation.create).not.toHaveBeenCalled();
+    });
+
+    it("sans clé IFU configurée, inscrit sur le seul contrôle de format et d'unicité", async () => {
+      prisma.organisation.findUnique.mockResolvedValue(null);
+      prisma.utilisateur.findUnique.mockResolvedValueOnce(null);
+      prisma.organisation.create.mockResolvedValue({ id: "org-1" });
+      prisma.utilisateur.create.mockResolvedValue({ id: "user-1", email: "jane@example.com", prenom: "Jane", roles: [] });
+      prisma.emailVerificationToken.create.mockResolvedValue({});
+      ifu.verifier.mockResolvedValue({ statut: "non_configure" });
+
+      await service.registerOrganisation(dtoOrganisation);
+      expect(prisma.organisation.create).toHaveBeenCalledOnce();
     });
   });
 

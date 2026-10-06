@@ -9,6 +9,7 @@ import { JwtAuthGuard } from "./guards/jwt-auth.guard.js";
 import { RolesGuard } from "./guards/roles.guard.js";
 import { PermissionsGuard } from "./guards/permissions.guard.js";
 import { UtilisateursModule } from "../utilisateurs/utilisateurs.module.js";
+import { IfuModule } from "../ifu/ifu.module.js";
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { UtilisateursModule } from "../utilisateurs/utilisateurs.module.js";
     // D8.2 — réutilise UtilisateursService.listerSessions/revoquerSession
     // (déjà testées côté admin en D3) pour /auth/me/sessions.
     UtilisateursModule,
+    IfuModule,
   ],
   controllers: [AuthController],
   providers: [

@@ -41,6 +41,7 @@ export class IntegrationsService {
     );
     resultats.push(this.verifierConfig("Brevo", ["BREVO_API_KEY", "BREVO_SENDER_EMAIL"]));
     resultats.push(this.verifierConfig("KKiaPay", ["KKIAPAY_PUBLIC_KEY", "KKIAPAY_PRIVATE_KEY", "KKIAPAY_SECRET"]));
+    resultats.push(this.verifierConfig("API IFU (DGI)", ["IFU_API_KEY"]));
 
     resultats.push({
       nom: "Redis / BullMQ",

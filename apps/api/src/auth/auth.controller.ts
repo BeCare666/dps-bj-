@@ -3,6 +3,7 @@ import { Throttle, ThrottlerGuard } from "@nestjs/throttler";
 import type { Request, Response } from "express";
 import { AuthService, type CompteEnregistre, type TokensEtUtilisateur } from "./auth.service.js";
 import { UtilisateursService } from "../utilisateurs/utilisateurs.service.js";
+import { IfuService } from "../ifu/ifu.service.js";
 import { RegisterOrganisationDto } from "./dto/register-organisation.dto.js";
 import { RegisterIndividuelDto } from "./dto/register-individuel.dto.js";
 import { LoginDto } from "./dto/login.dto.js";
@@ -20,6 +21,7 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly utilisateursService: UtilisateursService,
+    private readonly ifuService: IfuService,
   ) {}
 
   // D9 — 5 requêtes/60s par IP : abus de création de compte (écrit en base +
@@ -31,6 +33,17 @@ export class AuthController {
   async registerOrganisation(@Body() dto: RegisterOrganisationDto) {
     const resultat = await this.authService.registerOrganisation(dto);
     return this.repondreCompteEnregistre(resultat);
+  }
+
+  // Formulaire d'inscription : vérifie l'IFU auprès de la DGI et renvoie le nom
+  // trouvé pour pré-remplir le champ. 10 requêtes/60s par IP : l'endpoint est
+  // public et chaque appel interroge un service externe.
+  @Public()
+  @UseGuards(ThrottlerGuard)
+  @Throttle({ default: { limit: 10, ttl: 60_000 } })
+  @Get("verifier-ifu/:ifu")
+  verifierIfu(@Param("ifu") ifu: string) {
+    return this.ifuService.verifier(ifu);
   }
 
   // D9 — même justification que register/organisation.

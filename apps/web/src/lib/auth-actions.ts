@@ -31,6 +31,27 @@ async function appelerApiPublic(path: string, payload: unknown): Promise<{ res: 
   return { res, corps };
 }
 
+export type ResultatVerificationIfu =
+  | { statut: "trouve"; nom: string | null }
+  | { statut: "introuvable" }
+  | { statut: "indisponible" }
+  | { statut: "non_configure" }
+  | { statut: "trop_de_requetes" };
+
+// Inscription Organisation : vérifie l'IFU auprès de la DGI (via l'API DSP,
+// qui détient la clé) pour pré-remplir le nom de l'établissement.
+export async function verifierIfuAction(ifu: string): Promise<ResultatVerificationIfu> {
+  if (!/^\d{13}$/.test(ifu)) return { statut: "introuvable" };
+  try {
+    const res = await fetch(`${API_URL}/auth/verifier-ifu/${ifu}`, { cache: "no-store" });
+    if (res.status === 429) return { statut: "trop_de_requetes" };
+    if (!res.ok) return { statut: "indisponible" };
+    return (await res.json()) as ResultatVerificationIfu;
+  } catch {
+    return { statut: "indisponible" };
+  }
+}
+
 // Case "J'accepte les CGU" des formulaires d'inscription : le navigateur
 // l'impose déjà (required), revérifié ici pour ne pas dépendre du seul client.
 const ERREUR_CGU = "Vous devez accepter les conditions générales d'utilisation pour créer un compte.";
