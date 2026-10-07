@@ -76,6 +76,10 @@ export class AuthService {
           pays: dto.organisationPays,
           telephone: dto.organisationTelephone,
           email: dto.organisationEmail,
+          departement: dto.organisationDepartement,
+          commune: dto.organisationCommune,
+          arrondissement: dto.organisationArrondissement,
+          zoneSanitaire: dto.organisationZoneSanitaire,
         },
       });
 

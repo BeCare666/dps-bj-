@@ -11,6 +11,7 @@ import {
   type ResultatVerificationIfu,
 } from "@/lib/auth-actions";
 import { LIBELLES_CIVILITE, LIBELLES_TYPE_STRUCTURE } from "@/lib/libelles-comptes";
+import { DEPARTEMENTS } from "@dps/shared";
 
 const ETAT_INITIAL: EtatFormulaire = {};
 
@@ -115,6 +116,23 @@ export function RegisterOrganisationForm() {
         <div className="grid grid-cols-2 gap-4">
           <Field label="Ville" name="organisationVille" required minLength={2} />
           <Field label="Pays" name="organisationPays" required minLength={2} defaultValue="Bénin" />
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <SelectField label="Département" name="organisationDepartement" defaultValue="" required>
+            <option value="" disabled>
+              Sélectionner…
+            </option>
+            {Object.entries(DEPARTEMENTS).map(([code, libelle]) => (
+              <option key={code} value={code}>
+                {libelle}
+              </option>
+            ))}
+          </SelectField>
+          <Field label="Zone sanitaire" name="organisationZoneSanitaire" required minLength={2} />
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <Field label="Commune" name="organisationCommune" required minLength={2} />
+          <Field label="Arrondissement (optionnel)" name="organisationArrondissement" />
         </div>
         <div className="grid grid-cols-2 gap-4">
           <Field label="Email de l'établissement" name="organisationEmail" type="email" required />

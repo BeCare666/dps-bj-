@@ -15,6 +15,7 @@ const LIBELLES_ROLE: Record<string, string> = {
   PERSONNEL_SOIGNANT: "Personnel soignant",
   GESTIONNAIRE_FORMATION: "Gestionnaire formation",
   ADMIN_PLATEFORME: "Admin plateforme",
+  AUTORITE_SANITAIRE: "Autorité sanitaire",
 };
 
 // Les codes de permission suivent la forme DOMAINE_ACTION (packages/shared) :

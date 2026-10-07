@@ -6,7 +6,7 @@ export type { RoleUtilisateur };
 
 export interface SessionPayload {
   sub: string;
-  typeCompte: "ORGANISATION" | "INDIVIDUEL" | "ADMIN_PLATEFORME";
+  typeCompte: "ORGANISATION" | "INDIVIDUEL" | "ADMIN_PLATEFORME" | "AUTORITE_SANITAIRE";
   organisationId: string | null;
   serviceId: string | null;
   roles: RoleUtilisateur[];

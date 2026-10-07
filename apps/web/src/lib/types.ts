@@ -47,6 +47,11 @@ export interface Organisation {
   pays: string | null;
   telephone: string | null;
   email: string | null;
+  // Rapports statistiques — localisation sanitaire (code de DEPARTEMENTS).
+  departement: string | null;
+  commune: string | null;
+  arrondissement: string | null;
+  zoneSanitaire: string | null;
   actif: boolean;
   createdAt: string;
 }
@@ -478,7 +483,7 @@ export interface UtilisateurProfil {
   prenom: string;
   email: string;
   telephone: string | null;
-  typeCompte: "ORGANISATION" | "INDIVIDUEL" | "ADMIN_PLATEFORME";
+  typeCompte: "ORGANISATION" | "INDIVIDUEL" | "ADMIN_PLATEFORME" | "AUTORITE_SANITAIRE";
 }
 
 export interface UtilisateurAdmin {
@@ -486,7 +491,7 @@ export interface UtilisateurAdmin {
   nom: string;
   prenom: string;
   email: string;
-  typeCompte: "ORGANISATION" | "INDIVIDUEL" | "ADMIN_PLATEFORME";
+  typeCompte: "ORGANISATION" | "INDIVIDUEL" | "ADMIN_PLATEFORME" | "AUTORITE_SANITAIRE";
   organisationId: string | null;
   serviceId: string | null;
   actif: boolean;
@@ -646,4 +651,45 @@ export interface ActivitePlateforme {
   mois: string[];
   series: Record<"etablissementsInscrits" | "evaluationsSoumises" | "alertesNews" | "evenementsIndesirables" | "reservations", number[]>;
   modulesParStatut: Record<string, Record<string, number>>;
+}
+
+// Rapports statistiques (ROADMAP_RAPPORTS_STATISTIQUES.md).
+export type StatutRapportStatistique = "BROUILLON" | "SOUMIS" | "VALIDE";
+
+interface UtilisateurResume {
+  id: string;
+  nom: string;
+  prenom: string;
+}
+
+export interface RapportStatistiqueResume {
+  id: string;
+  formulaireCode: string;
+  formulaireVersion: string;
+  periode: string;
+  statut: StatutRapportStatistique;
+  departement: string | null;
+  entete: Record<string, string>;
+  soumisLe: string | null;
+  recuLe: string | null;
+  valideLe: string | null;
+  createdAt: string;
+  updatedAt: string;
+  organisation: { id: string; nom: string; typeStructure: TypeStructure | null };
+  creePar: UtilisateurResume;
+  soumisPar: UtilisateurResume | null;
+  validePar: UtilisateurResume | null;
+}
+
+export interface RapportStatistique extends RapportStatistiqueResume {
+  valeurs: Record<string, number | string | boolean>;
+}
+
+export interface AutoriteSanitaire {
+  id: string;
+  nom: string;
+  niveau: "ZONE_SANITAIRE" | "DEPARTEMENT" | "NATIONAL";
+  departement: string | null;
+  departementLibelle: string | null;
+  zoneSanitaire: string | null;
 }

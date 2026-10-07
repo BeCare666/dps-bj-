@@ -73,6 +73,10 @@ export async function inscrireOrganisationAction(
     organisationPays: valeur(formData, "organisationPays"),
     organisationTelephone: valeur(formData, "organisationTelephone"),
     organisationEmail: valeur(formData, "organisationEmail"),
+    organisationDepartement: valeur(formData, "organisationDepartement"),
+    organisationCommune: valeur(formData, "organisationCommune"),
+    organisationArrondissement: valeurOptionnelle(formData, "organisationArrondissement"),
+    organisationZoneSanitaire: valeur(formData, "organisationZoneSanitaire"),
     responsableCivilite: valeur(formData, "responsableCivilite"),
     responsableNom: valeur(formData, "responsableNom"),
     responsablePrenom: valeur(formData, "responsablePrenom"),
@@ -123,15 +127,15 @@ export async function connexionAction(_etat: EtatFormulaire, formData: FormData)
   }
 
   const accessToken = extraireAccessTokenDepuisReponse(res);
-  const estAdmin = accessToken
-    ? (decoderPayloadJwt(accessToken)?.roles.includes("ADMIN_PLATEFORME") ?? false)
-    : false;
+  const roles = accessToken ? (decoderPayloadJwt(accessToken)?.roles ?? []) : [];
+  const estAdmin = roles.includes("ADMIN_PLATEFORME");
+  const estAutorite = roles.includes("AUTORITE_SANITAIRE");
 
   await synchroniserCookiesSession(res);
 
   const next = valeurOptionnelle(formData, "next");
   // Anti open-redirect : uniquement un chemin relatif interne (jamais "//hôte externe").
-  const destinationParDefaut = estAdmin ? "/admin/reservations" : "/tableau-de-bord";
+  const destinationParDefaut = estAdmin ? "/admin/reservations" : estAutorite ? "/autorite" : "/tableau-de-bord";
   const destination = next && next.startsWith("/") && !next.startsWith("//") ? next : destinationParDefaut;
   redirect(destination);
 }

@@ -12,6 +12,7 @@ import {
   IconHospital,
   IconFileText,
   IconKey,
+  IconBarChart,
 } from "@/components/icons";
 import type { GroupeNav, LienNav } from "@/components/shell/sidebar-nav";
 import type { RoleUtilisateur } from "@dps/shared";
@@ -77,6 +78,8 @@ export function groupesOrganisation(roles: readonly RoleUtilisateur[]): GroupeNa
         { href: "/organisation/equipe", label: "Équipe", icon: IconUsers },
         { href: "/organisation/services", label: "Services", icon: IconHospital },
         { href: "/abonnements", label: "Abonnements", icon: IconKey },
+        // Rapports statistiques transmis aux autorités sanitaires.
+        { href: "/rapports-statistiques", label: "Rapports statistiques", icon: IconBarChart },
       ],
     });
   }

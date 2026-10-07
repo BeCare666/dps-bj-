@@ -56,6 +56,7 @@ const LIBELLES_ROLE: Record<string, string> = {
   PERSONNEL_SOIGNANT: "Personnel soignant",
   GESTIONNAIRE_FORMATION: "Gestionnaire formation",
   ADMIN_PLATEFORME: "Admin plateforme",
+  AUTORITE_SANITAIRE: "Autorité sanitaire",
 };
 
 interface ElementATraiter {

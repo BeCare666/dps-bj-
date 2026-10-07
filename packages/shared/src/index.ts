@@ -14,7 +14,8 @@ export type RoleUtilisateur =
   | "RESP_QUALITE"
   | "PERSONNEL_SOIGNANT"
   | "GESTIONNAIRE_FORMATION"
-  | "ADMIN_PLATEFORME";
+  | "ADMIN_PLATEFORME"
+  | "AUTORITE_SANITAIRE";
 
 export type Permission =
   | "ORGANISATIONS_READ"
@@ -42,7 +43,11 @@ export type Permission =
   | "ANALYTICS_READ"
   | "PARAMETRES_READ"
   | "PARAMETRES_MANAGE"
-  | "SECURITE_READ";
+  | "SECURITE_READ"
+  // Rapports statistiques (ROADMAP_RAPPORTS_STATISTIQUES.md).
+  | "RAPPORTS_STATISTIQUES_SAISIR"
+  | "RAPPORTS_STATISTIQUES_CONSULTER"
+  | "RAPPORTS_STATISTIQUES_VALIDER";
 
 // RM7 (isolation multi-tenant, voir ROADMAP.md) — rappel structurel : une
 // permission dit CE QU'un rôle peut faire, jamais OÙ (organisationId). Ne
@@ -82,6 +87,8 @@ export const ROLE_PERMISSIONS: Record<RoleUtilisateur, readonly Permission[]> = 
     "EI_EXPORT",
     "AUTO_EVALUATION_READ",
     "AUTO_EVALUATION_CREATE",
+    // Décision client : seul le responsable du compte remplit et soumet.
+    "RAPPORTS_STATISTIQUES_SAISIR",
   ],
   RESP_QUALITE: [
     "NEWS_READ",
@@ -107,6 +114,10 @@ export const ROLE_PERMISSIONS: Record<RoleUtilisateur, readonly Permission[]> = 
   // Câblé aux seules fonctionnalités Formation (décision explicite) : jamais
   // ORGANISATIONS_*, USERS_*, NEWS_*, EI_*, ni AUTO_EVALUATION_*.
   GESTIONNAIRE_FORMATION: ["FORMATIONS_MANAGE", "RESERVATIONS_READ", "RESERVATIONS_MANAGE"],
+  // Zone sanitaire, direction départementale, ministère : consultation des
+  // rapports de leur ressort. La validation est réservée au niveau zone
+  // sanitaire, vérifié côté API.
+  AUTORITE_SANITAIRE: ["RAPPORTS_STATISTIQUES_CONSULTER", "RAPPORTS_STATISTIQUES_VALIDER"],
 };
 
 export function resoudrePermissions(roles: readonly RoleUtilisateur[]): Permission[] {
@@ -122,3 +133,5 @@ export function resoudrePermissions(roles: readonly RoleUtilisateur[]): Permissi
 export function aLaPermission(roles: readonly RoleUtilisateur[], permission: Permission): boolean {
   return resoudrePermissions(roles).includes(permission);
 }
+
+export * from "./rapports-statistiques/index.js";

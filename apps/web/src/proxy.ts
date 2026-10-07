@@ -16,6 +16,8 @@ const PREFIXES_PROTEGES = [
   "/mes-sessions",
   "/profil",
   "/admin",
+  "/rapports-statistiques",
+  "/autorite",
 ];
 const ROUTES_AUTH = ["/login", "/inscription"];
 

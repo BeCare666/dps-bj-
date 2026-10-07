@@ -28,6 +28,7 @@ import { FormationsModule } from './formations/formations.module.js';
 import { ReservationsModule } from './reservations/reservations.module.js';
 import { FacturesModule } from './factures/factures.module.js';
 import { RappelsModule } from './rappels/rappels.module.js';
+import { RapportsStatistiquesModule } from './rapports-statistiques/rapports-statistiques.module.js';
 
 @Module({
   imports: [
@@ -58,6 +59,7 @@ import { RappelsModule } from './rappels/rappels.module.js';
     ReservationsModule,
     FacturesModule,
     RappelsModule,
+    RapportsStatistiquesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

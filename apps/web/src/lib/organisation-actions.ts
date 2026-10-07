@@ -24,6 +24,11 @@ export async function modifierMonOrganisationAction(_etat: EtatAction, formData:
       pays: champ("pays"),
       telephone: champ("telephone") || undefined,
       email: champ("email") || undefined,
+      // Rapports statistiques — localisation sanitaire.
+      departement: champ("departement") || undefined,
+      commune: champ("commune"),
+      arrondissement: champ("arrondissement"),
+      zoneSanitaire: champ("zoneSanitaire"),
     }),
   });
   if (!res.ok) {

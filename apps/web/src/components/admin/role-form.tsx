@@ -16,9 +16,11 @@ const LIBELLES_ROLE: Record<RoleUtilisateur, string> = {
   PERSONNEL_SOIGNANT: "Personnel soignant",
   GESTIONNAIRE_FORMATION: "Gestionnaire formation",
   ADMIN_PLATEFORME: "Admin plateforme",
+  AUTORITE_SANITAIRE: "Autorité sanitaire",
 };
 
-const TOUS_LES_ROLES = Object.keys(LIBELLES_ROLE) as RoleUtilisateur[];
+// Le rôle autorité sanitaire n'est jamais ajouté à un compte existant (refusé par l'API).
+const TOUS_LES_ROLES = (Object.keys(LIBELLES_ROLE) as RoleUtilisateur[]).filter((r) => r !== "AUTORITE_SANITAIRE");
 
 function BoutonAjouter() {
   const { pending } = useFormStatus();

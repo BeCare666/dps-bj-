@@ -5,6 +5,7 @@ import { useFormStatus } from "react-dom";
 import { modifierMonOrganisationAction, type EtatAction } from "@/lib/organisation-actions";
 import type { Organisation } from "@/lib/types";
 import { LIBELLES_TYPE_STRUCTURE } from "@/lib/libelles-comptes";
+import { DEPARTEMENTS } from "@dps/shared";
 
 const ETAT_INITIAL: EtatAction = {};
 
@@ -86,6 +87,44 @@ export function OrganisationForm({ organisation }: { organisation: Organisation 
         </label>
         <input id="email" name="email" type="email" defaultValue={organisation.email ?? ""} className={styleChamp} />
       </div>
+
+      <fieldset className="flex flex-col gap-4 border-t border-border pt-4">
+        <legend className="text-sm font-semibold text-text">Localisation sanitaire</legend>
+        <p className="text-xs text-text-muted">Pré-remplit l&apos;en-tête des rapports statistiques transmis aux autorités sanitaires.</p>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="departement" className="text-sm font-medium text-text">
+              Département
+            </label>
+            <select id="departement" name="departement" defaultValue={organisation.departement ?? ""} className={styleChamp}>
+              <option value="">Non renseigné</option>
+              {Object.entries(DEPARTEMENTS).map(([code, libelle]) => (
+                <option key={code} value={code}>
+                  {libelle}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="zoneSanitaire" className="text-sm font-medium text-text">
+              Zone sanitaire
+            </label>
+            <input id="zoneSanitaire" name="zoneSanitaire" type="text" defaultValue={organisation.zoneSanitaire ?? ""} className={styleChamp} />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="commune" className="text-sm font-medium text-text">
+              Commune
+            </label>
+            <input id="commune" name="commune" type="text" defaultValue={organisation.commune ?? ""} className={styleChamp} />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="arrondissement" className="text-sm font-medium text-text">
+              Arrondissement
+            </label>
+            <input id="arrondissement" name="arrondissement" type="text" defaultValue={organisation.arrondissement ?? ""} className={styleChamp} />
+          </div>
+        </div>
+      </fieldset>
 
       <div className="mt-1 flex items-center gap-3">
         <Bouton />

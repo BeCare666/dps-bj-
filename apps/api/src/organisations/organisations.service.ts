@@ -121,6 +121,10 @@ export class OrganisationsService {
         pays: dto.pays,
         telephone: dto.telephone,
         email: dto.email,
+        departement: dto.departement,
+        commune: dto.commune,
+        arrondissement: dto.arrondissement,
+        zoneSanitaire: dto.zoneSanitaire,
       },
     });
     const champs = (o: typeof avant) => ({

@@ -21,6 +21,8 @@ enum TypeCompte {
   ORGANISATION
   INDIVIDUEL
   ADMIN_PLATEFORME
+  // Rapports statistiques — zone sanitaire, direction départementale, ministère.
+  AUTORITE_SANITAIRE
 
   @@map("type_compte")
 }
@@ -31,6 +33,7 @@ enum RoleUtilisateur {
   PERSONNEL_SOIGNANT
   GESTIONNAIRE_FORMATION
   ADMIN_PLATEFORME
+  AUTORITE_SANITAIRE
 
   @@map("role_utilisateur")
 }
@@ -122,6 +125,24 @@ enum StatutAbonnement {
 }
 
 // §5 / §10.4 — demande de paiement d'un abonnement NEWS / EI.
+// Rapports statistiques — ressort d'une autorité sanitaire destinataire.
+enum NiveauAutorite {
+  ZONE_SANITAIRE
+  DEPARTEMENT
+  NATIONAL
+
+  @@map("niveau_autorite")
+}
+
+enum StatutRapportStatistique {
+  BROUILLON
+  SOUMIS
+  // Validé par la zone sanitaire destinataire.
+  VALIDE
+
+  @@map("statut_rapport_statistique")
+}
+
 enum StatutPaiementAbonnement {
   EN_ATTENTE
   PAYE
@@ -235,6 +256,12 @@ model Organisation {
   pays      String?
   telephone String?
   email     String?           @unique
+  // Rapports statistiques — localisation sanitaire, pré-remplie dans l'en-tête
+  // des rapports. Département = code de DEPARTEMENTS (@dps/shared).
+  departement    String?
+  commune        String?
+  arrondissement String?
+  zoneSanitaire  String?      @map("zone_sanitaire")
   actif     Boolean           @default(true)
   createdAt DateTime          @default(now()) @map("created_at")
   updatedAt DateTime          @updatedAt @map("updated_at")
@@ -249,6 +276,7 @@ model Organisation {
   alertes            Alerte[]
   evenementsIndesirables EvenementIndesirable[]
   reservations       Reservation[]
+  rapportsStatistiques RapportStatistique[]
 
   @@map("organisations")
 }
@@ -257,6 +285,8 @@ model Utilisateur {
   id             String      @id @default(cuid())
   organisationId String?     @map("organisation_id")
   serviceId      String?     @map("service_id")
+  // Compte AUTORITE_SANITAIRE : autorité à laquelle il appartient.
+  autoriteSanitaireId String? @map("autorite_sanitaire_id")
   typeCompte     TypeCompte  @map("type_compte")
   civilite       Civilite?
   email          String      @unique
@@ -271,6 +301,7 @@ model Utilisateur {
 
   organisation Organisation?     @relation(fields: [organisationId], references: [id])
   service      Service?          @relation(fields: [serviceId], references: [id])
+  autoriteSanitaire AutoriteSanitaire? @relation(fields: [autoriteSanitaireId], references: [id])
   roles        UtilisateurRole[]
   journalAudit JournalAudit[]
   emailVerificationTokens EmailVerificationToken[]
@@ -293,8 +324,13 @@ model Utilisateur {
   reservations            Reservation[]
   notifications           Notification[]
 
+  rapportsCrees    RapportStatistique[] @relation("RapportCreePar")
+  rapportsSoumis   RapportStatistique[] @relation("RapportSoumisPar")
+  rapportsValides  RapportStatistique[] @relation("RapportValidePar")
+
   @@index([organisationId])
   @@index([serviceId])
+  @@index([autoriteSanitaireId])
   @@map("utilisateurs")
 }
 
@@ -1005,4 +1041,64 @@ model ParametrePlateforme {
   updatedAt    DateTime @updatedAt @map("updated_at")
 
   @@map("parametres_plateforme")
+}
+
+// ---------------------------------------------------------------------------
+// Rapports statistiques (ROADMAP_RAPPORTS_STATISTIQUES.md)
+// ---------------------------------------------------------------------------
+
+// Destinataire des rapports : zone sanitaire (département + zone), direction
+// départementale (département) ou niveau national.
+model AutoriteSanitaire {
+  id                String         @id @default(cuid())
+  nom               String
+  niveau            NiveauAutorite
+  departement       String?
+  zoneSanitaire     String?        @map("zone_sanitaire")
+  // cleRapprochement(zoneSanitaire) (@dps/shared).
+  zoneSanitaireCle  String?        @map("zone_sanitaire_cle")
+  actif             Boolean        @default(true)
+  createdAt         DateTime       @default(now()) @map("created_at")
+  updatedAt         DateTime       @updatedAt @map("updated_at")
+
+  utilisateurs Utilisateur[]
+
+  @@map("autorites_sanitaires")
+}
+
+// Un rapport par établissement, formulaire et période. Les valeurs saisies
+// sont stockées par clé de case (bloc.ligne.colonne) ; les totaux sont
+// recalculés depuis la définition du formulaire, jamais stockés.
+model RapportStatistique {
+  id                String                   @id @default(cuid())
+  organisationId    String                   @map("organisation_id")
+  formulaireCode    String                   @map("formulaire_code")
+  formulaireVersion String                   @map("formulaire_version")
+  // AAAA-MM ou AAAA-Snn (semaine ISO).
+  periode           String
+  statut            StatutRapportStatistique @default(BROUILLON)
+  // En-tête du rapport (département, zone sanitaire, commune…).
+  entete            Json
+  valeurs           Json
+  // Repris de l'en-tête pour retrouver les rapports d'une autorité.
+  departement       String?
+  zoneSanitaireCle  String?                  @map("zone_sanitaire_cle")
+  creeParId         String                   @map("cree_par_id")
+  soumisParId       String?                  @map("soumis_par_id")
+  soumisLe          DateTime?                @map("soumis_le")
+  // Première consultation par la zone sanitaire destinataire.
+  recuLe            DateTime?                @map("recu_le")
+  valideParId       String?                  @map("valide_par_id")
+  valideLe          DateTime?                @map("valide_le")
+  createdAt         DateTime                 @default(now()) @map("created_at")
+  updatedAt         DateTime                 @updatedAt @map("updated_at")
+
+  organisation Organisation @relation(fields: [organisationId], references: [id])
+  creePar      Utilisateur  @relation("RapportCreePar", fields: [creeParId], references: [id])
+  soumisPar    Utilisateur? @relation("RapportSoumisPar", fields: [soumisParId], references: [id])
+  validePar    Utilisateur? @relation("RapportValidePar", fields: [valideParId], references: [id])
+
+  @@unique([organisationId, formulaireCode, periode])
+  @@index([statut, departement, zoneSanitaireCle])
+  @@map("rapports_statistiques")
 }

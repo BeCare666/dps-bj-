@@ -1,4 +1,5 @@
-import { IsEmail, IsEnum, IsOptional, IsString, MaxLength, MinLength } from "class-validator";
+import { IsEmail, IsEnum, IsIn, IsOptional, IsString, MaxLength, MinLength } from "class-validator";
+import { DEPARTEMENTS } from "@dps/shared";
 import { TypeStructure } from "../../generated/prisma/enums.js";
 
 // D8.1 — auto-édition des coordonnées de sa propre organisation par
@@ -50,4 +51,24 @@ export class ModifierOrganisationDto {
   @IsEmail()
   @MaxLength(191)
   email?: string;
+
+  // Rapports statistiques — localisation sanitaire (pré-remplit les rapports).
+  @IsOptional()
+  @IsIn(Object.keys(DEPARTEMENTS), { message: "Département inconnu" })
+  departement?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(191)
+  commune?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(191)
+  arrondissement?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(191)
+  zoneSanitaire?: string;
 }

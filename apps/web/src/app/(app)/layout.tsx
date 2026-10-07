@@ -34,6 +34,7 @@ function versAlertesEi(evenements: EvenementIndesirable[]): AlerteResume[] {
 export default async function AppLayout({ children }: { children: ReactNode }) {
   const estAdmin = await aRole("ADMIN_PLATEFORME");
   if (estAdmin) redirect("/admin");
+  if (await aRole("AUTORITE_SANITAIRE")) redirect("/autorite");
 
   const [organisation, profil, session, notifications, nonLues] = await Promise.all([
     silencieux(apiFetchJson<Organisation>("/organisations/me"), null),

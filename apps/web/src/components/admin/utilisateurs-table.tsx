@@ -15,12 +15,14 @@ const LIBELLES_ROLE: Record<string, string> = {
   PERSONNEL_SOIGNANT: "Personnel soignant",
   GESTIONNAIRE_FORMATION: "Gestionnaire formation",
   ADMIN_PLATEFORME: "Admin plateforme",
+  AUTORITE_SANITAIRE: "Autorité sanitaire",
 };
 
 const LIBELLES_TYPE_COMPTE: Record<UtilisateurAdmin["typeCompte"], string> = {
   ORGANISATION: "Établissement",
   INDIVIDUEL: "Individuel",
   ADMIN_PLATEFORME: "Administration",
+  AUTORITE_SANITAIRE: "Autorité sanitaire",
 };
 
 export function Initiales({ prenom, nom }: { prenom: string; nom: string }) {

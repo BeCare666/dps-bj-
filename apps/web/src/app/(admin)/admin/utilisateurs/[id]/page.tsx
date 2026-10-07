@@ -20,12 +20,14 @@ const LIBELLES_ROLE: Record<string, string> = {
   PERSONNEL_SOIGNANT: "Personnel soignant",
   GESTIONNAIRE_FORMATION: "Gestionnaire formation",
   ADMIN_PLATEFORME: "Admin plateforme",
+  AUTORITE_SANITAIRE: "Autorité sanitaire",
 };
 
 const LIBELLES_TYPE_COMPTE: Record<UtilisateurAdmin["typeCompte"], string> = {
   ORGANISATION: "Compte établissement",
   INDIVIDUEL: "Compte individuel",
   ADMIN_PLATEFORME: "Administration de la plateforme",
+  AUTORITE_SANITAIRE: "Autorité sanitaire",
 };
 
 export default async function UtilisateurDetailPage({ params }: { params: Promise<{ id: string }> }) {

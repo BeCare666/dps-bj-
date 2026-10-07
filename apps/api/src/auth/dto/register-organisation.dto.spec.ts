@@ -12,6 +12,9 @@ const valide = {
   organisationPays: "Bénin",
   organisationTelephone: "+22990000000",
   organisationEmail: "contact@clinique.example",
+  organisationDepartement: "OUEME",
+  organisationCommune: "Porto-Novo",
+  organisationZoneSanitaire: "PAS",
   responsableCivilite: "M",
   responsableNom: "Doe",
   responsablePrenom: "John",
@@ -42,6 +45,9 @@ describe("RegisterOrganisationDto (§4.1)", () => {
     "organisationTelephone",
     "organisationEmail",
     "responsableCivilite",
+    "organisationDepartement",
+    "organisationCommune",
+    "organisationZoneSanitaire",
   ])("exige %s", async (champ) => {
     expect(await erreursPour({ [champ]: undefined })).toContain(champ);
   });
@@ -51,5 +57,10 @@ describe("RegisterOrganisationDto (§4.1)", () => {
       "organisationTypeStructure",
       "responsableCivilite",
     ]);
+  });
+
+  it("rejette un département hors des 12 départements ; l'arrondissement est facultatif", async () => {
+    expect(await erreursPour({ organisationDepartement: "Oueme" })).toEqual(["organisationDepartement"]);
+    expect(await erreursPour({ organisationArrondissement: undefined })).toEqual([]);
   });
 });

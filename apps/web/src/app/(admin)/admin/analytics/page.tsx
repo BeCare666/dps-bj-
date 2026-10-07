@@ -160,6 +160,7 @@ export default async function AdminAnalyticsPage({
                       PERSONNEL_SOIGNANT: "Personnel soignant",
                       GESTIONNAIRE_FORMATION: "Gestionnaire formation",
                       ADMIN_PLATEFORME: "Admin plateforme",
+                      AUTORITE_SANITAIRE: "Autorité sanitaire",
                     },
                     {},
                     "info",

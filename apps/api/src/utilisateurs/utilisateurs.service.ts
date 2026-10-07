@@ -1,7 +1,7 @@
-import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service.js";
 import type { Prisma } from "../generated/prisma/client.js";
-import type { RoleUtilisateur } from "../generated/prisma/enums.js";
+import { RoleUtilisateur } from "../generated/prisma/enums.js";
 import type { ListUtilisateursQueryDto } from "./dto/list-utilisateurs-query.dto.js";
 
 // Jamais motDePasseHash — select explicite systématique (D3, annuaire admin).
@@ -95,6 +95,11 @@ export class UtilisateursService {
   // migration). Aucune règle de type "au moins un rôle restant" n'est
   // appliquée ici — pas validée, voir ROADMAP.md D4.
   async ajouterRole(utilisateurId: string, role: RoleUtilisateur, acteurId: string) {
+    // Rapports statistiques : ce rôle n'a de sens que pour un compte rattaché
+    // à une autorité sanitaire, créé comme tel — jamais ajouté à un compte existant.
+    if (role === RoleUtilisateur.AUTORITE_SANITAIRE) {
+      throw new BadRequestException("Le rôle autorité sanitaire ne s'ajoute pas à un compte existant");
+    }
     const cible = await this.obtenir(utilisateurId);
     const existant = await this.prisma.utilisateurRole.findUnique({
       where: { utilisateurId_role: { utilisateurId, role } },
