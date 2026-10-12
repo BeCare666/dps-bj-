@@ -48,6 +48,12 @@ export class CreateCritereDto {
   @IsString()
   recommandation?: string;
 
+  // Mention « Registre … » de la grille officielle ESPC (ex. « Registre CQSP »).
+  @IsOptional()
+  @IsString()
+  @MaxLength(191)
+  registre?: string;
+
   @IsInt()
   ordre!: number;
 

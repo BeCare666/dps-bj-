@@ -25,6 +25,7 @@ interface EtatCritere {
   libelle: string;
   categorie: string;
   recommandation: string;
+  registre: string;
   ordre: number;
   elements: EtatElement[];
 }
@@ -71,7 +72,7 @@ function normeVide(): EtatNorme {
 }
 
 function critereVide(): EtatCritere {
-  return { id: idLocal(), code: "", libelle: "", categorie: "", recommandation: "", ordre: 0, elements: [] };
+  return { id: idLocal(), code: "", libelle: "", categorie: "", recommandation: "", registre: "", ordre: 0, elements: [] };
 }
 
 function elementVide(): EtatElement {
@@ -105,6 +106,7 @@ function depuisGrille(grille: Grille): { nom: string; type: TypeEtablissement; d
           libelle: c.libelle,
           categorie: c.categorie ?? "",
           recommandation: c.recommandation ?? "",
+          registre: c.registre ?? "",
           ordre: c.ordre,
           elements: c.elementsMesurables.map((e) => ({
             id: idLocal(),
@@ -137,6 +139,7 @@ function versPayload(nom: string, type: TypeEtablissement, domaines: EtatDomaine
           libelle: c.libelle,
           categorie: c.categorie.trim() || undefined,
           recommandation: c.recommandation.trim() || undefined,
+          registre: c.registre.trim() || undefined,
           ordre: ci,
           elementsMesurables: c.elements.map((e, ei) => ({
             libelle: e.libelle,
@@ -412,12 +415,20 @@ export function GrilleEditeur({ grille, grilleId }: { grille?: Grille; grilleId?
                         </div>
 
                         <div className="mt-2 grid gap-2 sm:grid-cols-[12rem_1fr]">
-                          <input
-                            value={critere.categorie}
-                            onChange={(e) => majCritere(domaine.id, norme.id, critere.id, { categorie: e.target.value })}
-                            placeholder="Catégorie (ex. essentiel)"
-                            className={styleChamp}
-                          />
+                          <div className="flex flex-col gap-2">
+                            <input
+                              value={critere.categorie}
+                              onChange={(e) => majCritere(domaine.id, norme.id, critere.id, { categorie: e.target.value })}
+                              placeholder="Catégorie (ex. essentiel)"
+                              className={styleChamp}
+                            />
+                            <input
+                              value={critere.registre}
+                              onChange={(e) => majCritere(domaine.id, norme.id, critere.id, { registre: e.target.value })}
+                              placeholder="Registre (ex. Registre CQSP)"
+                              className={styleChamp}
+                            />
+                          </div>
                           <textarea
                             value={critere.recommandation}
                             onChange={(e) => majCritere(domaine.id, norme.id, critere.id, { recommandation: e.target.value })}

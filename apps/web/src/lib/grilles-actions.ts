@@ -25,6 +25,7 @@ export interface CriterePayload {
   libelle: string;
   categorie?: string;
   recommandation?: string;
+  registre?: string;
   ordre: number;
   elementsMesurables: ElementMesurablePayload[];
 }

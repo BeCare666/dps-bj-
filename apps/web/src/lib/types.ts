@@ -75,6 +75,8 @@ export interface Critere {
   libelle: string;
   categorie?: string | null;
   recommandation?: string | null;
+  // Mention « Registre … » de la grille officielle ESPC (ex. « Registre CQSP »).
+  registre?: string | null;
   ordre: number;
   elementsMesurables: ElementMesurable[];
 }

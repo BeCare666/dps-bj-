@@ -21,6 +21,7 @@ interface Question {
   normeLibelle: string;
   critereCode: string;
   critereLibelle: string;
+  critereRegistre: string | null;
 }
 
 const LIBELLES_TYPE_ELEMENT: Record<TypeElementMesurable, string> = {
@@ -51,6 +52,7 @@ function aplatir(session: SessionEvaluation): Question[] {
             normeLibelle: norme.libelle,
             critereCode: critere.code,
             critereLibelle: critere.libelle,
+            critereRegistre: critere.registre ?? null,
           });
         }
       }
@@ -186,6 +188,9 @@ export function Questionnaire({ session }: { session: SessionEvaluation }) {
               <span className="rounded-full bg-bg-subtle px-2.5 py-0.5 text-xs font-medium text-text-muted">
                 {LIBELLES_TYPE_ELEMENT[question.typeElement]}
               </span>
+              {question.critereRegistre && (
+                <span className="rounded-full bg-bg-subtle px-2.5 py-0.5 text-xs text-text-faint">{question.critereRegistre}</span>
+              )}
               {!question.entreDansScore && (
                 <span className="rounded-full bg-bg-subtle px-2.5 py-0.5 text-xs text-text-faint">N&apos;entre pas dans le score</span>
               )}

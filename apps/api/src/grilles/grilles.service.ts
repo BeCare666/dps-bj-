@@ -133,6 +133,7 @@ export class GrillesService {
                     libelle: critere.libelle,
                     categorie: critere.categorie,
                     recommandation: critere.recommandation,
+                    registre: critere.registre,
                     ordre: critere.ordre,
                     elementsMesurables: {
                       create: critere.elementsMesurables.map((element) => ({
@@ -175,6 +176,7 @@ export class GrillesService {
               libelle: critere.libelle,
               categorie: critere.categorie?.trim() || null,
               recommandation: critere.recommandation?.trim() || null,
+              registre: critere.registre?.trim() || null,
               ordre: critere.ordre,
               elementsMesurables: {
                 create: critere.elementsMesurables.map((element) => {

@@ -473,7 +473,7 @@ model Norme {
   id        String   @id @default(cuid())
   domaineId String   @map("domaine_id")
   code      String
-  libelle   String
+  libelle   String   @db.Text
   ordre     Int
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -491,12 +491,15 @@ model Critere {
   id        String   @id @default(cuid())
   normeId   String   @map("norme_id")
   code      String
-  libelle   String
+  libelle   String   @db.Text
   ordre     Int
   // §6.6 — catégorie du critère (ex. « essentiel »), libre faute de liste fermée dans le CDC.
   categorie      String?
   // §6.4 — recommandation synthétique affichée quand le critère est en écart.
   recommandation String?  @db.Text
+  // Mention « Registre … » portée sous le n° du critère dans la grille officielle ESPC
+  // (ex. « Registre CQSP »), reprise telle quelle : les manuels ARS n'en donnent pas le sens.
+  registre  String?
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
@@ -511,7 +514,7 @@ model Critere {
 model ElementMesurable {
   id        String      @id @default(cuid())
   critereId String      @map("critere_id")
-  libelle   String
+  libelle   String   @db.Text
   typeReponse TypeReponse @default(OUI_NON) @map("type_reponse")
   optionsChoix Json?      @map("options_choix")
   // §6.2 / §6.6 — seuls les éléments « document à examiner » entrent dans le score.

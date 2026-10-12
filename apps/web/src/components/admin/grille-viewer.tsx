@@ -92,6 +92,7 @@ export function GrilleViewer({ grille }: { grille: Grille }) {
                       <div key={critere.id}>
                         <p className="text-sm text-text">
                           C{ci + 1}. {critere.code} · {critere.libelle}
+                          {critere.registre && <span className="ml-2 text-xs text-text-faint">({critere.registre})</span>}
                         </p>
                         <ul className="mt-1 flex flex-col gap-1 border-l-2 border-border pl-4">
                           {critere.elementsMesurables.map((element, ei) => (

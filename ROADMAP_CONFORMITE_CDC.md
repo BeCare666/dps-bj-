@@ -57,7 +57,7 @@ Légende : `[ ]` à faire · `[~]` en cours · `[x]` fait et testé · `[!]` blo
 - [x] **4.4** EI liés à un critère affichés dans les résultats et le rapport (§8.4).
 - [x] **4.5** Rapport PDF de synthèse généré en tâche asynchrone (file d'attente en base), notification « rapport disponible » (§6.4, §6.6, §11.2).
 - [x] **4.6** Vue admin comparative de la conformité par établissement (§6.5) + historique des évaluations dans la fiche établissement.
-- [!] **4.7** Contenu officiel des grilles ARS EH et ESPC : **à fournir par le client** (l'éditeur admin permet de le saisir).
+- [x] **4.7** Contenu officiel des grilles ARS EH et ESPC : intégré le 12/10/2026 depuis les PDF fournis (`GRILLES/`), voir le journal et `GRILLES/RAPPORT_INTEGRATION_GRILLES.md`. Points à faire valider par l'ARS : section 5 de ce rapport.
 
 ## Phase 5 — Abonnements, paiements, facturation (§5, §10.4, §10.5, §11.1)
 
@@ -396,6 +396,70 @@ Légende : `[ ]` à faire · `[~]` en cours · `[x]` fait et testé · `[!]` blo
 - Appel réel vers `backend.impots.bj` avec une fausse clé : en TLS strict, `certificate has expired` donne « indisponible » ; avec `IFU_API_TLS_INSECURE=true`, la DGI répond HTTP 401, ce qui donne aussi « indisponible ».
 - Non testé avec une vraie clé : la réponse 200 réelle n'a jamais été observée.
 
+### 4.7 — Grilles officielles ARS EH et ESPC (12/10/2026)
+
+**Sources** : les 4 PDF du dossier `GRILLES/`, soit les deux grilles d'auto-évaluation des critères essentiels et les deux manuels de sécurité des patients. Détail complet, divergences et journal des corrections dans `GRILLES/RAPPORT_INTEGRATION_GRILLES.md`.
+
+**Analyse**
+- La règle de notation des manuels est celle du CDC §6.3, déjà codée :
+  - EH, manuel §2.2.1 ; ESPC, « Les critères essentiels » ;
+  - un critère essentiel vaut 1 si tous ses éléments mesurables, ou preuves, sont justifiés, et 0 sinon ;
+  - il faut 100 % des critères essentiels pour atteindre le niveau 1.
+- Aucun changement du calcul n'a donc été nécessaire.
+
+**Ce qui a été fait**
+- Contenu extrait des PDF par reconstitution des cellules, puis contrôlé visuellement page par page :
+  - EH : 25 critères, 152 éléments dont 100 documents ;
+  - ESPC : 30 critères, 194 éléments dont 113 documents ;
+  - ces effectifs sont ceux annoncés par les manuels.
+- Données : `apps/api/prisma/grilles-ars/eh.json` et `espc.json`.
+- Import idempotent : `prisma/grilles-ars/importer.ts`. Le seed l'utilise à la place des grilles placeholder, et `npx tsx prisma/import-grilles-ars.ts` le lance sur une base existante.
+- Base de développement :
+  - les deux grilles sont publiées en v1 ;
+  - les placeholders EH et ESPC sont archivés ; leurs sessions restent consultables.
+- Migration `20261012100000_grilles_ars_registre` : champ `criteres.registre`. Il conserve la mention « Registre CQSP / SP / … » des critères ESPC, reprise telle quelle.
+- Migration `20261012110000_grilles_ars_libelles_longs` : `normes.libelle`, `criteres.libelle` et `elements_mesurables.libelle` passent de VARCHAR(191) à TEXT, car des libellés officiels atteignent 645 caractères.
+- Les deux migrations sont additives ou élargissantes, et appliquées à la base de développement. Après application, `prisma migrate diff` ne détecte aucun écart.
+- API : `registre` est pris en compte dans le DTO, à la création et lors d'une nouvelle version.
+- Web : `registre` apparaît dans le questionnaire (pastille), le visualiseur et l'éditeur admin. L'éditeur le conserve à l'enregistrement.
+
+**Décisions** (toutes justifiées par la grille ou le manuel, listées dans le rapport)
+- La grille fait foi pour les critères et les éléments.
+- Le manuel est utilisé seulement pour trancher une ambiguïté de mise en page ou compléter un libellé absent ou illisible. Cela concerne :
+  - le domaine B EH ;
+  - les domaines B et D ESPC ;
+  - le titre ESPC D.2.1.3 ;
+  - la norme EH E.1.
+- Une question « Avec le Responsable… ? » placée sous « Exploitation documentaire » est classée en entretien (ESPC A.1.1.4, B.3.1.2, C.4.1.4). Le nombre de preuves exigé par le manuel le confirme.
+- « Intitulé : » suivi de sous-éléments : chaque sous-élément devient une question préfixée par l'intitulé.
+- Les coquilles de la grille sont conservées, sauf dans les libellés de normes EH.
+
+**[!] À faire valider par l'ARS** (section 5 du rapport)
+- Règle propre au manuel pour EH E.1.1.1 : « 80 à 100 % du personnel formé ».
+- Preuves exigées par le manuel ESPC mais absentes de la grille (C.2.1.1, C.2.1.2).
+- Questions d'entretien dupliquées dans la grille EH.
+- Sens des mentions « Registre … ».
+- Colonnes de plan d'action de la grille (responsable, délai, suivi) : absentes du CDC, donc non implémentées.
+
+**Tests**
+- Nouveau `src/grilles/grilles-ars.spec.ts`, **11/11**. Il vérifie :
+  - les effectifs et l'unicité des codes ;
+  - le rattachement norme et domaine ;
+  - que les questions sont Oui/Non et que seuls les documents entrent dans le score ;
+  - la validation par `CreateGrilleDto`, donc l'acceptation par l'éditeur admin ;
+  - le score : 100 % si tous les documents sont présents, et un document manquant invalide son critère.
+- `scoring.util.spec.ts` : 10/10.
+- e2e `auto-evaluation-conformite.e2e-spec.ts` : **6/6**.
+  - Au 1er passage, un test a dépassé le délai de 30 s alors que le chargement des modules prenait 268 s.
+  - Relancé avec un délai de 180 s, le fichier passe en entier.
+- `tsc` API : OK sur les fichiers modifiés. La seule erreur, préexistante, est dans `test/app.e2e-spec.ts` (`supertest/types`), un fichier non modifié.
+- `tsc` web : OK sur `src/`. La seule erreur vient du fichier généré `.next/dev/types/validator.ts`.
+- **Non fait** :
+  - `next build` ;
+  - le parcours du questionnaire dans un navigateur.
+
+**Remarque** : la base de développement contient aussi une grille « Grille Smoke Test EH », publiée et issue des tests du 17/09. Elle reste visible des établissements EH. Elle n'a pas été modifiée : à archiver depuis l'admin si souhaité.
+
 ---
 
 ## Bilan après mise en conformité (01/10/2026)
@@ -407,7 +471,7 @@ Légende : `[ ]` à faire · `[~]` en cours · `[x]` fait et testé · `[!]` blo
 | 4.1 Inscription Organisation | 🟡 | ✅ | — |
 | 4.2 Utilisateurs internes, rôles, services | ❌ | ✅ | — |
 | 5 Abonnements, essai, fin d'essai | 🟡 | ✅ | Prix et durée à saisir par l'admin |
-| 6.1 Grilles EH / ESPC | 🟡 | 🟡 | **Contenu officiel ARS à fournir (4.7)** |
+| 6.1 Grilles EH / ESPC | 🟡 | ✅ | Grilles officielles intégrées le 12/10/2026 ; points à valider par l'ARS dans `GRILLES/RAPPORT_INTEGRATION_GRILLES.md` |
 | 6.2 Une question à la fois | ⚠️ | ✅ | — |
 | 6.3 Score sur les documents à examiner | 🟡 | ✅ | — |
 | 6.4 Documents non validés, recommandations, PDF | ❌ | ✅ | Recommandations à saisir dans les grilles officielles |
@@ -437,7 +501,7 @@ Légende : `[ ]` à faire · `[~]` en cours · `[x]` fait et testé · `[!]` blo
 | 13.5 Évolutivité | 🟡 | ✅ (sauf grille NEWS, voir 7.2) | — |
 
 **La plateforme est-elle prête ?** Fonctionnellement, presque tout le CDC est couvert et testé. Une **mise en production** reste conditionnée par quatre éléments qui ne dépendent pas du code :
-1. le contenu officiel des grilles ARS EH et ESPC (4.7) ;
+1. ~~le contenu officiel des grilles ARS EH et ESPC (4.7)~~ : intégré le 12/10/2026, avec des points à faire valider par l'ARS ;
 2. la décision sur la grille NEWS (2.4) ;
 3. la décision sur la transmission des EI à la zone sanitaire ou au ministère (3.11) ;
 4. l'accès au serveur de recette puis de production (8.3), où il faudra aussi :

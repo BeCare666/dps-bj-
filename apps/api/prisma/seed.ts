@@ -1,16 +1,15 @@
 // Seed de développement — dps.bj
 // - Compte admin plateforme initial
-// - Grilles EH/ESPC PLACEHOLDER (structure minimale) pour débloquer le développement
-//   des sessions d'auto-évaluation avant que le contenu réel du CDC soit fourni.
-//   ⚠️ À remplacer par le vrai référentiel avant toute mise en production.
+// - Grilles officielles ARS EH/ESPC (critères essentiels), voir prisma/grilles-ars/
 import "dotenv/config";
 import bcrypt from "bcrypt";
 import { randomBytes } from "node:crypto";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
-import { PrismaClient, TypeCompte, RoleUtilisateur, TypeEtablissement, StatutGrille, TypeReponse, NiveauAutorite } from "../src/generated/prisma/client.js";
+import { PrismaClient, TypeCompte, RoleUtilisateur, NiveauAutorite } from "../src/generated/prisma/client.js";
 import { cleRapprochement } from "@dps/shared";
 import { createTidbAdapter } from "../src/prisma/create-tidb-adapter.js";
+import { importerGrillesArs } from "./grilles-ars/importer.js";
 
 const certsDir = join(dirname(fileURLToPath(import.meta.url)), "..", "certs");
 const adapter = createTidbAdapter(process.env.DATABASE_URL!, join(certsDir, "tidb-ca.pem"));
@@ -43,59 +42,6 @@ async function seedAdmin() {
   if (!process.env.ADMIN_PASSWORD) {
     console.log(`Mot de passe généré (à noter, non réaffiché) : ${password}`);
   }
-}
-
-async function seedGrillePlaceholder(type: TypeEtablissement) {
-  const nom = `Grille ${type} — placeholder`;
-  const existing = await prisma.grille.findUnique({ where: { nom_version: { nom, version: 1 } } });
-  if (existing) {
-    console.log(`${nom} v1 déjà présente, aucune modification.`);
-    return;
-  }
-
-  await prisma.grille.create({
-    data: {
-      nom,
-      type,
-      version: 1,
-      statut: StatutGrille.PUBLIEE,
-      publieeLe: new Date(),
-      domaines: {
-        create: [
-          {
-            nom: "Domaine placeholder 1",
-            ordre: 1,
-            normes: {
-              create: [
-                {
-                  code: "N1",
-                  libelle: "Norme placeholder 1",
-                  ordre: 1,
-                  criteres: {
-                    create: [
-                      {
-                        code: "C1",
-                        libelle: "Critère placeholder 1",
-                        ordre: 1,
-                        elementsMesurables: {
-                          create: [
-                            { libelle: "Élément mesurable placeholder 1.1", typeReponse: TypeReponse.OUI_NON, ordre: 1 },
-                            { libelle: "Élément mesurable placeholder 1.2", typeReponse: TypeReponse.OUI_NON, ordre: 2 },
-                          ],
-                        },
-                      },
-                    ],
-                  },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  });
-
-  console.log(`${nom} v1 créée.`);
 }
 
 // D8 — provisionne la seule ligne de paramètre validée à ce jour. Le
@@ -190,8 +136,7 @@ async function seedAutoritesFictives() {
 
 async function main() {
   await seedAdmin();
-  await seedGrillePlaceholder(TypeEtablissement.EH);
-  await seedGrillePlaceholder(TypeEtablissement.ESPC);
+  await importerGrillesArs(prisma);
   await seedParametres();
   await seedAutoritesFictives();
 }
