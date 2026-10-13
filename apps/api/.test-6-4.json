@@ -1,0 +1,14 @@
+{
+  "espc": {
+    "email": "test-6-4-espc@example.test",
+    "motDePasse": "AS9hm0wYTmoGtCcI!A1"
+  },
+  "eh": {
+    "email": "test-6-4-eh@example.test",
+    "motDePasse": "L7Cve_cHmQOGm4_9!A1"
+  },
+  "admin": {
+    "email": "test-6-4-admin@example.test",
+    "motDePasse": "Sc0cPnwuPhwyy-nn!A1"
+  }
+}

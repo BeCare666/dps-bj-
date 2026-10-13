@@ -1,0 +1,10 @@
+import "dotenv/config";
+import { fileURLToPath } from "node:url";
+import { dirname, join } from "node:path";
+import { PrismaClient } from "../src/generated/prisma/client.js";
+import { createTidbAdapter } from "../src/prisma/create-tidb-adapter.js";
+const ici = dirname(fileURLToPath(import.meta.url));
+const prisma = new PrismaClient({ adapter: createTidbAdapter(process.env.DATABASE_URL!, join(ici, "..", "certs", "tidb-ca.pem")) });
+const id = process.argv[2];
+console.log("réponses enregistrées pour", id, ":", await prisma.reponse.count({ where: { sessionId: id } }));
+await prisma.$disconnect();

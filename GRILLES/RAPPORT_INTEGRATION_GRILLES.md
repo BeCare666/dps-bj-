@@ -88,15 +88,26 @@ Ce qui a été mis en place :
 
 ### 5.2 Grille ESPC
 
-- **Le nombre de documents de la grille diffère souvent de celui du manuel.** Le plus souvent, la grille détaille davantage : par exemple « Documents qui montrent les rôles… du : » est suivi de 4 personnes. La grille a été suivie. Dans quatre cas, en revanche, **la grille omet des preuves que le manuel exige**. Elles n'ont pas été ajoutées :
+- **Comparaison preuve par preuve avec le manuel** (refaite le 12/10/2026 sur les 55 critères, à partir des PDF ; chaque écart vérifié sur la page de la grille).
+  - **Grille EH** : aucune preuve du manuel ne manque dans la grille.
+  - **Grille ESPC** : souvent plus détaillée que le manuel, par exemple « Documents qui montrent les rôles… du : » suivi de 4 personnes. La grille a été suivie. En revanche, **5 preuves exigées par le manuel n'apparaissent nulle part dans la grille**. Elles n'ont pas été ajoutées :
 
-  | Critère | Preuves exigées par le manuel et absentes de la grille |
-  |---|---|
-  | C.2.1.1 | « Plan d'actions de prévention et le contrôle des infections » ; « Procédures fondées sur des données probantes… » ; « Stratégies multimodales de prévention… » |
-  | C.2.1.2 | « Lignes directrices de l'OMS sur les composantes essentielles et les exigences minimales en matière de la PCI » |
-  | A.1.1.2 | « Objectifs de sécurité des patients à court et à long terme » (présents dans la grille, mais sous A.1.1.3) |
-  | A.1.1.1 | La 2e preuve du manuel ne vise que « le responsable de l'offre de soins ». La grille en demande davantage. |
+    | Critère | Preuve du manuel absente de la grille |
+    |---|---|
+    | C.2.1.1 | « Plan d'actions de prévention et le contrôle des infections » |
+    | C.2.1.1 | « Procédures fondées sur des données probantes, adaptées aux établissements et basées sur les lignes directrices nationales en matière de PCI » |
+    | C.2.1.1 | « Stratégies multimodales de prévention pour les interventions de PCI prioritaires » |
+    | C.2.1.2 | « Lignes directrices de l'OMS sur les composantes essentielles et les exigences minimales en matière de la PCI » |
+    | D.2.1.1 | « e… apporte la preuve : de la disponibilité d'eau courante propre » (les 3 autres points du rapport de visite sont dans la grille) |
 
+  - **Preuves présentes dans la grille, mais placées autrement que dans le manuel** :
+
+    | Critère | Écart |
+    |---|---|
+    | A.1.1.2 | « Objectifs de sécurité des patients à court et à long terme » : preuve de A.1.1.2 dans le manuel, mais rangée sous A.1.1.3 dans la grille. |
+    | D.2.1.3 | « Déchets placés dans un lieu dédié… » : preuve dans le manuel, mais **Observation** dans la grille, donc hors score. |
+    | E.1.1.1 | Le manuel demande une « Procédure de gestion des blessures par piqûre d'aiguille ». La grille demande une « Procédure de gestion des accidents d'exposition au sang » (ligne surlignée en vert). L'équivalence n'est pas tranchée ici. |
+    | A.1.1.1 | La 2e preuve du manuel ne vise que « le responsable de l'offre de soins ». La grille en demande davantage. |
 - **Questions placées sous « Exploitation documentaire »** : trois questions « Avec le Responsable… : … ? » (A.1.1.4, B.3.1.2, C.4.1.4) ont été classées en entretien, hors score. Le manuel ne les compte pas parmi les preuves : par exemple, A.1.1.4 exige 5 preuves, soit exactement les 5 documents de la grille.
 - **Cellules fusionnées scindées** :
   - D.2.1.4 : « Régistre de formation… » (document), « Rapport d'évaluation… » (document) et une question d'entretien ;
