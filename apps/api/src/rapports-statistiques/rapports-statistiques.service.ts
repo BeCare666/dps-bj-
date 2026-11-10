@@ -254,7 +254,8 @@ export class RapportsStatistiquesService {
     return user.organisationId;
   }
 
-  private async exigerAutorite(user: JwtAccessPayload) {
+  // Public : réutilisé par AutoriteStatistiquesService (tableaux de bord).
+  async exigerAutorite(user: JwtAccessPayload) {
     const utilisateur = await this.prisma.utilisateur.findUnique({
       where: { id: user.sub },
       select: { autoriteSanitaire: true },
@@ -266,8 +267,9 @@ export class RapportsStatistiquesService {
 
   // Rapports soumis du ressort de l'autorité : la zone sanitaire voit sa zone
   // (département + zone de l'en-tête), la direction départementale son
-  // département, le niveau national tout.
-  private ressort(autorite: { niveau: NiveauAutorite; departement: string | null; zoneSanitaireCle: string | null }) {
+  // département, le niveau national tout. Public : même ressort pour les
+  // tableaux de bord (AutoriteStatistiquesService).
+  ressort(autorite: { niveau: NiveauAutorite; departement: string | null; zoneSanitaireCle: string | null }) {
     const soumis: Prisma.RapportStatistiqueWhereInput = {
       statut: { in: [StatutRapportStatistique.SOUMIS, StatutRapportStatistique.VALIDE] },
     };

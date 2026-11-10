@@ -1,6 +1,8 @@
 import { Body, Controller, Get, Param, Patch, Post, Query } from "@nestjs/common";
 import { RapportsStatistiquesService } from "./rapports-statistiques.service.js";
 import { CreerRapportDto, EnregistrerRapportDto, ListerRapportsQueryDto } from "./dto/rapports-statistiques.dto.js";
+import { AutoriteStatistiquesService } from "./autorite-statistiques.service.js";
+import { DonneesQueryDto, FiltresAutoriteDto, TransmissionsQueryDto } from "./dto/autorite-statistiques.dto.js";
 import { Roles } from "../auth/decorators/roles.decorator.js";
 import { CurrentUser } from "../auth/decorators/current-user.decorator.js";
 import { RoleUtilisateur } from "../generated/prisma/enums.js";
@@ -45,11 +47,35 @@ export class RapportsStatistiquesController {
 @Roles(RoleUtilisateur.AUTORITE_SANITAIRE)
 @Controller("autorite")
 export class AutoriteRapportsController {
-  constructor(private readonly service: RapportsStatistiquesService) {}
+  constructor(
+    private readonly service: RapportsStatistiquesService,
+    private readonly statistiques: AutoriteStatistiquesService,
+  ) {}
 
   @Get("me")
   monAutorite(@CurrentUser() user: JwtAccessPayload) {
     return this.service.monAutorite(user);
+  }
+
+  // Tableaux de bord (ROADMAP_ESPACE_AUTORITES.md, étape 3).
+  @Get("etablissements")
+  etablissements(@CurrentUser() user: JwtAccessPayload) {
+    return this.statistiques.etablissements(user);
+  }
+
+  @Get("synthese")
+  synthese(@Query() query: FiltresAutoriteDto, @CurrentUser() user: JwtAccessPayload) {
+    return this.statistiques.synthese(query, user);
+  }
+
+  @Get("transmissions")
+  transmissions(@Query() query: TransmissionsQueryDto, @CurrentUser() user: JwtAccessPayload) {
+    return this.statistiques.transmissions(query, user);
+  }
+
+  @Get("donnees")
+  donnees(@Query() query: DonneesQueryDto, @CurrentUser() user: JwtAccessPayload) {
+    return this.statistiques.donnees(query, user);
   }
 
   @Get("rapports")

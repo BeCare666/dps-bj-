@@ -564,3 +564,60 @@ export function IconCamera(props: IconProps) {
     </svg>
   );
 }
+
+// Espace des autorités sanitaires (ROADMAP_ESPACE_AUTORITES.md).
+export function IconDroplet(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M12 3.5c3.2 3.9 6 7.4 6 10.5a6 6 0 0 1-12 0c0-3.1 2.8-6.6 6-10.5Z" />
+      <path d="M9.2 14.5a2.9 2.9 0 0 0 2.6 2.6" />
+    </svg>
+  );
+}
+
+export function IconVirus(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <circle cx="12" cy="12" r="5" />
+      <path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.9 2.9M15.5 15.5l2.9 2.9M5.6 18.4l2.9-2.9M15.5 8.5l2.9-2.9" />
+      <circle cx="10.5" cy="11" r="0.6" />
+      <circle cx="13.5" cy="13" r="0.6" />
+    </svg>
+  );
+}
+
+export function IconHeartPulse(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M20.4 12.6 12 21l-8.4-8.4A5 5 0 0 1 12 6.1a5 5 0 0 1 8.4 6.5Z" />
+      <path d="M3.5 12h4l1.5-2.5 2.5 5 1.5-2.5h7.5" />
+    </svg>
+  );
+}
+
+export function IconCompass(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <circle cx="12" cy="12" r="9" />
+      <path d="m15.5 8.5-2 5-5 2 2-5 5-2Z" />
+    </svg>
+  );
+}
+
+export function IconTrendingUp(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M3 17l6-6 4 4 8-8" />
+      <path d="M15 7h6v6" />
+    </svg>
+  );
+}
+
+export function IconClock(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 7v5l3 2" />
+    </svg>
+  );
+}

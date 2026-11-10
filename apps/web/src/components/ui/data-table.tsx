@@ -100,6 +100,9 @@ interface DataTableProps<T> {
   // Synchronise recherche/filtres/vue/tri/page dans l'URL (partageable,
   // conservé au retour arrière). Désactivable si plusieurs tables par page.
   synchroniserUrl?: boolean;
+  // En-têtes de colonnes sur plusieurs lignes (tableaux à colonnes nombreuses
+  // ou à libellés longs). Désactivé par défaut : rendu existant inchangé.
+  entetesMultilignes?: boolean;
 }
 
 const ALIGNEMENTS = { left: "text-left", right: "text-right", center: "text-center" } as const;
@@ -168,6 +171,7 @@ export function DataTable<T>({
   triParDefaut,
   vide,
   synchroniserUrl = true,
+  entetesMultilignes = false,
 }: DataTableProps<T>) {
   const router = useRouter();
   const pathname = usePathname();
@@ -596,7 +600,7 @@ export function DataTable<T>({
                     key={c.cle}
                     scope="col"
                     style={c.largeur ? { width: c.largeur } : undefined}
-                    className={`whitespace-nowrap bg-bg-subtle/70 px-4 py-2.5 text-xs font-semibold text-text-muted lg:sticky lg:top-16 lg:z-[5] lg:backdrop-blur ${ALIGNEMENTS[c.alignement ?? "left"]}`}
+                    className={`${entetesMultilignes ? "min-w-[5.5rem] max-w-[13rem] whitespace-normal align-bottom" : "whitespace-nowrap"} bg-bg-subtle/70 px-4 py-2.5 text-xs font-semibold text-text-muted lg:sticky lg:top-16 lg:z-[5] lg:backdrop-blur ${ALIGNEMENTS[c.alignement ?? "left"]}`}
                   >
                     {c.valeurTri ? (
                       <button

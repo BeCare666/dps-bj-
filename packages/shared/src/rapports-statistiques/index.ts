@@ -8,6 +8,7 @@ import { TRANSFUSION } from "./formulaires/transfusion.js";
 export * from "./types.js";
 export * from "./calcul.js";
 export * from "./periodes.js";
+export * from "./indicateurs.js";
 
 // Ordre d'affichage : celui des photos fournies.
 export const FORMULAIRES_STATISTIQUES: readonly DefinitionFormulaire[] = [

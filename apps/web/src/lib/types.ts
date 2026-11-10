@@ -695,3 +695,97 @@ export interface AutoriteSanitaire {
   departementLibelle: string | null;
   zoneSanitaire: string | null;
 }
+
+// Espace des autorités — tableaux de bord (ROADMAP_ESPACE_AUTORITES.md).
+export interface EtablissementAutorite {
+  id: string;
+  nom: string;
+  type: TypeEtablissement;
+  typeStructure: TypeStructure | null;
+  departement: string | null;
+  commune: string | null;
+  arrondissement: string | null;
+  zoneSanitaire: string | null;
+  telephone: string | null;
+  email: string | null;
+  actif: boolean;
+  createdAt: string;
+  localiseDansRessort: boolean;
+  rapports: { total: number; soumis: number; valides: number };
+  formulaires: string[];
+  derniereSoumission: string | null;
+}
+
+export interface StatistiqueDelai {
+  n: number;
+  moyenne: number | null;
+  mediane: number | null;
+}
+
+export interface RapportAutoriteResume {
+  id: string;
+  organisationId: string;
+  formulaireCode: string;
+  periode: string;
+  statut: StatutRapportStatistique;
+  soumisLe: string | null;
+  recuLe: string | null;
+  valideLe: string | null;
+  organisation: { id: string; nom: string; commune: string | null; typeStructure: TypeStructure | null };
+}
+
+export interface SyntheseAutorite {
+  totaux: {
+    recus: number;
+    aValider: number;
+    valides: number;
+    nonOuverts: number;
+    etablissementsRessort: number;
+    etablissementsAyantTransmis: number;
+  };
+  parFormulaire: { code: string; recus: number; aValider: number; valides: number }[];
+  parMois: { mois: string; soumis: number; valides: number }[];
+  delais: {
+    finPeriodeSoumission: StatistiqueDelai;
+    soumissionReception: StatistiqueDelai;
+    soumissionValidation: StatistiqueDelai;
+  };
+  aValiderListe: RapportAutoriteResume[];
+  dernieresPeriodes: { code: string; periode: string; transmis: number; etablissements: number }[];
+}
+
+export interface CelluleTransmission {
+  id: string;
+  statut: StatutRapportStatistique;
+  soumisLe: string | null;
+  recuLe: string | null;
+  valideLe: string | null;
+}
+
+export interface TransmissionsAutorite {
+  formulaire: string;
+  periodicite: "MENSUELLE" | "HEBDOMADAIRE";
+  periodes: string[];
+  etablissements: {
+    id: string;
+    nom: string;
+    commune: string | null;
+    localiseDansRessort: boolean;
+    cellules: Record<string, CelluleTransmission | null>;
+  }[];
+  parPeriode: { periode: string; transmis: number; valides: number; etablissementsLocalises: number }[];
+}
+
+export interface DonneesAutorite {
+  formulaire: string;
+  periodicite: "MENSUELLE" | "HEBDOMADAIRE";
+  rapports: {
+    id: string;
+    organisationId: string;
+    organisationNom: string;
+    commune: string | null;
+    periode: string;
+    statut: StatutRapportStatistique;
+    valeurs: Record<string, number | boolean | null>;
+  }[];
+}

@@ -1,96 +1,227 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { FORMULAIRES_STATISTIQUES } from "@dps/shared";
-import { apiFetchJson, silencieux } from "@/lib/api-server";
+import { FORMULAIRES_STATISTIQUES, formulaireStatistique } from "@dps/shared";
+import { apiFetchJson } from "@/lib/api-server";
+import { contexteAutorite, optionsEtablissements } from "@/lib/autorite-serveur";
+import { requeteApi, resumeFiltres, type ParametresUrl } from "@/lib/autorite-filtres";
+import { formaterNombre, libellePeriodeCourt, pourcentage, formaterPourcentage } from "@/lib/autorite-agregats";
+import { formaterDateHeure } from "@/lib/format";
+import { libellePeriodeRapport, titreFormulaire } from "@/lib/rapports-statistiques-libelles";
 import { PageHeader } from "@/components/ui/page-header";
-import { EmptyState } from "@/components/ui/empty-state";
-import { IconInbox } from "@/components/icons";
-import { RapportsTable } from "@/components/rapports-statistiques/rapports-table";
-import { LIBELLES_NIVEAU_AUTORITE, libelleDepartement } from "@/lib/rapports-statistiques-libelles";
-import type { AutoriteSanitaire, RapportStatistiqueResume, StatutRapportStatistique } from "@/lib/types";
+import { Card, CardHeader, StatCard } from "@/components/ui/card";
+import { FiltresBarre } from "@/components/autorite/filtres-barre";
+import { GraphiqueBarres } from "@/components/autorite/graphiques";
+import { Barre, Formule, ressortAutorite, surtitreAutorite } from "@/components/autorite/elements";
+import { IconCheckCircle, IconClock, IconHospital, IconInbox, IconArrowRight, IconEye } from "@/components/icons";
+import { COULEURS } from "@/lib/chart-theme";
+import type { StatistiqueDelai, SyntheseAutorite } from "@/lib/types";
 
 export const metadata: Metadata = {
-  title: "Rapports reçus",
+  title: "Tableau de bord",
   robots: { index: false, follow: false },
 };
 
-const FILTRES_STATUT: { valeur?: StatutRapportStatistique; libelle: string }[] = [
-  { libelle: "Tous" },
-  { valeur: "SOUMIS", libelle: "À valider" },
-  { valeur: "VALIDE", libelle: "Validés" },
-];
-
-function ressort(a: AutoriteSanitaire): string {
-  if (a.niveau === "NATIONAL") return "tous les départements";
-  if (a.niveau === "DEPARTEMENT") return `département ${libelleDepartement(a.departement)}`;
-  return `zone sanitaire ${a.zoneSanitaire ?? "—"} (${libelleDepartement(a.departement)})`;
+function jours(v: number | null): string {
+  if (v === null) return "—";
+  return `${formaterNombre(v)} j`;
 }
 
-function lien(statut?: string, formulaire?: string): string {
-  const q = new URLSearchParams();
-  if (statut) q.set("statut", statut);
-  if (formulaire) q.set("formulaire", formulaire);
-  const chaine = q.toString();
-  return chaine ? `/autorite?${chaine}` : "/autorite";
+function LigneDelai({ titre, delai, explication }: { titre: string; delai: StatistiqueDelai; explication: string }) {
+  return (
+    <li className="flex flex-col gap-1 border-b border-border pb-3 last:border-0 last:pb-0">
+      <div className="flex items-baseline justify-between gap-3">
+        <span className="text-sm font-medium text-text">{titre}</span>
+        <span className="font-display text-lg font-semibold text-text tabular-nums">{jours(delai.mediane)}</span>
+      </div>
+      <p className="text-xs text-text-muted">
+        Médiane · moyenne {jours(delai.moyenne)} · sur {delai.n} rapport{delai.n > 1 ? "s" : ""}
+      </p>
+      <Formule>{explication}</Formule>
+    </li>
+  );
 }
 
-function classeFiltre(actif: boolean): string {
-  return `rounded-full border px-3 py-1 text-xs font-medium ${
-    actif ? "border-primary bg-primary-soft text-primary" : "border-border text-text-muted hover:text-text"
-  }`;
-}
+export default async function AutoriteTableauDeBordPage({ searchParams }: { searchParams: Promise<ParametresUrl> }) {
+  const { autorite, etablissements, filtres, noms } = await contexteAutorite(searchParams);
+  const synthese = await apiFetchJson<SyntheseAutorite>(`/autorite/synthese?${requeteApi(filtres)}`);
+  const { totaux } = synthese;
+  const resume = resumeFiltres(filtres, noms);
 
-export default async function AutoriteRapportsPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ statut?: string; formulaire?: string }>;
-}) {
-  const { statut, formulaire } = await searchParams;
-  const statutFiltre = FILTRES_STATUT.find((f) => f.valeur && f.valeur === statut)?.valeur;
-  const formulaireFiltre = FORMULAIRES_STATISTIQUES.find((f) => f.code === formulaire)?.code;
-
-  const query = new URLSearchParams();
-  if (statutFiltre) query.set("statut", statutFiltre);
-  if (formulaireFiltre) query.set("formulaire", formulaireFiltre);
-
-  const [autorite, rapports] = await Promise.all([
-    apiFetchJson<AutoriteSanitaire>("/autorite/me"),
-    silencieux(apiFetchJson<RapportStatistiqueResume[]>(`/autorite/rapports?${query.toString()}`), []),
-  ]);
+  const parMois = synthese.parMois.map((m) => ({
+    libelle: libellePeriodeCourt(m.mois),
+    valides: m.valides,
+    aValider: m.soumis - m.valides,
+  }));
+  const parFormulaire = synthese.parFormulaire.map((f) => ({
+    libelle: titreFormulaire(f.code),
+    valides: f.valides,
+    aValider: f.aValider,
+  }));
+  const tauxTransmission = pourcentage(totaux.etablissementsAyantTransmis, totaux.etablissementsRessort);
 
   return (
     <>
       <PageHeader
-        surtitre={LIBELLES_NIVEAU_AUTORITE[autorite.niveau]}
-        titre="Rapports reçus"
-        description={`Rapports statistiques soumis par les établissements de votre ressort : ${ressort(autorite)}.`}
+        surtitre={surtitreAutorite(autorite)}
+        titre="Tableau de bord"
+        description={`Rapports statistiques reçus des établissements de votre ressort : ${ressortAutorite(autorite)}.`}
       />
-      <div className="mb-4 flex flex-wrap gap-2">
-        {FILTRES_STATUT.map((f) => (
-          <Link key={f.libelle} href={lien(f.valeur, formulaireFiltre)} className={classeFiltre(statutFiltre === f.valeur)}>
-            {f.libelle}
-          </Link>
-        ))}
-      </div>
-      <div className="mb-6 flex flex-wrap gap-2">
-        <Link href={lien(statutFiltre)} className={classeFiltre(!formulaireFiltre)}>
-          Tous les formulaires
-        </Link>
-        {FORMULAIRES_STATISTIQUES.map((f) => (
-          <Link key={f.code} href={lien(statutFiltre, f.code)} className={classeFiltre(formulaireFiltre === f.code)}>
-            {f.titre}
-          </Link>
-        ))}
-      </div>
-      {rapports.length === 0 ? (
-        <EmptyState
-          icon={<IconInbox className="h-8 w-8" />}
-          titre="Aucun rapport reçu"
-          description="Les rapports apparaissent ici dès qu'un établissement de votre ressort les soumet."
+      <FiltresBarre etablissements={optionsEtablissements(etablissements)} />
+
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <StatCard
+          label="Rapports reçus"
+          valeur={formaterNombre(totaux.recus)}
+          sousTexte={`${totaux.aValider} à valider · ${totaux.valides} validé${totaux.valides > 1 ? "s" : ""}`}
+          icone={IconInbox}
+          href="/autorite/rapports"
         />
-      ) : (
-        <RapportsTable rapports={rapports} lienBase="/autorite/rapports" avecEtablissement />
-      )}
+        <StatCard
+          label="À valider"
+          valeur={formaterNombre(totaux.aValider)}
+          sousTexte={autorite.niveau === "ZONE_SANITAIRE" ? "Rapports soumis en attente de votre validation" : "Validation par la zone sanitaire"}
+          icone={IconCheckCircle}
+          ton={totaux.aValider > 0 ? "warning" : "success"}
+          href="/autorite/rapports?statut=SOUMIS"
+        />
+        <StatCard
+          label="Non encore ouverts"
+          valeur={formaterNombre(totaux.nonOuverts)}
+          sousTexte="Soumis, jamais consultés par la zone sanitaire"
+          icone={IconEye}
+          ton={totaux.nonOuverts > 0 ? "info" : "neutral"}
+        />
+        <StatCard
+          label="Établissements ayant transmis"
+          valeur={`${totaux.etablissementsAyantTransmis} / ${totaux.etablissementsRessort}`}
+          sousTexte={
+            <Formule>
+              établissements ayant transmis au moins un rapport ÷ établissements localisés dans le ressort ={" "}
+              {formaterPourcentage(tauxTransmission)}
+            </Formule>
+          }
+          icone={IconHospital}
+          ton="info"
+          href="/autorite/etablissements"
+        />
+      </div>
+
+      <div className="mt-6 grid gap-6 xl:grid-cols-3">
+        <Card className="xl:col-span-2">
+          <CardHeader titre="Rapports reçus par mois de soumission" description={resume} />
+          <GraphiqueBarres
+            donnees={parMois}
+            cleX="libelle"
+            empile
+            series={[
+              { cle: "valides", label: "Validés", couleur: COULEURS.success },
+              { cle: "aValider", label: "À valider", couleur: COULEURS.warning },
+            ]}
+          />
+        </Card>
+        <Card>
+          <CardHeader titre="Délais" description="Mesurés sur les dates enregistrées" />
+          <ul className="flex flex-col gap-3">
+            <LigneDelai
+              titre="Transmission"
+              delai={synthese.delais.finPeriodeSoumission}
+              explication="date de soumission − fin de la période du rapport (négatif : soumis avant la fin)"
+            />
+            <LigneDelai titre="Réception" delai={synthese.delais.soumissionReception} explication="première consultation par la zone − soumission" />
+            <LigneDelai titre="Validation" delai={synthese.delais.soumissionValidation} explication="validation par la zone − soumission" />
+          </ul>
+          <p className="mt-4 flex items-start gap-2 text-xs text-text-faint">
+            <IconClock width={14} height={14} className="mt-0.5 shrink-0" />
+            Aucune date limite de transmission n&apos;a été fournie : les délais sont affichés sans appréciation « à temps / en retard ».
+          </p>
+        </Card>
+      </div>
+
+      <div className="mt-6 grid gap-6 xl:grid-cols-3">
+        <Card className="xl:col-span-2">
+          <CardHeader titre="Rapports par formulaire" description={resume} />
+          <GraphiqueBarres
+            donnees={parFormulaire}
+            cleX="libelle"
+            horizontal
+            empile
+            series={[
+              { cle: "valides", label: "Validés", couleur: COULEURS.success },
+              { cle: "aValider", label: "À valider", couleur: COULEURS.warning },
+            ]}
+          />
+        </Card>
+        <Card>
+          <CardHeader titre="Dernière période complète" description="Établissements ayant transmis, par formulaire" />
+          <ul className="flex flex-col gap-4">
+            {synthese.dernieresPeriodes.map((p) => {
+              const def = formulaireStatistique(p.code);
+              return (
+                <li key={p.code}>
+                  <Link href={`/autorite/transmissions?formulaire=${p.code}`} className="group block">
+                    <div className="flex items-baseline justify-between gap-3 text-sm">
+                      <span className="min-w-0 truncate font-medium text-text group-hover:text-primary">{def?.titre ?? p.code}</span>
+                      <span className="shrink-0 tabular-nums text-text-muted">
+                        {p.transmis} / {p.etablissements}
+                      </span>
+                    </div>
+                    <p className="mb-1.5 text-xs text-text-faint">{libellePeriodeRapport(p.code, p.periode)}</p>
+                    <Barre valeur={p.transmis} max={p.etablissements} ton={p.transmis === p.etablissements && p.etablissements > 0 ? "bg-success" : "bg-primary"} />
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+          <p className="mt-4 text-xs text-text-faint">
+            Base : établissements de la plateforme localisés dans votre ressort. La liste officielle des établissements attendus par formulaire n&apos;a pas été fournie.
+          </p>
+        </Card>
+      </div>
+
+      <Card className="mt-6">
+        <CardHeader
+          titre="Plus anciens rapports à valider"
+          description={`${totaux.aValider} au total`}
+          action={
+            <Link href="/autorite/rapports?statut=SOUMIS" className="text-xs font-medium text-primary hover:underline">
+              Tout voir
+            </Link>
+          }
+        />
+        {synthese.aValiderListe.length === 0 ? (
+          <div className="flex items-center gap-3 rounded-[var(--radius-md)] bg-success-soft/60 px-4 py-4 text-sm text-success">
+            <IconCheckCircle width={18} height={18} />
+            Aucun rapport en attente de validation.
+          </div>
+        ) : (
+          <ul className="grid gap-2 md:grid-cols-2">
+            {synthese.aValiderListe.map((r) => (
+              <li key={r.id}>
+                <Link
+                  href={`/autorite/rapports/${r.id}`}
+                  className="group flex items-center gap-3 rounded-[var(--radius-md)] border border-border px-4 py-3 transition-colors hover:border-primary/30 hover:bg-bg-subtle/60"
+                >
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-sm font-medium text-text">{r.organisation.nom}</span>
+                    <span className="block truncate text-xs text-text-muted">
+                      {titreFormulaire(r.formulaireCode)} · {libellePeriodeRapport(r.formulaireCode, r.periode)}
+                    </span>
+                    <span className="block text-xs text-text-faint">
+                      Soumis le {r.soumisLe ? formaterDateHeure(r.soumisLe) : "—"}
+                      {r.recuLe ? "" : " · non ouvert"}
+                    </span>
+                  </span>
+                  <IconArrowRight width={16} height={16} className="shrink-0 text-text-faint transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+      </Card>
+
+      <p className="mt-6 text-xs text-text-faint">
+        {FORMULAIRES_STATISTIQUES.length} formulaires suivis. Seuls les rapports soumis ou validés de votre ressort sont comptés ; un brouillon n&apos;est jamais visible.
+      </p>
     </>
   );
 }

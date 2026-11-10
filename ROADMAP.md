@@ -5,6 +5,8 @@ Stack : Next.js (front) · NestJS (API) · MySQL sur TiDB Cloud · Cloudinary (m
 
 Légende : ✅ fait · ⏳ à faire · ❓ en attente de décision/donnée du client
 
+> Chantiers suivis dans leur propre feuille de route : `ROADMAP_CONFORMITE_CDC.md`, `ROADMAP_GRILLES_ARS.md`, `ROADMAP_RAPPORTS_STATISTIQUES.md`, **`ROADMAP_ESPACE_AUTORITES.md`** (espace des zones sanitaires : tableaux de bord, statistiques, filtres — en cours depuis le 13/10/2026).
+
 ---
 
 ## 1. Analyse et préparation

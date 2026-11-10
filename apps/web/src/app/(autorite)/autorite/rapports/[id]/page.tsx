@@ -31,7 +31,7 @@ export default async function AutoriteRapportPage({ params }: { params: Promise<
         surtitre={rapport.organisation.nom}
         titre={titreFormulaire(rapport.formulaireCode)}
         description={libellePeriodeRapport(rapport.formulaireCode, rapport.periode)}
-        filAriane={[{ label: "Rapports reçus", href: "/autorite" }, { label: rapport.organisation.nom }]}
+        filAriane={[{ label: "Rapports reçus", href: "/autorite/rapports" }, { label: rapport.organisation.nom }]}
         actions={peutValider ? <ValiderBouton rapportId={rapport.id} /> : undefined}
       />
       <RapportFormulaire key={`${rapport.id}-${rapport.statut}`} rapport={rapport} modifiable={false} />

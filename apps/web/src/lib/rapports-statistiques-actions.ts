@@ -57,6 +57,7 @@ export async function validerRapportAction(id: string): Promise<EtatRapport> {
     return { erreur: messageErreurApi(corps, "Impossible de valider le rapport.") };
   }
   revalidatePath("/autorite");
+  revalidatePath("/autorite/rapports");
   revalidatePath(`/autorite/rapports/${id}`);
   return { succes: true };
 }
