@@ -20,7 +20,7 @@ function buildPrismaMock() {
   return {
     organisation: { findUnique: vi.fn(), create: orgTx.create },
     utilisateur: { findUnique: vi.fn(), findUniqueOrThrow: vi.fn(), create: userTx.create, update: vi.fn() },
-    refreshToken: { findUnique: vi.fn(), create: vi.fn(), update: vi.fn(), updateMany: vi.fn() },
+    refreshToken: { findUnique: vi.fn(), findFirst: vi.fn(), create: vi.fn(), update: vi.fn(), updateMany: vi.fn() },
     passwordResetToken: { findUnique: vi.fn(), create: vi.fn(), update: vi.fn() },
     emailVerificationToken: { findUnique: vi.fn(), create: vi.fn(), update: vi.fn() },
     journalAudit: { create: vi.fn() },
@@ -261,14 +261,52 @@ describe("AuthService", () => {
       await expect(service.refresh("token-inconnu")).rejects.toThrow("Session expirée");
     });
 
-    it("rejette un refresh token révoqué", async () => {
+    it("rejette un refresh token révoqué sans rotation (déconnexion, révocation)", async () => {
       prisma.refreshToken.findUnique.mockResolvedValue({
         id: "rt-1",
         utilisateurId: "user-1",
         revokedAt: new Date(),
         expiresAt: new Date(Date.now() + 1000 * 60 * 60),
       });
+      prisma.refreshToken.findFirst.mockResolvedValue(null);
       await expect(service.refresh("token-revoque")).rejects.toThrow("Session expirée");
+    });
+
+    it("rejette un refresh token révoqué depuis plus de 30 s, même après rotation", async () => {
+      prisma.refreshToken.findUnique.mockResolvedValue({
+        id: "rt-1",
+        utilisateurId: "user-1",
+        revokedAt: new Date(Date.now() - 31_000),
+        expiresAt: new Date(Date.now() + 1000 * 60 * 60),
+      });
+      prisma.refreshToken.findFirst.mockResolvedValue({ id: "rt-2" });
+      await expect(service.refresh("token-ancien")).rejects.toThrow("Session expirée");
+      expect(prisma.refreshToken.findFirst).not.toHaveBeenCalled();
+    });
+
+    it("accepte un refresh token tout juste remplacé par rotation (requêtes parallèles)", async () => {
+      prisma.refreshToken.findUnique.mockResolvedValue({
+        id: "rt-1",
+        utilisateurId: "user-1",
+        revokedAt: new Date(Date.now() - 2_000),
+        expiresAt: new Date(Date.now() + 1000 * 60 * 60),
+      });
+      prisma.refreshToken.findFirst.mockResolvedValue({ id: "rt-2" });
+      prisma.utilisateur.findUnique.mockResolvedValue({
+        id: "user-1",
+        actif: true,
+        organisationId: null,
+        typeCompte: TypeCompte.INDIVIDUEL,
+        emailVerifieLe: new Date(),
+        roles: [],
+      });
+      prisma.refreshToken.create.mockResolvedValue({});
+
+      const resultat = await service.refresh("token-parallele");
+
+      expect(resultat.accessToken).toBeTruthy();
+      // Déjà révoqué : pas de seconde révocation.
+      expect(prisma.refreshToken.update).not.toHaveBeenCalled();
     });
 
     it("rejette un refresh token expiré", async () => {

@@ -10,9 +10,9 @@ export const metadata: Metadata = {
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ verified?: string; reset?: string; active?: string; next?: string }>;
+  searchParams: Promise<{ verified?: string; reset?: string; active?: string; expiree?: string; next?: string }>;
 }) {
-  const { verified, reset, active, next } = await searchParams;
+  const { verified, reset, active, expiree, next } = await searchParams;
 
   return (
     <AuthCard
@@ -40,6 +40,11 @@ export default async function LoginPage({
       {reset === "true" && (
         <p className="mb-4 rounded-[var(--radius-md)] bg-success-soft px-3.5 py-2.5 text-sm text-success">
           Mot de passe réinitialisé. Vous pouvez maintenant vous connecter.
+        </p>
+      )}
+      {expiree === "1" && (
+        <p className="mb-4 rounded-[var(--radius-md)] bg-warning-soft px-3.5 py-2.5 text-sm text-warning">
+          Votre session a expiré. Veuillez vous reconnecter.
         </p>
       )}
       {active === "true" && (

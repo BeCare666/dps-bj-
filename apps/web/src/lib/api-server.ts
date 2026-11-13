@@ -1,5 +1,6 @@
 import "server-only";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 // URL serveur-à-serveur vers l'API NestJS (jamais exposée au navigateur).
 export const API_URL = process.env.API_URL ?? "http://localhost:3001";
@@ -45,6 +46,14 @@ export async function apiFetchJson<T>(path: string, init?: RequestInit): Promise
   const body = contentType.includes("application/json") ? await res.json() : await res.text();
 
   if (!res.ok) {
+    // Jeton refusé alors que la requête en portait un (session révoquée ou
+    // expirée en cours de route, malgré le rafraîchissement de proxy.ts) : on
+    // renvoie vers /login via une route qui efface les cookies, au lieu de
+    // laisser la page tomber en erreur 500. `redirect` lève une exception
+    // NEXT_REDIRECT, que les `catch (e instanceof ApiError)` laissent passer.
+    if (res.status === 401 && (await cookies()).has("access_token")) {
+      redirect("/api/session-expiree");
+    }
     throw new ApiError(res.status, body);
   }
   return body as T;

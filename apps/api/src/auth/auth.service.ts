@@ -17,6 +17,7 @@ import { generateOpaqueToken, hashOpaqueToken, ttlToMs } from "./auth.util.js";
 const BCRYPT_ROUNDS = 12;
 const RESET_TOKEN_TTL_MS = 60 * 60 * 1000; // 1h
 const VERIFICATION_TOKEN_TTL_MS = 48 * 60 * 60 * 1000; // 48h
+const FENETRE_REUTILISATION_MS = 30 * 1000; // voir AuthService.rotationRecente
 
 type UtilisateurAvecRoles = Utilisateur & { roles: UtilisateurRole[] };
 
@@ -206,7 +207,10 @@ export class AuthService {
     const tokenHash = hashOpaqueToken(rawRefreshToken);
     const tokenEnBase = await this.prisma.refreshToken.findUnique({ where: { tokenHash } });
 
-    if (!tokenEnBase || tokenEnBase.revokedAt || tokenEnBase.expiresAt < new Date()) {
+    if (!tokenEnBase || tokenEnBase.expiresAt < new Date()) {
+      throw new UnauthorizedException("Session expirée, veuillez vous reconnecter");
+    }
+    if (tokenEnBase.revokedAt && !(await this.rotationRecente(tokenEnBase.utilisateurId, tokenEnBase.revokedAt))) {
       throw new UnauthorizedException("Session expirée, veuillez vous reconnecter");
     }
 
@@ -218,12 +222,34 @@ export class AuthService {
       throw new UnauthorizedException("Session expirée, veuillez vous reconnecter");
     }
 
-    await this.prisma.refreshToken.update({
-      where: { id: tokenEnBase.id },
-      data: { revokedAt: new Date() },
-    });
+    if (!tokenEnBase.revokedAt) {
+      await this.prisma.refreshToken.update({
+        where: { id: tokenEnBase.id },
+        data: { revokedAt: new Date() },
+      });
+    }
 
     return this.issueTokens(utilisateur);
+  }
+
+  // Le site renouvelle la session à la volée (apps/web/src/proxy.ts) : plusieurs
+  // requêtes parallèles d'un même navigateur peuvent présenter le même
+  // refresh_token, et la rotation l'a déjà révoqué pour toutes sauf la
+  // première. On les accepte encore pendant FENETRE_REUTILISATION_MS, mais
+  // seulement si la révocation vient d'une rotation : un nouveau refresh_token
+  // a été créé pour cet utilisateur juste après. Une déconnexion, une
+  // révocation de session ou un changement de mot de passe ne crée aucun jeton,
+  // donc le refus reste immédiat dans ces cas.
+  private async rotationRecente(utilisateurId: string, revokedAt: Date): Promise<boolean> {
+    if (Date.now() - revokedAt.getTime() > FENETRE_REUTILISATION_MS) return false;
+    const successeur = await this.prisma.refreshToken.findFirst({
+      where: {
+        utilisateurId,
+        createdAt: { gte: new Date(revokedAt.getTime() - 1_000), lte: new Date(revokedAt.getTime() + 5_000) },
+      },
+      select: { id: true },
+    });
+    return successeur !== null;
   }
 
   async logout(rawRefreshToken: string | undefined): Promise<void> {
