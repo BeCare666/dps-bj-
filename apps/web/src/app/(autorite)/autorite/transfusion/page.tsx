@@ -108,7 +108,7 @@ export default async function TransfusionPage({ searchParams }: { searchParams: 
         Le « Taux de satisfaction » saisi sur chaque rapport n&apos;est pas additionné (un taux ne se cumule pas) : il reste consultable dans chaque rapport.
       </p>
 
-      <div className="mt-6 grid gap-6 xl:grid-cols-2">
+      <div className="mt-6 grid grid-cols-1 gap-6 xl:grid-cols-2">
         <Card>
           <CardHeader titre="PSL demandés et servis" description={resume} />
           <GraphiqueBarres
@@ -134,7 +134,7 @@ export default async function TransfusionPage({ searchParams }: { searchParams: 
         </Card>
       </div>
 
-      <div className="mt-6 grid gap-6 xl:grid-cols-2">
+      <div className="mt-6 grid grid-cols-1 gap-6 xl:grid-cols-2">
         <Card>
           <CardHeader titre="Services utilisateurs" description="PSL par service" />
           <GraphiqueBarres
@@ -151,7 +151,7 @@ export default async function TransfusionPage({ searchParams }: { searchParams: 
         </Card>
       </div>
 
-      <div className="mt-6 grid gap-6 xl:grid-cols-2">
+      <div className="mt-6 grid grid-cols-1 gap-6 xl:grid-cols-2">
         <Card>
           <CardHeader titre="Effets indésirables receveurs (EIR)" description="Nombre de patients ayant eu un EIR" />
           <GraphiqueBarres donnees={effets} cleX="libelle" horizontal vide="Aucun EIR déclaré." series={[{ cle: "n", label: "Patients", couleur: COULEURS.danger }]} />

@@ -49,6 +49,8 @@ const formateur = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 1 });
 // Graduations d'axe : « 20 k » plutôt qu'un nombre coupé par la largeur de l'axe.
 const compact = new Intl.NumberFormat("fr-FR", { notation: "compact", maximumFractionDigits: 1 });
 const formaterAxe = (v: number) => compact.format(v);
+// Largeur de l'axe vertical : 44 px coupait « 4,5 k » (notation compacte fr-FR).
+const LARGEUR_AXE_Y = 52;
 const formaterValeur = (v: unknown) => (typeof v === "number" ? formateur.format(v) : String(v ?? "—"));
 
 function useLargeur<T extends HTMLElement>() {
@@ -152,7 +154,7 @@ export function GraphiqueBarres({
             type={horizontal ? "category" : "number"}
             dataKey={horizontal ? cleX : undefined}
             allowDecimals={false}
-            width={horizontal ? largeurLibelles : 44}
+            width={horizontal ? largeurLibelles : LARGEUR_AXE_Y}
             tick={AXE.tick}
             axisLine={horizontal ? AXE.ligne : false}
             tickLine={false}
@@ -202,7 +204,7 @@ export function GraphiqueCourbes({
       <Graphique data={donnees} margin={{ top: 8, right: 12, left: -12, bottom: 0 }}>
         <CartesianGrid stroke={COULEURS.bordure} strokeDasharray="3 3" vertical={false} />
         <XAxis dataKey={cleX} tick={AXE.tick} axisLine={AXE.ligne} tickLine={false} minTickGap={12} />
-        <YAxis allowDecimals={false} tick={AXE.tick} axisLine={false} tickLine={false} width={44} tickFormatter={formaterAxe} />
+        <YAxis allowDecimals={false} tick={AXE.tick} axisLine={false} tickLine={false} width={LARGEUR_AXE_Y} tickFormatter={formaterAxe} />
         <Tooltip contentStyle={STYLE_INFOBULLE} formatter={formaterValeur} />
         {legende(series, masquees, basculer)}
         {series.map((s, i) => {

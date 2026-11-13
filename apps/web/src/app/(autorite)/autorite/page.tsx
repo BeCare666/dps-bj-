@@ -106,7 +106,7 @@ export default async function AutoriteTableauDeBordPage({ searchParams }: { sear
         />
       </div>
 
-      <div className="mt-6 grid gap-6 xl:grid-cols-3">
+      <div className="mt-6 grid grid-cols-1 gap-6 xl:grid-cols-3">
         <Card className="xl:col-span-2">
           <CardHeader titre="Rapports reçus par mois de soumission" description={resume} />
           <GraphiqueBarres
@@ -137,7 +137,7 @@ export default async function AutoriteTableauDeBordPage({ searchParams }: { sear
         </Card>
       </div>
 
-      <div className="mt-6 grid gap-6 xl:grid-cols-3">
+      <div className="mt-6 grid grid-cols-1 gap-6 xl:grid-cols-3">
         <Card className="xl:col-span-2">
           <CardHeader titre="Rapports par formulaire" description={resume} />
           <GraphiqueBarres
@@ -194,7 +194,7 @@ export default async function AutoriteTableauDeBordPage({ searchParams }: { sear
             Aucun rapport en attente de validation.
           </div>
         ) : (
-          <ul className="grid gap-2 md:grid-cols-2">
+          <ul className="grid grid-cols-1 gap-2 md:grid-cols-2">
             {synthese.aValiderListe.map((r) => (
               <li key={r.id}>
                 <Link

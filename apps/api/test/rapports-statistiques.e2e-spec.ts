@@ -12,7 +12,8 @@ import { NiveauAutorite, RoleUtilisateur, TypeCompte, TypeEtablissement } from "
 // Rapports statistiques (ROADMAP_RAPPORTS_STATISTIQUES.md, étapes 2 à 6) :
 // saisie par le responsable du compte, soumission, ressort et validation des
 // autorités sanitaires. Données préfixées par un suffixe aléatoire et nettoyées.
-describe("Rapports statistiques (e2e)", () => {
+// Délai porté à 120 s : un test peut attendre la fin de la fenêtre de 60 s de /auth/login.
+describe("Rapports statistiques (e2e)", { timeout: 120_000 }, () => {
   let app: INestApplication;
   let prisma: PrismaService;
 
@@ -30,7 +31,16 @@ describe("Rapports statistiques (e2e)", () => {
     const email = emails[cle];
     const deja = cacheConnexion.get(email);
     if (deja) return deja;
-    const res = await request(app.getHttpServer()).post("/auth/login").send({ email, motDePasse }).expect(200);
+    // Ce fichier connecte 7 comptes : au-delà de 5 connexions en 60 s, la limite
+    // D9 de /auth/login (inchangée) répond 429. On attend alors la fin de la
+    // fenêtre (en-tête Retry-After, en secondes) avant de réessayer une fois.
+    let res = await request(app.getHttpServer()).post("/auth/login").send({ email, motDePasse });
+    if (res.status === 429) {
+      const secondes = Number(res.headers["retry-after"]) || 60;
+      await new Promise((r) => setTimeout(r, (secondes + 1) * 1000));
+      res = await request(app.getHttpServer()).post("/auth/login").send({ email, motDePasse });
+    }
+    expect(res.status).toBe(200);
     const cookies = res.headers["set-cookie"] as unknown as string[];
     const cookie = cookies.map((c) => c.split(";")[0]).join("; ");
     cacheConnexion.set(email, cookie);

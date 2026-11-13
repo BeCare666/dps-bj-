@@ -36,7 +36,10 @@ export function SeriesSelectionnables({
     .slice(0, maximum)
     .map((cle) => options.find((o) => o.cle === cle))
     .filter((o): o is { cle: string; label: string } => Boolean(o))
-    .map((o) => ({ ...o, couleur: PALETTE[options.findIndex((x) => x.cle === o.cle) % PALETTE.length] }));
+    // Couleur selon le rang parmi les séries choisies (au plus `maximum`) : deux
+    // séries affichées n'ont jamais la même couleur, quel que soit leur rang dans
+    // le catalogue (avant : rang dans le catalogue modulo la palette → doublons).
+    .map((o, i) => ({ ...o, couleur: PALETTE[i % PALETTE.length] }));
 
   return (
     <div>

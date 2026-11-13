@@ -54,21 +54,21 @@ Suite de `ROADMAP_RAPPORTS_STATISTIQUES.md` : les données exploitées sont **le
 - Composants communs : graphiques (`graphiques.tsx` : barres verticales / horizontales / empilées, courbes, aires, anneau ; légende cliquable pour masquer une série ; libellés raccourcis selon la largeur), séries au choix de l'utilisateur (`series-selectionnables.tsx`), tableau générique (`tableau-donnees.tsx`, sur `DataTable` : recherche, facettes, tri, colonnes affichables, export CSV, cartes mobiles), matrice des transmissions.
 
 ### Étape 5 — Pages
-- [ ] **5.1** Tableau de bord : chiffres clés, rapports à valider, réception par mois (graphique), répartition par formulaire, transmissions du dernier mois par formulaire, délais.
-- [ ] **5.2** Rapports reçus : `DataTable` (recherche, filtres formulaire / statut / établissement / commune / période, tri, export CSV, cartes mobiles).
-- [ ] **5.3** Suivi des transmissions : matrice colorée établissement × période, taux « établissements ayant transmis / établissements du ressort » (formule affichée).
-- [ ] **5.4** Établissements : liste + fiche (identité, localisation, historique des rapports, transmissions par formulaire).
-- [ ] **5.5** Épidémiologie (BS-a) : cas et décès par affection, classement, évolution mensuelle, âge et sexe, hospitalisés / non hospitalisés, cas référés, consultants.
-- [ ] **5.6** Surveillance hebdomadaire (12_BJ) : courbe hebdomadaire par maladie (suspects, décès, confirmés), situation des décès, flambées, paludisme hebdomadaire.
-- [ ] **5.7** Paludisme (PNLP1) : cas testés / positifs (TDR, GE), paludisme grave, décès, CTA, ruptures de stock par produit.
-- [ ] **5.8** Maladies non transmissibles (PNLMNT 1 et 2) : dépistage, complications, prise en charge, femmes enceintes, cécité, santé mentale, accidents de la voie publique.
-- [ ] **5.9** Transfusion sanguine : PSL demandés / servis, receveurs par âge et sexe, services, affections, effets indésirables receveurs.
-- [ ] **5.10** Explorateur d'indicateurs : n'importe quelle case de n'importe quel formulaire, regroupée par période / établissement / ligne / colonne, en barres, courbe ou tableau, export CSV.
+- [x] **5.1** Tableau de bord : chiffres clés, rapports à valider, réception par mois (graphique), répartition par formulaire, transmissions du dernier mois par formulaire, délais.
+- [x] **5.2** Rapports reçus : `DataTable` (recherche, filtres formulaire / statut / établissement / commune / période, tri, export CSV, cartes mobiles).
+- [x] **5.3** Suivi des transmissions : matrice colorée établissement × période, taux « établissements ayant transmis / établissements du ressort » (formule affichée).
+- [x] **5.4** Établissements : liste + fiche (identité, localisation, historique des rapports, transmissions par formulaire).
+- [x] **5.5** Épidémiologie (BS-a) : cas et décès par affection, classement, évolution mensuelle, âge et sexe, hospitalisés / non hospitalisés, cas référés, consultants.
+- [x] **5.6** Surveillance hebdomadaire (12_BJ) : courbe hebdomadaire par maladie (suspects, décès, confirmés), situation des décès, flambées, paludisme hebdomadaire.
+- [x] **5.7** Paludisme (PNLP1) : cas testés / positifs (TDR, GE), paludisme grave, décès, CTA, ruptures de stock par produit.
+- [x] **5.8** Maladies non transmissibles (PNLMNT 1 et 2) : dépistage, complications, prise en charge, femmes enceintes, cécité, santé mentale, accidents de la voie publique.
+- [x] **5.9** Transfusion sanguine : PSL demandés / servis, receveurs par âge et sexe, services, affections, effets indésirables receveurs.
+- [x] **5.10** Explorateur d'indicateurs : n'importe quelle case de n'importe quel formulaire, regroupée par période / établissement / ligne / colonne, en barres, courbe ou tableau, export CSV.
 
 ### Étape 6 — Vérifications
-- [ ] **6.1** `tsc --noEmit` API et web, eslint sur les fichiers modifiés.
-- [ ] **6.2** Test réel dans Chrome (headless, CDP) avec le compte temporaire : chaque page, chaque filtre, 0 erreur JS ; largeur bureau et mobile (390 px), captures contrôlées.
-- [ ] **6.3** Non-régression : e2e `rapports-statistiques` existant.
+- [x] **6.1** `tsc --noEmit` API et web, eslint sur les fichiers modifiés. *12/11* : `tsc` web 0 erreur ; `tsc` API : seule l'erreur antérieure `test/app.e2e-spec.ts` ; eslint (fichiers web du commit `3472b35`) 0 problème ; oxlint (fichiers API du commit) 0 erreur, 1 avertissement `no-misused-spread` (`autorite-statistiques.service.ts:216`, copie du DTO de filtres dans un objet simple : seuls ses champs sont lus, sans effet).
+- [x] **6.2** Test réel dans Chrome (headless, CDP) avec le compte temporaire : chaque page, chaque filtre, 0 erreur JS ; largeur bureau et mobile (390 px), captures contrôlées. *13/11* (Chrome, compte temporaire) : les 12 pages + fiche établissement + détail d'un rapport, **0 erreur JS** ; 1366 px : 0 débordement ; 390 px (cadre de 390 px, même origine) : 0 débordement après correction. Filtres vérifiés : période (raccourci et dates choisies), commune, statut, type de structure, établissement, combinés dans l'URL (puces affichées), « Tout réinitialiser ». Défauts trouvés et corrigés : voir Journal du 13/11.
+- [x] **6.3** Non-régression : e2e `rapports-statistiques` existant. *12/11, après D6* : **14/14** (268 s). *Avant D6* : `autorite-tableaux-de-bord` **5/5** ; `rapports-statistiques` **12/14** — les 2 échecs sont des **429** sur `/auth/login` (limite D9 : 5 connexions / 60 s par IP), pas une assertion métier : le fichier connecte 7 comptes différents et la base a répondu plus vite que le 07/10 (14/14), donc 7 connexions en moins de 60 s. Lancés seuls, ces tests ne sont pas exploitables (ils dépendent du rapport créé par les tests précédents). Voir **D6**.
 
 ## Décisions attendues du client `[!]`
 
@@ -76,7 +76,9 @@ Suite de `ROADMAP_RAPPORTS_STATISTIQUES.md` : les données exploitées sont **le
 - [!] **D2** Date limite de transmission (promptitude) : non fournie. Seul le délai mesuré (fin de période → soumission) est affiché, sans jugement « à temps / en retard ».
 - [!] **D3** Seuils d'alerte épidémique (12_BJ, BS-a) : non fournis. Aucun seuil ni alerte automatique.
 - [!] **D4** Accès des autorités aux autres données des établissements (scores d'auto-évaluation, EI…) : non prévu, non fait.
-- [!] **D5** Suppression des données de démonstration de l'étape 2 : à faire dès que le client a terminé ses essais.
+- [!] **D5** Suppression des données de démonstration de l'étape 2 : à faire dès que le client a terminé ses essais. *Au 12/11 : toujours en base (8 établissements, 390 rapports : 244 validés, 146 soumis). Les scripts `demo-autorites.ts` et `compte-autorite-temporaire.ts` ont été perdus : la suppression devra être réécrite.*
+- [x] **D6** e2e `rapports-statistiques` : faut-il adapter le test (attendre la fin de la fenêtre de 60 s quand `/auth/login` répond 429) ? La limite de production n'est pas à modifier. *Décidé le 12/11 : adapter le test.* Fait : `connecter()` attend la durée de l'en-tête `Retry-After` (60 s à défaut) puis réessaie une fois ; délai des tests du fichier porté à 120 s. Limite de production inchangée.
+- [x] **D7** Test réel 6.2 : le mot de passe du compte temporaire n'est écrit nulle part dans le dépôt (communiqué au client le 13/10). Il faut soit le recevoir, soit autoriser sa réinitialisation (le client devra alors utiliser le nouveau). *Décidé le 12/11 : réinitialiser.* Fait le 12/11 par un script temporaire (supprimé après usage) : nouveau hash bcrypt (12 tours, comme l'application), sessions du compte révoquées. Nouveau mot de passe communiqué dans la conversation, jamais écrit dans le dépôt.
 
 ## Journal
 
@@ -90,3 +92,14 @@ Suite de `ROADMAP_RAPPORTS_STATISTIQUES.md` : les données exploitées sont **le
     - colonne par défaut de l'explorateur : la colonne « Total ».
   - Données de démonstration rendues plausibles (cases majoritairement à 0, maladies du 12_BJ rares) et régénérées : 390 rapports.
   - **Reste à tester** : « Mon autorité », fiche établissement, détail d'un rapport, filtres combinés dans l'URL, largeur mobile 390 px, non-régression e2e `rapports-statistiques`. Test interrompu : machine saturée (≈ 470 Mo libres, compilation d'une page > 20 min).
+- **12/11/2026** : 6.1 fait. 6.3 : 5/5 et 12/14 (2 échecs 429, voir D6). Compte temporaire et données de démonstration vérifiés en base (lecture seule). 6.2 en attente de D7 ; machine : ≈ 715 Mo libres sur 4 Go.
+- **13/11/2026** : D7 appliqué (mot de passe du compte temporaire réinitialisé par un script temporaire supprimé après usage, sessions révoquées ; **compte conservé**, non supprimé). 6.2 fait, étape 5 cochée.
+  - Défauts trouvés et corrigés :
+    - 390 px : débordement horizontal (jusqu'à 755 px) sur le tableau de bord et la transfusion — grilles sans colonne explicite sous `xl` : la colonne implicite `auto` prenait la largeur des textes tronqués. `grid-cols-1` ajouté (`autorite/page.tsx` : 3 grilles ; `transfusion/page.tsx` : 3 grilles) ;
+    - MNT, « Évolution mensuelle » : 2 courbes de même couleur (couleur = rang dans le catalogue modulo 10 : v4 et v54). Couleur désormais selon le rang parmi les séries choisies (`series-selectionnables.tsx`) ;
+    - Paludisme, axe vertical : « 4,5 k » coupé. Largeur de l'axe 44 → 52 px (`graphiques.tsx`, barres et courbes).
+  - `tsc` web 0 erreur ; eslint sur les 4 fichiers modifiés : 0 problème.
+  - Constats non corrigés (aucune décision à inventer) :
+    - données de démonstration : décès BS-a non plafonnés par les cas (décès / cas = 66,2 %) ; aucune donnée après S41 / septembre, d'où « 0 / 6 » en « Dernière période complète » (octobre). La formule est juste (somme des lignes « Décès » du formulaire) ; les scripts de démonstration ayant été perdus (D5), les données ne sont pas régénérées ;
+    - jeton d'accès de 15 min sans renouvellement silencieux (choix V1, `proxy.ts`) : à l'expiration, une page de l'espace répond 500 (erreur API 401 dans le layout) au lieu de renvoyer vers la connexion, tant que le cookie n'a pas expiré (écart de quelques secondes en production ; jusqu'à 2 min ici, la connexion ayant duré 2 min pendant la compilation).
+  - `next dev` (Turbopack) ne compile plus depuis `E:\ARCHIVE` (`@swc/helpers` introuvable, `apps/web` ayant son propre `.git`) : lancé avec `next dev --webpack`, comme le 12/10. Machine saturée (≈ 300 Mo libres, une page jusqu'à 8,5 min de compilation) : serveur web redémarré une fois.
