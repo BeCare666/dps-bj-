@@ -1,9 +1,10 @@
 // Informations publiques de la vitrine, centralisées ici pour que le header,
 // le footer et les pages légales restent cohérents entre eux.
 //
-// À CONFIRMER par le porteur du projet avant la mise en production : l'adresse
-// de contact et les URL des réseaux sociaux ci-dessous suivent le nom de domaine
-// prévu par le CDC (dps.bj) mais n'ont pas été fournis explicitement.
+// L'adresse de contact contact@dps.bj a été confirmée par le porteur du projet
+// le 17/11/2026. À CONFIRMER encore avant la mise en production : les URL des
+// réseaux sociaux ci-dessous suivent le nom de domaine prévu par le CDC (dps.bj)
+// mais n'ont pas été fournies explicitement.
 export const SITE = {
   nom: "DSP",
   nomComplet: "Dispositif de Sécurité des Patients",

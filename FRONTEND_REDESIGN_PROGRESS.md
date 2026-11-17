@@ -239,7 +239,7 @@ Vérification du code faite le 2026-09-29 : points 1, 2, 3, 4 et 6 présents dan
 **Critères de sortie** :
 - [x] Typage + build OK
 - [ ] Vérification visuelle
-- [ ] Email de contact et URL réseaux sociaux confirmés par le client
+- [ ] Email de contact et URL réseaux sociaux confirmés par le client — *17/11/2026 : `contact@dps.bj` confirmé ; URL des réseaux sociaux toujours à confirmer.*
 
 ---
 
