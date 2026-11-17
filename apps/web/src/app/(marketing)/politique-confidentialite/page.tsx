@@ -35,6 +35,10 @@ const DONNEES = [
     detail: "Réservations, formule choisie, tarif appliqué, identifiant de transaction KKiaPay, facture, date de session et présence.",
   },
   {
+    categorie: "Rapports statistiques",
+    detail: "Données chiffrées agrégées des formulaires officiels (sans identité de patient), observations facultatives, nom du compte qui soumet le rapport et, le cas échéant, nom du statisticien ou de l'agent de collecte, dates de soumission, de réception et de validation.",
+  },
+  {
     categorie: "Données techniques",
     detail: "Sessions de connexion actives et journal des actions sensibles (connexions, déconnexions, actions d'administration).",
   },
@@ -44,7 +48,14 @@ const PRESTATAIRES = [
   { nom: "TiDB Cloud", role: "Hébergement de la base de données", lieu: "Centre de données AWS de Francfort (Allemagne)" },
   { nom: "Cloudinary", role: "Stockage des pièces jointes des événements indésirables", lieu: "Hors du Bénin" },
   { nom: "Brevo", role: "Envoi des emails transactionnels (confirmation, alertes, réinitialisation)", lieu: "Union européenne" },
-  { nom: "KKiaPay", role: "Traitement des paiements des formations", lieu: "Bénin" },
+  { nom: "Vercel", role: "Hébergement du site web", lieu: "Hors du Bénin" },
+  { nom: "Render", role: "Hébergement du serveur applicatif (API)", lieu: "Hors du Bénin" },
+  { nom: "KKiaPay", role: "Traitement des paiements (formations et abonnements)", lieu: "Bénin" },
+  {
+    nom: "Direction Générale des Impôts (DGI)",
+    role: "Vérification du numéro IFU d'un établissement lors de l'inscription",
+    lieu: "Bénin",
+  },
 ];
 
 const SECTIONS: SectionLegale[] = [
@@ -117,7 +128,8 @@ const SECTIONS: SectionLegale[] = [
         <li>permettre l&apos;auto-évaluation qualité et le calcul des scores ;</li>
         <li>assurer la surveillance clinique des patients et déclencher les alertes NEWS ;</li>
         <li>déclarer, analyser et suivre les événements indésirables ;</li>
-        <li>gérer les réservations, paiements et factures des formations ;</li>
+        <li>gérer les réservations, paiements et factures des formations, ainsi que les abonnements ;</li>
+        <li>transmettre les rapports statistiques des établissements aux autorités sanitaires compétentes ;</li>
         <li>envoyer les notifications liées au service (confirmation d&apos;email, alertes, dates de formation) ;</li>
         <li>assurer la sécurité de la plateforme et la traçabilité des actions sensibles.</li>
       </ul>
@@ -180,6 +192,14 @@ const SECTIONS: SectionLegale[] = [
           Certaines données sont ainsi hébergées hors du Bénin. Ces transferts sont limités à ce qui est nécessaire
           au service et encadrés par les garanties de sécurité décrites ci-dessous.
         </p>
+        <p>
+          <strong>Autorités sanitaires.</strong> Les rapports statistiques soumis par un établissement sont
+          transmis aux autorités sanitaires de son ressort : la zone sanitaire voit les rapports de sa zone et de son
+          département, la direction départementale ceux de son département, le niveau national l&apos;ensemble. Seule
+          la zone sanitaire valide les rapports. Un brouillon n&apos;est visible par aucune autorité, et les autorités
+          n&apos;ont pas accès aux autres données des établissements (patients, événements indésirables,
+          auto-évaluations).
+        </p>
       </>
     ),
   },
@@ -241,7 +261,8 @@ const SECTIONS: SectionLegale[] = [
       <>
         <p>
           {SITE.nom} n&apos;utilise <strong>aucun cookie publicitaire ni outil de mesure d&apos;audience</strong>.
-          Seuls les éléments strictement nécessaires au fonctionnement sont déposés :
+          Seuls les éléments strictement nécessaires au fonctionnement sont déposés. Un bandeau vous en informe lors
+          de votre première visite :
         </p>
         <div className="overflow-x-auto">
           <table>
@@ -265,7 +286,10 @@ const SECTIONS: SectionLegale[] = [
               </tr>
               <tr>
                 <td className="font-medium text-text">Stockage local</td>
-                <td>Mémoriser l&apos;état ouvert ou replié des menus de votre espace</td>
+                <td>
+                  Mémoriser l&apos;état ouvert ou replié des menus, vos préférences d&apos;affichage des tableaux et la
+                  fermeture du bandeau d&apos;information sur les cookies
+                </td>
                 <td>Jusqu&apos;à suppression par le navigateur</td>
               </tr>
             </tbody>

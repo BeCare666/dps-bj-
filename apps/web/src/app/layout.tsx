@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import { ToastProvider } from "@/components/ui/toast";
+import { BandeauCookies } from "@/components/legal/bandeau-cookies";
 import "./globals.css";
 
 const body = Inter({
@@ -56,6 +57,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html lang="fr" data-scroll-behavior="smooth" className={`${body.variable} ${display.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col font-sans bg-bg text-text">
         <ToastProvider>{children}</ToastProvider>
+        <BandeauCookies />
       </body>
     </html>
   );

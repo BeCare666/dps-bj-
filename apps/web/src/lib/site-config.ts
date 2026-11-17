@@ -10,7 +10,7 @@ export const SITE = {
   pays: "République du Bénin",
   emailContact: "contact@dps.bj",
   // Date de dernière mise à jour des documents légaux (CGU, confidentialité).
-  majDocumentsLegaux: "28 septembre 2026",
+  majDocumentsLegaux: "17 novembre 2026",
 } as const;
 
 export type ReseauSocial = "facebook" | "linkedin" | "x" | "instagram" | "youtube";
