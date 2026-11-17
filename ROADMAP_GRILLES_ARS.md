@@ -114,7 +114,7 @@ Suivi du point 4.7 de `ROADMAP_CONFORMITE_CDC.md`. Rapport détaillé : `GRILLES
 - [ ] **6.4** **Vérification dans un navigateur** :
   - questionnaire EH et ESPC, pastille registre ;
   - éditeur admin : ouvrir une grille officielle, cliquer « nouvelle version », enregistrer sans perte.
-- [ ] **6.5** **Commit**, sur demande de l'utilisateur.
+- [x] **6.5** **Commit** : fait par l'utilisateur, commit `a4229a0` du 12/10/2026 « grille auto update » (grilles EH/ESPC, importeur, 2 migrations, éditeur, questionnaire, rapport d'intégration). Constaté le 17/11/2026 dans l'historique git.
 
 ## Étape 7 — Décisions client / ARS
 

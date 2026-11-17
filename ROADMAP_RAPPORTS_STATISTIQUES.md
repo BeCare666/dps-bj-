@@ -36,7 +36,7 @@ Celles de `ROADMAP_CONFORMITE_CDC.md` s'appliquent : rien d'inventé, isolation 
 - [x] **6** Comptes fictifs des autorités (seed).
 - [x] **7** Web établissement : liste, saisie fidèle au papier (cases hachurées grisées, totaux calculés), soumission.
 - [x] **8** Web autorités : espace dédié, consultation, validation.
-- [~] **9** Tests e2e et build web. E2E et test réel de l'interface faits ; **build de production non relancé** (voir journal).
+- [x] **9** Tests e2e et build web. E2E et test réel de l'interface faits. Build de production relancé le 17/11/2026 sur `main` (`79ffd70`) : `next build --webpack`, code de sortie 0 (voir journal de `ROADMAP_ESPACE_AUTORITES.md`).
 
 ## Points `[!]` à faire confirmer avec les formulaires vierges
 

@@ -256,7 +256,7 @@ Notes techniques :
 - [ ] 12.5 Tests E2E des parcours critiques (5 parcours identifiés)
 - [ ] 12.6 Tests des intégrations externes (KKiaPay sandbox, Cloudinary, Brevo)
 - [ ] 12.7 Tests de charge légers (saisie NEWS concurrente)
-- [ ] 12.8 Tests de build production (web + api)
+- [x] 12.8 Tests de build production (web + api) — 17/11/2026, `main` à `79ffd70`, code de sortie 0 pour les deux : API selon la Build Command Render (`@dps/shared`, `prisma generate`, `nest build`) ; web `next build --webpack` (78 pages, Proxy compris). À relancer après chaque changement important.
 
 ## 12b. Socle permissions/RBAC (Phase 1 d'un chantier admin plus large, 2026-09-18)
 
