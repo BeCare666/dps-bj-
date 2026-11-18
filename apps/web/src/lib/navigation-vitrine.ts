@@ -73,6 +73,7 @@ export const MENUS_VITRINE: MenuVitrine[] = [
     titre: "Informations légales",
     icon: IconScale,
     liens: [
+      { href: "/mentions-legales", label: "Mentions légales", icon: IconScale },
       { href: "/conditions-utilisation", label: "Conditions d'utilisation", icon: IconFileText },
       { href: "/politique-confidentialite", label: "Politique de confidentialité", icon: IconShieldCheck },
       { href: "/politique-confidentialite#cookies", label: "Cookies", icon: IconCookie },

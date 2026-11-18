@@ -14,6 +14,57 @@ export const SITE = {
   majDocumentsLegaux: "17 novembre 2026",
 } as const;
 
+// Éditeur du site, affiché dans les mentions légales. Informations fournies par
+// le porteur du projet le 18/11/2026. Les champs à null n'ont pas encore été
+// communiqués : ils ne sont pas affichés tant qu'ils restent vides.
+export const EDITEUR = {
+  raisonSociale: "HOUEDONOU ET FILS",
+  formeJuridique: "Société à responsabilité limitée (SARL)",
+  adresse: "Ilot 147, quartier Foun-Foun Sodji, parcelle R, maison Emile GBENOU",
+  rccm: "RCCM RB/PNO/24 B 5316",
+  ifu: "3202659045743" as string | null,
+  telephone: "+229 01 61 61 47 47",
+  telephoneHref: "tel:+2290161614747",
+  // Directeur de la publication : nom fourni le 18/11/2026, fonction non
+  // communiquée (non affichée tant qu'elle reste vide).
+  directeurPublication: { nom: "M. GBENOU Habib Todegnon Isaac Mawunan", fonction: null } as {
+    nom: string;
+    fonction: string | null;
+  } | null,
+};
+
+// Hébergeurs : coordonnées relevées sur leurs sites officiels le 17/11/2026.
+export const HEBERGEURS = [
+  {
+    role: "Site web",
+    societe: "Vercel Inc.",
+    adresse: "440 N Barranca Avenue #4133, Covina, CA 91723, États-Unis",
+    email: "privacy@vercel.com",
+    site: "https://vercel.com",
+  },
+  {
+    role: "Serveur applicatif (API)",
+    societe: "Render Inc.",
+    adresse: null,
+    email: "support@render.com",
+    site: "https://render.com",
+  },
+  {
+    role: "Base de données",
+    societe: "PingCAP Pte. Ltd. (service TiDB Cloud)",
+    adresse: null,
+    email: "legal@pingcap.com",
+    site: "https://www.pingcap.com",
+  },
+  {
+    role: "Pièces jointes des événements indésirables",
+    societe: "Cloudinary Ltd.",
+    adresse: null,
+    email: "privacy@cloudinary.com",
+    site: "https://cloudinary.com",
+  },
+] as const;
+
 export type ReseauSocial = "facebook" | "linkedin" | "x" | "instagram" | "youtube";
 
 export const RESEAUX_SOCIAUX: { reseau: ReseauSocial; label: string; href: string }[] = [

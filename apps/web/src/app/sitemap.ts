@@ -16,6 +16,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/inscription",
     "/conditions-utilisation",
     "/politique-confidentialite",
+    "/mentions-legales",
   ];
 
   return routes.map((route) => ({

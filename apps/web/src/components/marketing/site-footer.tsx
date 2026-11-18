@@ -70,6 +70,9 @@ export function SiteFooter() {
             © {annee} {SITE.nom}. {SITE.nomComplet}. Tous droits réservés.
           </p>
           <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+            <Link href="/mentions-legales" className="transition-colors hover:text-white">
+              Mentions légales
+            </Link>
             <Link href="/conditions-utilisation" className="transition-colors hover:text-white">
               Conditions d&apos;utilisation
             </Link>
