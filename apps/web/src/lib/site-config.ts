@@ -20,14 +20,13 @@ export const SITE = {
 export const EDITEUR = {
   raisonSociale: "HOUEDONOU ET FILS",
   formeJuridique: "Société à responsabilité limitée (SARL)",
-  adresse: "Ilot 147, quartier Foun-Foun Sodji, parcelle R, maison Emile GBENOU",
+  adresse: "Ilot 147, quartier Foun-Foun Sodji, parcelle R, maison Emile GBENOU, Porto-Novo",
   rccm: "RCCM RB/PNO/24 B 5316",
   ifu: "3202659045743" as string | null,
   telephone: "+229 01 61 61 47 47",
   telephoneHref: "tel:+2290161614747",
-  // Directeur de la publication : nom fourni le 18/11/2026, fonction non
-  // communiquée (non affichée tant qu'elle reste vide).
-  directeurPublication: { nom: "M. GBENOU Habib Todegnon Isaac Mawunan", fonction: null } as {
+  // Directeur de la publication : nom et fonction fournis le 18/11/2026.
+  directeurPublication: { nom: "M. GBENOU Habib Todegnon Isaac Mawunan", fonction: "PDG" } as {
     nom: string;
     fonction: string | null;
   } | null,
