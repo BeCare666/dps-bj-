@@ -91,6 +91,8 @@ export interface SectionMenu {
 export interface MenuEnTete {
   titre: string;
   icon: Icone;
+  // Lien direct (sans menu déroulant) : `sections` est alors vide.
+  href?: string;
   sections: SectionMenu[];
 }
 
@@ -121,6 +123,9 @@ export const MENUS_EN_TETE: MenuEnTete[] = [
     sections: [{ liens: [{ href: "/a-propos", label: "À propos", icon: IconInfo }, ...menu("À propos").liens] }],
   },
   { titre: "Services", icon: menu("Services").icon, sections: [{ liens: menu("Services").liens }] },
+  // ROADMAP_FORMATIONS_VERIFICATION.md §6 — liens directs après « Services ».
+  { titre: "Formations", icon: IconGraduationCap, href: "/formations", sections: [] },
+  { titre: "Vérifier votre établissement", icon: IconShieldCheck, href: "/verifier-etablissement", sections: [] },
   {
     titre: "Statistiques",
     icon: IconBarChart,

@@ -2,9 +2,9 @@ import { Body, Controller, Get, Param, Patch, Post, Query } from "@nestjs/common
 import { ReservationsService } from "./reservations.service.js";
 import { CreerReservationDto } from "./dto/creer-reservation.dto.js";
 import { VerifierPaiementDto } from "./dto/verifier-paiement.dto.js";
-import { FixerDateRdvDto } from "./dto/fixer-date-rdv.dto.js";
 import { MarquerRealiseeDto } from "./dto/marquer-realisee.dto.js";
 import { ListReservationsQueryDto } from "./dto/list-reservations-query.dto.js";
+import { AffecterSessionDto } from "./sessions/dto/session-formation.dto.js";
 import { Roles } from "../auth/decorators/roles.decorator.js";
 import { CurrentUser } from "../auth/decorators/current-user.decorator.js";
 import { RoleUtilisateur } from "../generated/prisma/enums.js";
@@ -44,9 +44,9 @@ export class ReservationsController {
   }
 
   @Roles(RoleUtilisateur.ADMIN_PLATEFORME)
-  @Patch(":id/date-rdv")
-  fixerDateRdv(@Param("id") id: string, @Body() dto: FixerDateRdvDto) {
-    return this.reservationsService.fixerDateRdv(id, dto);
+  @Patch(":id/session")
+  affecterSession(@Param("id") id: string, @Body() dto: AffecterSessionDto) {
+    return this.reservationsService.affecterSession(id, dto);
   }
 
   @Roles(RoleUtilisateur.ADMIN_PLATEFORME)

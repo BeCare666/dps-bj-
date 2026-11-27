@@ -9,8 +9,11 @@ import { PageHeader } from "@/components/ui/page-header";
 import { StatutReservationBadge } from "@/components/reservations/badges";
 import { KkiapayButton } from "@/components/reservations/kkiapay-button";
 import { AnnulerReservationButton } from "@/components/reservations/annuler-reservation-button";
-import { IconCheck } from "@/components/icons";
+import { ParticipantsReservation } from "@/components/reservations/participants-reservation";
+import { IconCheck, IconDownload } from "@/components/icons";
 import type { FormuleFormation, Reservation, StatutReservation } from "@/lib/types";
+
+const PLACES: Record<FormuleFormation, number> = { INDIVIDUEL: 1, GROUPE_5: 5, GROUPE_10: 10 };
 
 const LIBELLES_FORMULE: Record<FormuleFormation, string> = {
   INDIVIDUEL: "Individuel",
@@ -22,7 +25,7 @@ const LIBELLES_FORMULE: Record<FormuleFormation, string> = {
 const ETAPES: { statut: StatutReservation; label: string }[] = [
   { statut: "ATTENTE_PAIEMENT", label: "Réservée" },
   { statut: "PAYEE", label: "Payée" },
-  { statut: "CONFIRMEE", label: "Rendez-vous fixé" },
+  { statut: "CONFIRMEE", label: "Session fixée" },
   { statut: "REALISEE", label: "Réalisée" },
 ];
 
@@ -66,6 +69,10 @@ export default async function ReservationDetailPage({ params }: { params: Promis
   }
 
   const peutAnnuler = reservation.statut !== "REALISEE" && reservation.statut !== "ANNULEE";
+  const session = reservation.sessionFormation ?? null;
+  const sessionTerminee = session?.statut === "TERMINEE";
+  // §4.3 — participants modifiables jusqu'au début de la session.
+  const participantsModifiables = peutAnnuler && !(session && new Date(session.debut) <= new Date());
 
   return (
     <PageContainer largeur="detail">
@@ -108,15 +115,24 @@ export default async function ReservationDetailPage({ params }: { params: Promis
 
               {reservation.statut === "PAYEE" && (
                 <p className="text-sm leading-6 text-text-muted">
-                  Paiement confirmé{reservation.facture ? ` (facture ${reservation.facture.numero})` : ""}. La date de
-                  rendez-vous vous sera communiquée sous 48h.
+                  Paiement confirmé{reservation.facture ? ` (facture ${reservation.facture.numero})` : ""}. Une session
+                  en ligne vous sera affectée sous 48h ; inscrivez dès maintenant vos participants.
                 </p>
               )}
 
-              {reservation.statut === "CONFIRMEE" && reservation.dateRdv && (
+              {reservation.statut === "CONFIRMEE" && session && (
                 <div className="rounded-[var(--radius-md)] bg-primary-soft/60 px-4 py-4">
-                  <p className="text-sm text-text-muted">Rendez-vous le</p>
-                  <p className="font-display text-lg font-bold text-primary">{formaterDateHeure(reservation.dateRdv)}</p>
+                  <p className="text-sm text-text-muted">Session en ligne le</p>
+                  <p className="font-display text-lg font-bold text-primary">{formaterDateHeure(session.debut)}</p>
+                  {session.lienMeet && (
+                    <p className="mt-3 text-sm text-text">
+                      <a href={session.lienMeet} target="_blank" rel="noopener noreferrer" className="font-medium text-primary hover:underline">
+                        Lien Google Meet
+                      </a>
+                      {session.codeMeet && <span className="text-text-muted"> · code {session.codeMeet}</span>}
+                    </p>
+                  )}
+                  <p className="mt-2 text-xs text-text-muted">Chaque participant inscrit reçoit ce lien par email.</p>
                 </div>
               )}
 
@@ -131,6 +147,34 @@ export default async function ReservationDetailPage({ params }: { params: Promis
               )}
             </Card>
           </Reveal>
+
+          {reservation.statut !== "ANNULEE" && (
+            <Reveal delay={0.12}>
+              <Card>
+                <CardHeader
+                  titre="Participants"
+                  description="Personnes formées : leur présence est relevée par DSP pendant la session."
+                />
+                <ParticipantsReservation
+                  reservationId={reservation.id}
+                  participants={reservation.participants ?? []}
+                  places={PLACES[reservation.formule]}
+                  modifiable={participantsModifiables}
+                  sessionTerminee={sessionTerminee}
+                />
+                {sessionTerminee && (
+                  <div className="mt-5 flex flex-wrap gap-3 border-t border-border pt-4">
+                    <a href={`/api/reservations/${reservation.id}/registre/pdf`} className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline">
+                      <IconDownload width={16} height={16} /> Registre du personnel formé (PDF)
+                    </a>
+                    <a href={`/api/reservations/${reservation.id}/registre/csv`} className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline">
+                      <IconDownload width={16} height={16} /> Liste des présents (CSV)
+                    </a>
+                  </div>
+                )}
+              </Card>
+            </Reveal>
+          )}
 
           {peutAnnuler && (
             <Reveal delay={0.15}>
@@ -165,9 +209,9 @@ export default async function ReservationDetailPage({ params }: { params: Promis
                 },
                 { label: "Réservée le", valeur: formaterDate(reservation.createdAt) },
                 {
-                  label: "Rendez-vous",
-                  valeur: reservation.dateRdv ? formaterDateHeure(reservation.dateRdv) : null,
-                  vide: "Non fixé",
+                  label: "Session",
+                  valeur: session ? formaterDateHeure(session.debut) : reservation.dateRdv ? formaterDateHeure(reservation.dateRdv) : null,
+                  vide: "À affecter par DSP",
                 },
               ]}
             />

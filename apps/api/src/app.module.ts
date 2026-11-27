@@ -29,6 +29,7 @@ import { ReservationsModule } from './reservations/reservations.module.js';
 import { FacturesModule } from './factures/factures.module.js';
 import { RappelsModule } from './rappels/rappels.module.js';
 import { RapportsStatistiquesModule } from './rapports-statistiques/rapports-statistiques.module.js';
+import { VerificationModule } from './verification/verification.module.js';
 
 @Module({
   imports: [
@@ -60,6 +61,7 @@ import { RapportsStatistiquesModule } from './rapports-statistiques/rapports-sta
     FacturesModule,
     RappelsModule,
     RapportsStatistiquesModule,
+    VerificationModule,
   ],
   controllers: [AppController],
   providers: [AppService],

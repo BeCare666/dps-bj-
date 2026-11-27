@@ -227,6 +227,31 @@ enum FormuleFormation {
   @@map("formule_formation")
 }
 
+// Niveau d'un critère des manuels ARS (3e chiffre du code : 1, 2 ou 3).
+enum NiveauCritere {
+  ESSENTIEL
+  FONDAMENTAL
+  AVANCE
+
+  @@map("niveau_critere")
+}
+
+enum StatutSessionFormation {
+  PLANIFIEE
+  TERMINEE
+  ANNULEE
+
+  @@map("statut_session_formation")
+}
+
+// Évaluation réalisée hors DSP et enregistrée par DSP sur justificatif.
+enum SourceEvaluationExterne {
+  ARS
+  MINISTERE
+
+  @@map("source_evaluation_externe")
+}
+
 enum StatutReservation {
   ATTENTE_PAIEMENT
   PAYEE
@@ -277,6 +302,7 @@ model Organisation {
   evenementsIndesirables EvenementIndesirable[]
   reservations       Reservation[]
   rapportsStatistiques RapportStatistique[]
+  evaluationsExternes EvaluationExterne[]
 
   @@map("organisations")
 }
@@ -323,6 +349,7 @@ model Utilisateur {
   transitionsEi           EvenementTransition[]
   reservations            Reservation[]
   notifications           Notification[]
+  evaluationsExternesSaisies EvaluationExterne[]
 
   rapportsCrees    RapportStatistique[] @relation("RapportCreePar")
   rapportsSoumis   RapportStatistique[] @relation("RapportSoumisPar")
@@ -944,17 +971,86 @@ model Formation {
   description    String   @db.Text
   // §9 — objectifs de la formation (présentés au catalogue).
   objectifs      String?  @db.Text
-  dureeHeures    Int?     @map("duree_heures")
-  prixIndividuel Int      @map("prix_individuel")
-  prixGroupe5    Int      @map("prix_groupe_5")
-  prixGroupe10   Int      @map("prix_groupe_10")
+  // Catalogue officiel (formations/, ROADMAP_FORMATIONS_VERIFICATION.md) :
+  // type d'établissement, critère du manuel ARS qui exige la formation, niveau
+  // et domaine du critère, public et programme repris des documents fournis.
+  typeEtablissement TypeEtablissement? @map("type_etablissement")
+  critere        String?
+  niveau         NiveauCritere?
+  domaineCode    String?  @map("domaine_code")
+  domaine        String?
+  publicCible    String?  @db.Text @map("public_cible")
+  exigenceArs    String?  @db.Text @map("exigence_ars")
+  contenus       String?  @db.Text
+  methode        String?  @db.Text
+  evaluation     String?  @db.Text
+  dureeLibelle   String?  @map("duree_libelle")
+  // Heures de face-à-face de la session initiale (« 30 min » = 0,5).
+  dureeHeures    Float?   @map("duree_heures")
+  imageUrl       String?  @db.Text @map("image_url")
+  imageCloudinaryId String? @map("image_cloudinary_id")
+  ordre          Int?
+  // Tarifs fixés par DSP : absents des documents, nuls tant qu'ils ne sont pas
+  // saisis dans l'admin (formation alors non réservable).
+  prixIndividuel Int?     @map("prix_individuel")
+  prixGroupe5    Int?     @map("prix_groupe_5")
+  prixGroupe10   Int?     @map("prix_groupe_10")
   actif          Boolean  @default(true)
   createdAt      DateTime @default(now()) @map("created_at")
   updatedAt      DateTime @updatedAt @map("updated_at")
 
   reservations Reservation[]
+  sessions     SessionFormation[]
 
+  @@index([typeEtablissement])
   @@map("formations")
+}
+
+// Session en ligne (Google Meet) d'une formation, planifiée par DSP. Les
+// participants des réservations payées qui y sont rattachées reçoivent le lien
+// et le code par email.
+model SessionFormation {
+  id          String                 @id @default(cuid())
+  formationId String                 @map("formation_id")
+  debut       DateTime
+  fin         DateTime
+  lienMeet    String                 @db.Text @map("lien_meet")
+  codeMeet    String?                @map("code_meet")
+  placesMax   Int?                   @map("places_max")
+  statut      StatutSessionFormation @default(PLANIFIEE)
+  clotureeLe  DateTime?              @map("cloturee_le")
+  createdAt   DateTime               @default(now()) @map("created_at")
+  updatedAt   DateTime               @updatedAt @map("updated_at")
+
+  formation    Formation     @relation(fields: [formationId], references: [id])
+  reservations Reservation[]
+
+  @@index([formationId])
+  @@index([debut])
+  @@map("sessions_formation")
+}
+
+// Personne inscrite par la clinique à la formation achetée : registre du
+// personnel formé exigé par les manuels ARS (présence cochée à la clôture).
+model ParticipantFormation {
+  id                  String    @id @default(cuid())
+  reservationId       String    @map("reservation_id")
+  nom                 String
+  prenom              String
+  fonction            String
+  service             String?
+  email               String
+  telephone           String?
+  invitationEnvoyeeLe DateTime? @map("invitation_envoyee_le")
+  present             Boolean?
+  createdAt           DateTime  @default(now()) @map("created_at")
+  updatedAt           DateTime  @updatedAt @map("updated_at")
+
+  reservation Reservation @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+
+  @@unique([reservationId, email])
+  @@index([reservationId])
+  @@map("participants_formation")
 }
 
 // RM5 — `tarifApplique` est une copie figée du tarif catalogue au moment de la
@@ -978,15 +1074,53 @@ model Reservation {
   createdAt            DateTime          @default(now()) @map("created_at")
   updatedAt            DateTime          @updatedAt @map("updated_at")
 
+  // Session en ligne choisie à la réservation ou affectée par DSP après paiement.
+  sessionFormationId   String?           @map("session_formation_id")
+
   formation    Formation     @relation(fields: [formationId], references: [id])
   utilisateur  Utilisateur   @relation(fields: [utilisateurId], references: [id])
   organisation Organisation? @relation(fields: [organisationId], references: [id])
+  sessionFormation SessionFormation? @relation(fields: [sessionFormationId], references: [id])
   facture      Facture?
+  participants ParticipantFormation[]
 
   @@index([organisationId])
   @@index([utilisateurId])
   @@index([statut])
+  @@index([sessionFormationId])
   @@map("reservations")
+}
+
+// Évaluation d'un établissement par l'ARS ou le Ministère, antérieure à DSP,
+// enregistrée par DSP avec le document officiel. Seul le niveau (0-5) est
+// repris : l'établissement qui poursuit sur DSP refait l'auto-évaluation.
+model EvaluationExterne {
+  id                   String                  @id @default(cuid())
+  organisationId       String?                 @map("organisation_id")
+  nomEtablissement     String                  @map("nom_etablissement")
+  typeEtablissement    TypeEtablissement       @map("type_etablissement")
+  ville                String?
+  ifu                  String?
+  source               SourceEvaluationExterne
+  niveau               Int
+  dateEvaluation       DateTime                @map("date_evaluation")
+  pctEssentiels        Float?                  @map("pct_essentiels")
+  pctFondamentaux      Float?                  @map("pct_fondamentaux")
+  pctAvances           Float?                  @map("pct_avances")
+  reference            String?
+  documentUrl          String                  @db.Text @map("document_url")
+  documentCloudinaryId String                  @map("document_cloudinary_id")
+  documentNom          String                  @map("document_nom")
+  saisieParId          String                  @map("saisie_par_id")
+  createdAt            DateTime                @default(now()) @map("created_at")
+  updatedAt            DateTime                @updatedAt @map("updated_at")
+
+  organisation Organisation? @relation(fields: [organisationId], references: [id])
+  saisiePar    Utilisateur   @relation(fields: [saisieParId], references: [id])
+
+  @@index([organisationId])
+  @@index([ifu])
+  @@map("evaluations_externes")
 }
 
 // §9.3 / §11.1 — facture d'une réservation OU d'un abonnement.

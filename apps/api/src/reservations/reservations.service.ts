@@ -4,14 +4,15 @@ import { KkiapayService } from "../paiements/kkiapay.service.js";
 import { MailerService } from "../notifications/mailer.service.js";
 import { NotificationsInternesService } from "../notifications-internes/notifications-internes.service.js";
 import { FacturesService } from "../factures/factures.service.js";
-import { FormuleFormation, RoleUtilisateur, StatutReservation, TypeCompte } from "../generated/prisma/enums.js";
+import { FormuleFormation, RoleUtilisateur, StatutReservation, StatutSessionFormation, TypeCompte } from "../generated/prisma/enums.js";
 import type { Reservation } from "../generated/prisma/client.js";
 import type { JwtAccessPayload } from "../auth/types/jwt-payload.type.js";
 import type { CreerReservationDto } from "./dto/creer-reservation.dto.js";
 import type { VerifierPaiementDto } from "./dto/verifier-paiement.dto.js";
-import type { FixerDateRdvDto } from "./dto/fixer-date-rdv.dto.js";
 import type { MarquerRealiseeDto } from "./dto/marquer-realisee.dto.js";
 import type { ListReservationsQueryDto } from "./dto/list-reservations-query.dto.js";
+import type { AffecterSessionDto } from "./sessions/dto/session-formation.dto.js";
+import { InvitationsFormationService, formaterDateSession } from "./sessions/invitations-formation.service.js";
 
 @Injectable()
 export class ReservationsService {
@@ -23,6 +24,7 @@ export class ReservationsService {
     private readonly mailer: MailerService,
     private readonly notificationsInternes: NotificationsInternesService,
     private readonly factures: FacturesService,
+    private readonly invitations: InvitationsFormationService,
   ) {}
 
   // 9.1/9.2/9.9 — Organisation et Individuel peuvent réserver, pas l'admin plateforme.
@@ -40,6 +42,7 @@ export class ReservationsService {
     // RM5 — le tarif catalogue est figé sur la réservation dès sa création
     // (le paiement suit immédiatement via le widget), jamais recalculé ensuite.
     const tarifApplique = this.tarifPourFormule(formation, dto.formule);
+    if (dto.sessionFormationId) await this.exigerSessionOuverte(dto.sessionFormationId, formation.id);
 
     return this.prisma.reservation.create({
       data: {
@@ -48,6 +51,7 @@ export class ReservationsService {
         organisationId: user.organisationId,
         formule: dto.formule,
         tarifApplique,
+        sessionFormationId: dto.sessionFormationId ?? null,
       },
     });
   }
@@ -67,6 +71,8 @@ export class ReservationsService {
         // pour un compte non-admin, qui connaît déjà son propre profil.
         utilisateur: { select: { id: true, nom: true, prenom: true, email: true } },
         organisation: { select: { id: true, nom: true } },
+        sessionFormation: { select: { id: true, debut: true, fin: true, statut: true } },
+        _count: { select: { participants: true } },
       },
       orderBy: { createdAt: "desc" },
     });
@@ -75,9 +81,19 @@ export class ReservationsService {
   async obtenir(id: string, user: JwtAccessPayload) {
     const reservation = await this.prisma.reservation.findUnique({
       where: { id },
-      include: { formation: true, facture: true },
+      include: {
+        formation: true,
+        facture: true,
+        sessionFormation: true,
+        participants: { orderBy: [{ nom: "asc" }, { prenom: "asc" }] },
+      },
     });
     this.verifierAcces(reservation, user);
+    // §4.4 — lien et code Meet communiqués une fois le paiement confirmé.
+    const payee = reservation.statut !== StatutReservation.ATTENTE_PAIEMENT && reservation.statut !== StatutReservation.ANNULEE;
+    if (reservation.sessionFormation && !payee) {
+      return { ...reservation, sessionFormation: { ...reservation.sessionFormation, lienMeet: null, codeMeet: null } };
+    }
     return reservation;
   }
 
@@ -117,10 +133,18 @@ export class ReservationsService {
 
   // Point d'entrée idempotent partagé avec le webhook (voir PaiementsWebhookController).
   async confirmerPaiement(reservation: Reservation, transactionId: string) {
+    // Session choisie à la réservation et toujours ouverte : la réservation est
+    // confirmée d'emblée ; sinon DSP l'affecte à une session (affecterSession).
+    const session = reservation.sessionFormationId
+      ? await this.prisma.sessionFormation.findUnique({ where: { id: reservation.sessionFormationId } })
+      : null;
+    const sessionOuverte = session && session.statut === StatutSessionFormation.PLANIFIEE && session.debut > new Date() ? session : null;
     const misAJour = await this.prisma.$transaction(async (tx) => {
       const maj = await tx.reservation.update({
         where: { id: reservation.id },
-        data: { statut: StatutReservation.PAYEE, kkiapayTransactionId: transactionId },
+        data: sessionOuverte
+          ? { statut: StatutReservation.CONFIRMEE, kkiapayTransactionId: transactionId, dateRdv: sessionOuverte.debut }
+          : { statut: StatutReservation.PAYEE, kkiapayTransactionId: transactionId, sessionFormationId: null },
       });
       // §11.1 — facture émise automatiquement (numérotation commune aux abonnements).
       await this.factures.creerDansTransaction(tx, {
@@ -133,9 +157,12 @@ export class ReservationsService {
 
     await this.notifierUtilisateur(
       reservation.utilisateurId,
-      "Paiement confirmé. Une date de rendez-vous vous sera communiquée sous 48 h.",
+      sessionOuverte
+        ? `Paiement confirmé. Session en ligne le ${formaterDateSession(sessionOuverte.debut)} : chaque participant inscrit reçoit le lien Google Meet par email.`
+        : "Paiement confirmé. Une session en ligne vous sera affectée sous 48 h ; inscrivez dès maintenant vos participants.",
       { titre: "Paiement de formation confirmé", lienUrl: `/mes-reservations/${reservation.id}` },
     );
+    if (sessionOuverte) await this.invitations.envoyerPourReservation(reservation.id);
 
     const formation = await this.prisma.formation.findUnique({
       where: { id: reservation.formationId },
@@ -143,7 +170,7 @@ export class ReservationsService {
     });
     await this.notificationsInternes.creerPourAdmins({
       type: "RESERVATION_PAYEE",
-      titre: "Réservation payée, date de RDV à fixer",
+      titre: sessionOuverte ? "Réservation payée" : "Réservation payée, session à affecter",
       message: `${formation?.titre ?? "Une formation"} · ${reservation.tarifApplique.toLocaleString("fr-FR")} FCFA`,
       lienUrl: "/admin/reservations",
     });
@@ -151,25 +178,36 @@ export class ReservationsService {
     return misAJour;
   }
 
-  // 9.5 — fixation de la date de RDV par l'admin, fait passer PAYEE -> CONFIRMEE.
-  async fixerDateRdv(id: string, dto: FixerDateRdvDto) {
+  // §4.2 — affectation (ou changement) de la session en ligne par DSP après
+  // paiement : la réservation passe confirmée, ses participants sont invités.
+  async affecterSession(id: string, dto: AffecterSessionDto) {
     const reservation = await this.prisma.reservation.findUnique({ where: { id } });
     if (!reservation) throw new NotFoundException("Réservation introuvable");
-    if (reservation.statut !== StatutReservation.PAYEE) {
-      throw new ConflictException("La date de RDV ne peut être fixée que sur une réservation payée");
+    if (reservation.statut !== StatutReservation.PAYEE && reservation.statut !== StatutReservation.CONFIRMEE) {
+      throw new ConflictException("Seule une réservation payée peut être affectée à une session");
     }
-
-    const misAJour = await this.prisma.reservation.update({
-      where: { id },
-      data: { statut: StatutReservation.CONFIRMEE, dateRdv: new Date(dto.dateRdv) },
+    const session = await this.exigerSessionOuverte(dto.sessionFormationId, reservation.formationId);
+    const changement = reservation.sessionFormationId !== session.id;
+    const misAJour = await this.prisma.$transaction(async (tx) => {
+      if (changement) {
+        await tx.participantFormation.updateMany({ where: { reservationId: id }, data: { invitationEnvoyeeLe: null } });
+      }
+      return tx.reservation.update({
+        where: { id },
+        data: {
+          sessionFormationId: session.id,
+          statut: StatutReservation.CONFIRMEE,
+          dateRdv: session.debut,
+          ...(changement ? { rappelEnvoyeLe: null } : {}),
+        },
+      });
     });
-
+    await this.invitations.envoyerPourReservation(id);
     await this.notifierUtilisateur(
       reservation.utilisateurId,
-      `Date de rendez-vous fixée : ${new Date(dto.dateRdv).toLocaleString("fr-FR", { dateStyle: "long", timeStyle: "short", timeZone: "Africa/Porto-Novo" })}`,
-      { titre: "Date de formation fixée", lienUrl: `/mes-reservations/${reservation.id}` },
+      `Session en ligne fixée : ${formaterDateSession(session.debut)}. Chaque participant inscrit reçoit le lien Google Meet par email.`,
+      { titre: "Session de formation fixée", lienUrl: `/mes-reservations/${reservation.id}` },
     );
-
     return misAJour;
   }
 
@@ -206,15 +244,30 @@ export class ReservationsService {
     return this.prisma.reservation.update({ where: { id }, data: { statut: StatutReservation.ANNULEE } });
   }
 
-  private tarifPourFormule(formation: { prixIndividuel: number; prixGroupe5: number; prixGroupe10: number }, formule: FormuleFormation): number {
-    switch (formule) {
-      case FormuleFormation.INDIVIDUEL:
-        return formation.prixIndividuel;
-      case FormuleFormation.GROUPE_5:
-        return formation.prixGroupe5;
-      case FormuleFormation.GROUPE_10:
-        return formation.prixGroupe10;
+  private async exigerSessionOuverte(sessionFormationId: string, formationId: string) {
+    const session = await this.prisma.sessionFormation.findUnique({ where: { id: sessionFormationId } });
+    if (!session || session.formationId !== formationId) throw new NotFoundException("Session introuvable pour cette formation");
+    if (session.statut !== StatutSessionFormation.PLANIFIEE || session.debut <= new Date()) {
+      throw new ConflictException("Cette session n'est plus ouverte aux inscriptions");
     }
+    return session;
+  }
+
+  // Les tarifs ne figurent pas dans les documents officiels : tant que DSP ne
+  // les a pas fixés dans l'admin, la formule n'est pas réservable.
+  private tarifPourFormule(
+    formation: { prixIndividuel: number | null; prixGroupe5: number | null; prixGroupe10: number | null },
+    formule: FormuleFormation,
+  ): number {
+    const tarif = {
+      [FormuleFormation.INDIVIDUEL]: formation.prixIndividuel,
+      [FormuleFormation.GROUPE_5]: formation.prixGroupe5,
+      [FormuleFormation.GROUPE_10]: formation.prixGroupe10,
+    }[formule];
+    if (tarif === null || tarif === undefined) {
+      throw new BadRequestException("Tarif à définir : cette formule n'est pas encore réservable");
+    }
+    return tarif;
   }
 
   // §11.2 — email + notification dans l'espace personnel.

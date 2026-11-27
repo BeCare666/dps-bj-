@@ -9,17 +9,44 @@ export interface EtatAction {
   succes?: boolean;
 }
 
+export type NiveauCritere = "ESSENTIEL" | "FONDAMENTAL" | "AVANCE";
+
+// Session en ligne présentée au catalogue (sans lien ni code Meet).
+export interface SessionFormationPublique {
+  id: string;
+  debut: string;
+  fin: string;
+  placesMax: number | null;
+}
+
 export interface Formation {
   id: string;
   titre: string;
   description: string;
   // §9 — objectifs de la formation.
   objectifs?: string | null;
+  // Catalogue officiel (ROADMAP_FORMATIONS_VERIFICATION.md) : nuls pour les
+  // formations créées avant l'import.
+  typeEtablissement: TypeEtablissement | null;
+  critere: string | null;
+  niveau: NiveauCritere | null;
+  domaineCode: string | null;
+  domaine: string | null;
+  publicCible: string | null;
+  exigenceArs: string | null;
+  contenus: string | null;
+  methode: string | null;
+  evaluation: string | null;
+  dureeLibelle: string | null;
   dureeHeures: number | null;
-  prixIndividuel: number;
-  prixGroupe5: number;
-  prixGroupe10: number;
+  imageUrl: string | null;
+  ordre: number | null;
+  // Tarifs fixés par DSP ; nuls = « tarif à définir », formule non réservable.
+  prixIndividuel: number | null;
+  prixGroupe5: number | null;
+  prixGroupe10: number | null;
   actif: boolean;
+  sessions?: SessionFormationPublique[];
 }
 
 export type TypeEtablissement = "EH" | "ESPC";
@@ -512,6 +539,39 @@ export interface Reservation {
   facture?: FactureResume | null;
   utilisateur?: { id: string; nom: string; prenom: string; email: string };
   organisation?: { id: string; nom: string } | null;
+  // §4 — session en ligne et participants (ROADMAP_FORMATIONS_VERIFICATION.md).
+  sessionFormationId?: string | null;
+  sessionFormation?: SessionFormation | null;
+  participants?: ParticipantFormation[];
+  _count?: { participants: number };
+}
+
+export type StatutSessionFormation = "PLANIFIEE" | "TERMINEE" | "ANNULEE";
+
+// Lien et code Meet nuls tant que la réservation n'est pas payée.
+export interface SessionFormation {
+  id: string;
+  formationId?: string;
+  debut: string;
+  fin: string;
+  lienMeet?: string | null;
+  codeMeet?: string | null;
+  placesMax?: number | null;
+  statut: StatutSessionFormation;
+  clotureeLe?: string | null;
+}
+
+export interface ParticipantFormation {
+  id: string;
+  reservationId: string;
+  nom: string;
+  prenom: string;
+  fonction: string;
+  service: string | null;
+  email: string;
+  telephone: string | null;
+  invitationEnvoyeeLe: string | null;
+  present: boolean | null;
 }
 
 // --- Profil / notifications in-app ---
@@ -826,4 +886,58 @@ export interface DonneesAutorite {
     statut: StatutRapportStatistique;
     valeurs: Record<string, number | boolean | null>;
   }[];
+}
+// §4.1 / §4.5 — sessions en ligne côté administration.
+export interface SessionFormationAdmin extends SessionFormation {
+  formation: { id: string; titre: string; typeEtablissement: TypeEtablissement | null; critere: string | null; dureeLibelle?: string | null };
+  nombreReservations?: number;
+  nombreParticipants?: number;
+  reservations?: (Reservation & { participants: ParticipantFormation[] })[];
+}
+
+// §5 — vérification des établissements.
+export type SourceEvaluation = "AUTO_EVALUATION" | "ARS" | "MINISTERE";
+
+export interface EvaluationExterne {
+  id: string;
+  organisationId: string | null;
+  nomEtablissement: string;
+  typeEtablissement: TypeEtablissement;
+  ville: string | null;
+  ifu: string | null;
+  source: Exclude<SourceEvaluation, "AUTO_EVALUATION">;
+  niveau: number;
+  dateEvaluation: string;
+  pctEssentiels: number | null;
+  pctFondamentaux: number | null;
+  pctAvances: number | null;
+  reference: string | null;
+  documentUrl: string;
+  documentNom: string;
+  organisation?: { id: string; nom: string; ifu: string } | null;
+  saisiePar?: { id: string; nom: string; prenom: string };
+}
+
+export interface ResultatVerification {
+  nom: string;
+  typeEtablissement: TypeEtablissement;
+  ville: string | null;
+  source: SourceEvaluation;
+  niveau: number | null;
+  date: string | null;
+  pctEssentiels: number | null;
+  pctFondamentaux: number | null;
+  pctAvances: number | null;
+  inscritSurDsp: boolean;
+}
+
+export interface NiveauMonEtablissement {
+  autoEvaluation: {
+    niveau: number | null;
+    date: string | null;
+    essentiels: number | null;
+    fondamentaux: number | null;
+    avances: number | null;
+  };
+  evaluationsExternes: Pick<EvaluationExterne, "id" | "source" | "niveau" | "dateEvaluation" | "pctEssentiels" | "pctFondamentaux" | "pctAvances">[];
 }

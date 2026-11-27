@@ -26,7 +26,7 @@ function buildPrismaMock() {
     journalAudit: { create: vi.fn() },
     $transaction: vi.fn(async (arg: unknown) => {
       if (typeof arg === "function") {
-        return arg({ organisation: orgTx, utilisateur: userTx });
+        return arg({ organisation: orgTx, utilisateur: userTx, evaluationExterne: { updateMany: vi.fn() } });
       }
       return Promise.all(arg as Promise<unknown>[]);
     }),

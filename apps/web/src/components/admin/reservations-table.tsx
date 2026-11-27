@@ -7,9 +7,9 @@ import { Modal } from "@/components/ui/modal";
 import { StatutReservationBadge } from "@/components/reservations/badges";
 import { IconCalendarClock, IconCheckCircle } from "@/components/icons";
 import { formaterDate, formaterDateHeure, formaterFcfa } from "@/lib/format";
-import { FixerDateRdvForm } from "./fixer-date-rdv-form";
+import { AffecterSessionForm } from "./affecter-session-form";
 import { MarquerRealiseeForm } from "./marquer-realisee-form";
-import type { FormuleFormation, Reservation, StatutReservation } from "@/lib/types";
+import type { FormuleFormation, Reservation, SessionFormation, StatutReservation } from "@/lib/types";
 
 const LIBELLES_FORMULE: Record<FormuleFormation, string> = {
   INDIVIDUEL: "Individuel",
@@ -33,7 +33,7 @@ function nomClient(r: Reservation): string {
   return r.organisation ? `${r.organisation.nom} (${nomPersonne(r)})` : nomPersonne(r);
 }
 
-export function ReservationsTable({ reservations }: { reservations: Reservation[] }) {
+export function ReservationsTable({ reservations, sessions }: { reservations: Reservation[]; sessions: SessionFormation[] }) {
   const [reservationDateRdv, setReservationDateRdv] = useState<Reservation | null>(null);
   const [reservationRealisation, setReservationRealisation] = useState<Reservation | null>(null);
 
@@ -107,12 +107,12 @@ export function ReservationsTable({ reservations }: { reservations: Reservation[
     },
     {
       cle: "dateRdv",
-      entete: "Rendez-vous",
+      entete: "Session",
       render: (r) =>
         r.dateRdv ? (
           <span className="whitespace-nowrap tabular-nums">{formaterDateHeure(r.dateRdv)}</span>
         ) : r.statut === "PAYEE" ? (
-          <span className="font-medium text-warning">À planifier</span>
+          <span className="font-medium text-warning">À affecter</span>
         ) : (
           <span className="text-text-faint">Non fixé</span>
         ),
@@ -172,12 +172,14 @@ export function ReservationsTable({ reservations }: { reservations: Reservation[
           description: "Les réservations de formations apparaîtront ici dès le premier paiement initié.",
         }}
         actionsLigne={(r) => [
-          r.statut === "PAYEE" && {
-            label: "Fixer la date de RDV",
+          (r.statut === "PAYEE" || r.statut === "CONFIRMEE") && {
+            label: r.statut === "PAYEE" ? "Affecter à une session" : "Changer de session",
             icone: IconCalendarClock,
             onSelect: () => setReservationDateRdv(r),
           },
-          r.statut === "CONFIRMEE" && {
+          // Réservations confirmées avant les sessions en ligne : clôture
+          // individuelle ; les autres se clôturent depuis leur session.
+          r.statut === "CONFIRMEE" && !r.sessionFormationId && {
             label: "Clôturer la session",
             icone: IconCheckCircle,
             onSelect: () => setReservationRealisation(r),
@@ -188,11 +190,16 @@ export function ReservationsTable({ reservations }: { reservations: Reservation[
       <Modal
         open={reservationDateRdv !== null}
         onClose={() => setReservationDateRdv(null)}
-        title="Fixer la date de rendez-vous"
+        title="Session en ligne"
         description={reservationDateRdv?.formation?.titre}
       >
         {reservationDateRdv && (
-          <FixerDateRdvForm reservationId={reservationDateRdv.id} onSuccess={() => setReservationDateRdv(null)} />
+          <AffecterSessionForm
+            reservationId={reservationDateRdv.id}
+            sessions={sessions.filter((s) => s.formationId === reservationDateRdv.formationId && new Date(s.debut) > new Date())}
+            sessionActuelleId={reservationDateRdv.sessionFormationId}
+            onSuccess={() => setReservationDateRdv(null)}
+          />
         )}
       </Modal>
 

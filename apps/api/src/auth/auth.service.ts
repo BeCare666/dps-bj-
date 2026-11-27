@@ -83,6 +83,12 @@ export class AuthService {
           zoneSanitaire: dto.organisationZoneSanitaire,
         },
       });
+      // Évaluations ARS / Ministère enregistrées par DSP avant l'inscription :
+      // rattachées à l'établissement par son IFU.
+      await tx.evaluationExterne.updateMany({
+        where: { ifu: organisation.ifu, organisationId: null },
+        data: { organisationId: organisation.id },
+      });
 
       return tx.utilisateur.create({
         data: {

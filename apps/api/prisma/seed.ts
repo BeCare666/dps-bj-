@@ -1,6 +1,7 @@
 // Seed de développement — dps.bj
 // - Compte admin plateforme initial
 // - Grilles officielles ARS EH/ESPC (critères essentiels), voir prisma/grilles-ars/
+// - Catalogue officiel des formations EH/ESPC, voir prisma/formations-ars/
 import "dotenv/config";
 import bcrypt from "bcrypt";
 import { randomBytes } from "node:crypto";
@@ -10,6 +11,7 @@ import { PrismaClient, TypeCompte, RoleUtilisateur, NiveauAutorite } from "../sr
 import { cleRapprochement } from "@dps/shared";
 import { createTidbAdapter } from "../src/prisma/create-tidb-adapter.js";
 import { importerGrillesArs } from "./grilles-ars/importer.js";
+import { importerFormationsArs } from "./formations-ars/importer.js";
 
 const certsDir = join(dirname(fileURLToPath(import.meta.url)), "..", "certs");
 const adapter = createTidbAdapter(process.env.DATABASE_URL!, join(certsDir, "tidb-ca.pem"));
@@ -137,6 +139,7 @@ async function seedAutoritesFictives() {
 async function main() {
   await seedAdmin();
   await importerGrillesArs(prisma);
+  await importerFormationsArs(prisma);
   await seedParametres();
   await seedAutoritesFictives();
 }

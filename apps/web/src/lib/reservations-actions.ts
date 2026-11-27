@@ -19,7 +19,11 @@ export async function creerReservationAction(
   try {
     reservation = await apiFetchJson<Reservation>("/reservations", {
       method: "POST",
-      body: JSON.stringify({ formationId, formule: String(formData.get("formule") ?? "") }),
+      body: JSON.stringify({
+        formationId,
+        formule: String(formData.get("formule") ?? ""),
+        sessionFormationId: String(formData.get("sessionFormationId") ?? "") || undefined,
+      }),
     });
   } catch (erreur) {
     if (erreur instanceof ApiError) {
@@ -48,6 +52,42 @@ export async function annulerReservationAction(reservationId: string): Promise<E
   if (!res.ok) {
     const corps = await res.json().catch(() => undefined);
     return { erreur: messageErreurApi(corps, "Impossible d'annuler la réservation.") };
+  }
+  revalidatePath(`/mes-reservations/${reservationId}`);
+  return {};
+}
+
+// §4.3 — participants inscrits par l'établissement.
+export async function ajouterParticipantAction(
+  reservationId: string,
+  _etat: EtatAction & { succes?: boolean },
+  formData: FormData,
+): Promise<EtatAction & { succes?: boolean }> {
+  const texte = (cle: string) => String(formData.get(cle) ?? "").trim();
+  const res = await apiFetch(`/reservations/${reservationId}/participants`, {
+    method: "POST",
+    body: JSON.stringify({
+      nom: texte("nom"),
+      prenom: texte("prenom"),
+      fonction: texte("fonction"),
+      service: texte("service") || undefined,
+      email: texte("email"),
+      telephone: texte("telephone") || undefined,
+    }),
+  });
+  if (!res.ok) {
+    const corps = await res.json().catch(() => undefined);
+    return { erreur: messageErreurApi(corps, "Impossible d'ajouter ce participant.") };
+  }
+  revalidatePath(`/mes-reservations/${reservationId}`);
+  return { succes: true };
+}
+
+export async function retirerParticipantAction(reservationId: string, participantId: string): Promise<EtatAction> {
+  const res = await apiFetch(`/reservations/${reservationId}/participants/${participantId}`, { method: "DELETE" });
+  if (!res.ok) {
+    const corps = await res.json().catch(() => undefined);
+    return { erreur: messageErreurApi(corps, "Impossible de retirer ce participant.") };
   }
   revalidatePath(`/mes-reservations/${reservationId}`);
   return {};

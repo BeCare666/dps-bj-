@@ -116,11 +116,41 @@ Ce lien expire dans 72 heures.`,
     });
   }
 
-  private async envoyerSansEchouer(params: Parameters<BrevoService["envoyer"]>[0]): Promise<void> {
+  // Invitation d'un participant à une session de formation en ligne (Google Meet).
+  // Renvoie false si l'envoi a échoué, pour que l'invitation reste « à envoyer ».
+  async sendInvitationSessionFormation(params: {
+    email: string;
+    prenom: string;
+    nom: string;
+    formation: string;
+    debut: string;
+    fin: string;
+    lienMeet: string;
+    codeMeet: string | null;
+  }): Promise<boolean> {
+    const code = params.codeMeet ? `<p>Code de la réunion : <strong>${echapperHtml(params.codeMeet)}</strong></p>` : "";
+    return this.envoyerSansEchouer({
+      destinataire: { email: params.email, name: `${params.prenom} ${params.nom}` },
+      sujet: `Invitation : formation « ${params.formation} » · DSP`,
+      contenuHtml: `<p>Bonjour ${echapperHtml(params.prenom)},</p><p>Vous êtes inscrit(e) à la formation en ligne <strong>${echapperHtml(params.formation)}</strong>.</p><p>Date : <strong>${echapperHtml(params.debut)}</strong> au <strong>${echapperHtml(params.fin)}</strong></p><p><a href="${echapperHtml(params.lienMeet)}">Rejoindre la session Google Meet</a></p>${code}<p>Votre présence sera relevée pendant la session et figurera sur le registre du personnel formé de votre établissement.</p>`,
+      contenuTexte: `Bonjour ${params.prenom},
+
+Vous êtes inscrit(e) à la formation en ligne « ${params.formation} ».
+Date : ${params.debut} au ${params.fin}
+Lien Google Meet : ${params.lienMeet}${params.codeMeet ? `
+Code de la réunion : ${params.codeMeet}` : ""}
+
+Votre présence sera relevée pendant la session et figurera sur le registre du personnel formé de votre établissement.`,
+    });
+  }
+
+  private async envoyerSansEchouer(params: Parameters<BrevoService["envoyer"]>[0]): Promise<boolean> {
     try {
       await this.brevo.envoyer(params);
+      return true;
     } catch (erreur) {
       this.logger.error(`Échec d'envoi email "${params.sujet}" à ${params.destinataire.email} : ${erreur}`);
+      return false;
     }
   }
 }

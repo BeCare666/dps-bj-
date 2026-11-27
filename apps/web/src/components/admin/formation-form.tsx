@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect } from "react";
 import { useFormStatus } from "react-dom";
-import { Field } from "@/components/ui/field";
+import { Field, SelectField } from "@/components/ui/field";
 import type { EtatAction } from "@/lib/admin-actions";
 import type { Formation } from "@/lib/types";
 
@@ -42,71 +42,71 @@ export function FormationForm({
   return (
     <form action={formAction} className="flex flex-col gap-4">
       <Field label="Titre" name="titre" required minLength={3} defaultValue={formation?.titre} />
-      <div className="flex flex-col gap-1.5">
-        <label htmlFor="description" className="text-sm font-medium text-text">
-          Description
-        </label>
-        <textarea
-          id="description"
-          name="description"
-          required
-          minLength={10}
-          rows={4}
-          defaultValue={formation?.description}
-          className="rounded-[var(--radius-md)] border border-border bg-surface px-3.5 py-2.5 text-sm text-text placeholder:text-text-faint transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary-soft"
-        />
-      </div>
-      <div className="flex flex-col gap-1.5">
-        <label htmlFor="objectifs" className="text-sm font-medium text-text">
-          Objectifs
-        </label>
-        <textarea
-          id="objectifs"
-          name="objectifs"
-          rows={3}
-          defaultValue={formation?.objectifs ?? ""}
-          placeholder="Ce que les participants sauront faire à l'issue de la formation"
-          className="rounded-[var(--radius-md)] border border-border bg-surface px-3.5 py-2.5 text-sm text-text placeholder:text-text-faint transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary-soft"
-        />
-      </div>
-      <Field
-        label="Durée (heures, optionnel)"
-        name="dureeHeures"
-        type="number"
-        min={1}
-        defaultValue={formation?.dureeHeures ?? undefined}
-      />
       <div className="grid gap-4 sm:grid-cols-3">
-        <Field
-          label="Tarif individuel (FCFA)"
-          name="prixIndividuel"
-          type="number"
-          required
-          min={0}
-          defaultValue={formation?.prixIndividuel}
-        />
-        <Field
-          label="Tarif groupe de 5 (FCFA)"
-          name="prixGroupe5"
-          type="number"
-          required
-          min={0}
-          defaultValue={formation?.prixGroupe5}
-        />
-        <Field
-          label="Tarif groupe de 10 (FCFA)"
-          name="prixGroupe10"
-          type="number"
-          required
-          min={0}
-          defaultValue={formation?.prixGroupe10}
-        />
+        <SelectField label="Type d'établissement" name="typeEtablissement" defaultValue={formation?.typeEtablissement ?? ""}>
+          <option value="">Hors catalogue officiel</option>
+          <option value="EH">EH</option>
+          <option value="ESPC">ESPC</option>
+        </SelectField>
+        <Field label="Critère ARS" name="critere" placeholder="ex. C.2.1.1" defaultValue={formation?.critere ?? ""} />
+        <SelectField label="Niveau du critère" name="niveau" defaultValue={formation?.niveau ?? ""}>
+          <option value="">Non renseigné</option>
+          <option value="ESSENTIEL">Essentiel</option>
+          <option value="FONDAMENTAL">Fondamental</option>
+          <option value="AVANCE">Avancé</option>
+        </SelectField>
       </div>
+      <div className="grid gap-4 sm:grid-cols-[8rem_1fr]">
+        <Field label="Domaine (code)" name="domaineCode" placeholder="A à E" maxLength={1} defaultValue={formation?.domaineCode ?? ""} />
+        <Field label="Domaine" name="domaine" defaultValue={formation?.domaine ?? ""} />
+      </div>
+      <ZoneTexte label="Public" name="publicCible" rows={2} defaultValue={formation?.publicCible} />
+      <ZoneTexte label="Description (présentation)" name="description" required minLength={10} rows={3} defaultValue={formation?.description} />
+      <ZoneTexte label="Objectif" name="objectifs" rows={2} defaultValue={formation?.objectifs} />
+      <ZoneTexte label="Exigence ARS" name="exigenceArs" rows={2} defaultValue={formation?.exigenceArs} />
+      <ZoneTexte label="Contenus" name="contenus" rows={4} defaultValue={formation?.contenus} />
+      <div className="grid gap-4 sm:grid-cols-2">
+        <ZoneTexte label="Méthode" name="methode" rows={2} defaultValue={formation?.methode} />
+        <ZoneTexte label="Évaluation" name="evaluation" rows={2} defaultValue={formation?.evaluation} />
+      </div>
+      <div className="grid gap-4 sm:grid-cols-3">
+        <Field label="Durée (libellé)" name="dureeLibelle" placeholder="ex. 7 h, mise à jour annuelle 2 h" defaultValue={formation?.dureeLibelle ?? ""} />
+        <Field label="Durée initiale (heures)" name="dureeHeures" type="number" min={0} step={0.25} defaultValue={formation?.dureeHeures ?? undefined} />
+        <Field label="Ordre d'affichage" name="ordre" type="number" min={0} defaultValue={formation?.ordre ?? undefined} />
+      </div>
+      <div className="grid gap-4 sm:grid-cols-3">
+        <Field label="Tarif individuel (FCFA)" name="prixIndividuel" type="number" min={0} placeholder="À définir" defaultValue={formation?.prixIndividuel ?? undefined} />
+        <Field label="Tarif groupe de 5 (FCFA)" name="prixGroupe5" type="number" min={0} placeholder="À définir" defaultValue={formation?.prixGroupe5 ?? undefined} />
+        <Field label="Tarif groupe de 10 (FCFA)" name="prixGroupe10" type="number" min={0} placeholder="À définir" defaultValue={formation?.prixGroupe10 ?? undefined} />
+      </div>
+      <p className="-mt-2 text-xs text-text-faint">Un tarif vide rend la formule non réservable.</p>
 
       {etat.erreur && <p className="text-sm text-danger">{etat.erreur}</p>}
       <div>
         <Bouton label={libelleBouton} />
       </div>
     </form>
+  );
+}
+
+function ZoneTexte({
+  label,
+  name,
+  defaultValue,
+  ...props
+}: { label: string; name: string; defaultValue?: string | null } & Omit<React.ComponentPropsWithoutRef<"textarea">, "defaultValue">) {
+  return (
+    <div className="flex flex-col gap-1.5">
+      <label htmlFor={`formation-${name}`} className="text-sm font-medium text-text">
+        {label}
+      </label>
+      <textarea
+        id={`formation-${name}`}
+        name={name}
+        defaultValue={defaultValue ?? ""}
+        {...props}
+        className="rounded-[var(--radius-md)] border border-border bg-surface px-3.5 py-2.5 text-sm text-text placeholder:text-text-faint transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary-soft"
+      />
+    </div>
   );
 }

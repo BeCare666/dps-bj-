@@ -9,10 +9,12 @@ interface ModalProps {
   onClose: () => void;
   title: string;
   description?: string;
+  // « large » : formulaires longs (éditeur de formation).
+  largeur?: "normale" | "large";
   children: ReactNode;
 }
 
-export function Modal({ open, onClose, title, description, children }: ModalProps) {
+export function Modal({ open, onClose, title, description, largeur = "normale", children }: ModalProps) {
   useEffect(() => {
     if (!open) return;
     function onKeyDown(e: KeyboardEvent) {
@@ -42,7 +44,7 @@ export function Modal({ open, onClose, title, description, children }: ModalProp
             role="dialog"
             aria-modal="true"
             aria-labelledby="modal-titre"
-            className="max-h-[85vh] w-full max-w-lg overflow-y-auto rounded-[var(--radius-lg)] border border-border bg-surface p-6 shadow-[var(--shadow-elevated)]"
+            className={`max-h-[85vh] w-full ${largeur === "large" ? "max-w-3xl" : "max-w-lg"} overflow-y-auto rounded-[var(--radius-lg)] border border-border bg-surface p-6 shadow-[var(--shadow-elevated)]`}
             initial={{ opacity: 0, y: 14, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.98 }}

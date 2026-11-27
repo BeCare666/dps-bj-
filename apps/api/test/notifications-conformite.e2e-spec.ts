@@ -117,7 +117,10 @@ describe("Notifications — conformité CDC §11.2 (e2e)", () => {
     await prisma.patient.deleteMany({ where: { id: { in: idsPatients } } });
     await prisma.evenementIndesirable.deleteMany({ where: { organisationId: orgId } });
     await prisma.reservation.deleteMany({ where: { utilisateurId: { in: tous } } });
-    if (formationId) await prisma.formation.delete({ where: { id: formationId } });
+    if (formationId) {
+      await prisma.sessionFormation.deleteMany({ where: { formationId } });
+      await prisma.formation.delete({ where: { id: formationId } });
+    }
     await prisma.abonnementModule.deleteMany({ where: { organisationId: orgId } });
     await prisma.notification.deleteMany({ where: { destinataireId: { in: tous } } });
     await prisma.journalAudit.deleteMany({ where: { OR: [{ organisationId: orgId }, { utilisateurId: { in: tous } }] } });
@@ -204,20 +207,23 @@ describe("Notifications — conformité CDC §11.2 (e2e)", () => {
     expect(envois.filter((e) => e.type === "rappel-essai" && e.email === emails.resp)).toHaveLength(1);
   });
 
-  it("§9.1 / §11.2 — date de RDV fixée puis rappel avant la session (email + in-app)", async () => {
+  it("§9.1 / §11.2 — session en ligne affectée puis rappel avant la session (email + in-app)", async () => {
     formationId = (await prisma.formation.create({
       data: { titre: `Formation P6 ${suffixe}`, description: "Formation de test supprimée après exécution.", prixIndividuel: 1000, prixGroupe5: 4000, prixGroupe10: 7000 },
     })).id;
     const reservation = await prisma.reservation.create({
       data: { formationId, utilisateurId: ids.resp, organisationId: orgId, formule: "INDIVIDUEL", tarifApplique: 1000, statut: StatutReservation.PAYEE },
     });
-    const dateRdv = new Date(Date.now() + 86_400_000).toISOString();
+    const debut = new Date(Date.now() + 86_400_000);
+    const session = await prisma.sessionFormation.create({
+      data: { formationId, debut, fin: new Date(debut.getTime() + 3_600_000), lienMeet: "https://meet.google.com/abc-defg-hij" },
+    });
     await request(app.getHttpServer())
-      .patch(`/reservations/${reservation.id}/date-rdv`)
+      .patch(`/reservations/${reservation.id}/session`)
       .set("Cookie", await connecter(emails.admin))
-      .send({ dateRdv })
+      .send({ sessionFormationId: session.id })
       .expect(200);
-    expect((await notificationsDe(ids.resp, "FORMATION")).map((n) => n.titre)).toContain("Date de formation fixée");
+    expect((await notificationsDe(ids.resp, "FORMATION")).map((n) => n.titre)).toContain("Session de formation fixée");
 
     await rappels.rappelerFormations();
     expect(envois.filter((e) => e.type === "rappel-formation" && e.email === emails.resp)).toHaveLength(1);

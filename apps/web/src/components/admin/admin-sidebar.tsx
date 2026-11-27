@@ -1,8 +1,10 @@
 import {
   IconHome,
   IconCalendar,
+  IconCalendarClock,
   IconGraduationCap,
   IconShieldAlert,
+  IconShieldCheck,
   IconOrganisation,
   IconUsers,
   IconKey,
@@ -44,6 +46,8 @@ export const GROUPES_ADMIN: GroupeNav[] = [
     liens: [
       { href: "/admin/reservations", label: "Réservations", icon: IconCalendar },
       { href: "/admin/formations", label: "Formations", icon: IconGraduationCap },
+      { href: "/admin/sessions-formation", label: "Sessions en ligne", icon: IconCalendarClock },
+      { href: "/admin/evaluations-externes", label: "Évaluations ARS / Ministère", icon: IconShieldCheck },
       { href: "/admin/types-ei", label: "Types d'EI", icon: IconShieldAlert },
       { href: "/admin/grilles", label: "Grilles d'auto-évaluation", icon: IconChecklist },
     ],

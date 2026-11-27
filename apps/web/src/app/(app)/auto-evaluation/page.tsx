@@ -17,7 +17,8 @@ import {
   ReferentielsTable,
   type LigneReferentiel,
 } from "@/components/auto-evaluation/referentiels-table";
-import type { Grille, Organisation, SessionEvaluationResume } from "@/lib/types";
+import { BandeauNiveauArs } from "@/components/auto-evaluation/bandeau-niveau-ars";
+import type { Grille, NiveauMonEtablissement, Organisation, SessionEvaluationResume } from "@/lib/types";
 
 export const metadata: Metadata = {
   title: "Auto-évaluation",
@@ -48,9 +49,10 @@ function formaterEcart(points: number): string {
 
 export default async function AutoEvaluationPage() {
   const organisation = await silencieux(apiFetchJson<Organisation | null>("/organisations/me"), null);
-  const [grilles, sessions] = await Promise.all([
+  const [grilles, sessions, niveauArs] = await Promise.all([
     silencieux(apiFetchJson<Grille[]>(`/grilles${organisation ? `?type=${organisation.type}` : ""}`), []),
     silencieux(apiFetchJson<SessionEvaluationResume[]>("/sessions-evaluation"), []),
+    silencieux(apiFetchJson<NiveauMonEtablissement | null>("/verification/mon-etablissement"), null),
   ]);
 
   const enCours = sessions.filter((s) => s.statut === "EN_COURS").sort(plusRecente);
@@ -95,6 +97,12 @@ export default async function AutoEvaluationPage() {
           description={`Référentiels officiels de l'ARS${organisation ? ` pour les ${organisation.type}` : ""} : critères essentiels, fondamentaux et avancés. Le score est calculé par la plateforme à la soumission.`}
         />
       </Reveal>
+
+      {niveauArs && (
+        <Reveal delay={0.03} className="mb-6">
+          <BandeauNiveauArs niveau={niveauArs} />
+        </Reveal>
+      )}
 
       <Reveal delay={0.05} className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard

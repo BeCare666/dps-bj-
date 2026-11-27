@@ -16,17 +16,65 @@ function valeurOptionnelle(formData: FormData, champ: string): string | undefine
   return v.length > 0 ? v : undefined;
 }
 
+// Champ texte facultatif vidé : null pour l'effacer en base.
+function texteOuNull(formData: FormData, champ: string): string | null {
+  return valeurOptionnelle(formData, champ) ?? null;
+}
+
+function nombreOuNull(formData: FormData, champ: string): number | null {
+  const v = valeurOptionnelle(formData, champ);
+  return v === undefined ? null : Number(v.replace(",", "."));
+}
+
+// Tous les champs du catalogue officiel ; tarifs vides = « tarif à définir ».
 function dtoFormation(formData: FormData) {
-  const dureeHeures = valeurOptionnelle(formData, "dureeHeures");
+  const ordre = nombreOuNull(formData, "ordre");
   return {
     titre: valeur(formData, "titre"),
     description: valeur(formData, "description"),
-    objectifs: valeurOptionnelle(formData, "objectifs"),
-    dureeHeures: dureeHeures ? Number(dureeHeures) : undefined,
-    prixIndividuel: Number(valeur(formData, "prixIndividuel")),
-    prixGroupe5: Number(valeur(formData, "prixGroupe5")),
-    prixGroupe10: Number(valeur(formData, "prixGroupe10")),
+    objectifs: texteOuNull(formData, "objectifs"),
+    typeEtablissement: texteOuNull(formData, "typeEtablissement"),
+    critere: texteOuNull(formData, "critere"),
+    niveau: texteOuNull(formData, "niveau"),
+    domaineCode: texteOuNull(formData, "domaineCode"),
+    domaine: texteOuNull(formData, "domaine"),
+    publicCible: texteOuNull(formData, "publicCible"),
+    exigenceArs: texteOuNull(formData, "exigenceArs"),
+    contenus: texteOuNull(formData, "contenus"),
+    methode: texteOuNull(formData, "methode"),
+    evaluation: texteOuNull(formData, "evaluation"),
+    dureeLibelle: texteOuNull(formData, "dureeLibelle"),
+    dureeHeures: nombreOuNull(formData, "dureeHeures"),
+    ...(ordre !== null ? { ordre } : {}),
+    prixIndividuel: nombreOuNull(formData, "prixIndividuel"),
+    prixGroupe5: nombreOuNull(formData, "prixGroupe5"),
+    prixGroupe10: nombreOuNull(formData, "prixGroupe10"),
   };
+}
+
+// §3.2 — image de couverture (upload multipart vers l'API).
+export async function definirImageFormationAction(formationId: string, _etat: EtatAction, formData: FormData): Promise<EtatAction> {
+  const fichier = formData.get("fichier");
+  if (!(fichier instanceof File) || fichier.size === 0) return { erreur: "Choisissez une image (JPEG, PNG ou WebP)." };
+  const corps = new FormData();
+  corps.append("fichier", fichier);
+  const res = await apiFetch(`/formations/${formationId}/image`, { method: "POST", body: corps });
+  if (!res.ok) {
+    const erreur = await res.json().catch(() => undefined);
+    return { erreur: messageErreurApi(erreur, "Impossible d'enregistrer l'image.") };
+  }
+  revalidatePath("/admin/formations");
+  return { succes: true };
+}
+
+export async function retirerImageFormationAction(formationId: string): Promise<EtatAction> {
+  const res = await apiFetch(`/formations/${formationId}/image`, { method: "DELETE" });
+  if (!res.ok) {
+    const erreur = await res.json().catch(() => undefined);
+    return { erreur: messageErreurApi(erreur, "Impossible de retirer l'image.") };
+  }
+  revalidatePath("/admin/formations");
+  return { succes: true };
 }
 
 export async function creerFormationAction(_etat: EtatAction, formData: FormData): Promise<EtatAction> {
@@ -92,23 +140,15 @@ export async function basculerTypeEiAction(typeId: string, actif: boolean): Prom
   return { succes: true };
 }
 
-export async function fixerDateRdvAction(
-  reservationId: string,
-  _etat: EtatAction,
-  formData: FormData,
-): Promise<EtatAction> {
-  const brut = valeur(formData, "dateRdv");
-  const iso = brut ? new Date(brut).toISOString() : "";
-  try {
-    await apiFetchJson(`/reservations/${reservationId}/date-rdv`, {
-      method: "PATCH",
-      body: JSON.stringify({ dateRdv: iso }),
-    });
-  } catch (erreur) {
-    if (erreur instanceof ApiError) {
-      return { erreur: messageErreurApi(erreur.body, "Impossible de fixer la date de rendez-vous.") };
-    }
-    throw erreur;
+// §4.2 — affectation d'une réservation payée à une session en ligne.
+export async function affecterSessionAction(reservationId: string, _etat: EtatAction, formData: FormData): Promise<EtatAction> {
+  const res = await apiFetch(`/reservations/${reservationId}/session`, {
+    method: "PATCH",
+    body: JSON.stringify({ sessionFormationId: valeur(formData, "sessionFormationId") }),
+  });
+  if (!res.ok) {
+    const corps = await res.json().catch(() => undefined);
+    return { erreur: messageErreurApi(corps, "Impossible d'affecter la session.") };
   }
   revalidatePath("/admin/reservations");
   return { succes: true };

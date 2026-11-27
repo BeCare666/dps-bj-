@@ -9,10 +9,12 @@ import { IconBan, IconCheckCircle, IconPencil, IconPlus } from "@/components/ico
 import { formaterFcfa } from "@/lib/format";
 import { basculerFormationAction, creerFormationAction, modifierFormationAction } from "@/lib/admin-actions";
 import { FormationForm } from "./formation-form";
+import { ImageFormation } from "./image-formation";
 import { useActionConfirmee } from "./use-action-confirmee";
 import type { Formation } from "@/lib/types";
 
-function Prix({ montant }: { montant: number }) {
+function Prix({ montant }: { montant: number | null }) {
+  if (montant === null) return <span className="whitespace-nowrap text-text-faint">À définir</span>;
   return <span className="whitespace-nowrap font-medium text-text tabular-nums">{formaterFcfa(montant)}</span>;
 }
 
@@ -29,31 +31,45 @@ export function FormationsTable({ formations }: { formations: Formation[] }) {
       render: (f) => (
         <div className="min-w-0">
           <p className="font-medium text-text">{f.titre}</p>
-          <p className="text-xs text-text-faint">{f.dureeHeures ? `${f.dureeHeures} heures` : "Durée non renseignée"}</p>
+          <p className="text-xs text-text-faint">{f.dureeLibelle ?? (f.dureeHeures ? `${f.dureeHeures} h` : "Durée non renseignée")}</p>
         </div>
       ),
       valeurTri: (f) => f.titre,
-      valeurRecherche: (f) => f.titre,
+      valeurRecherche: (f) => `${f.titre} ${f.critere ?? ""}`,
+    },
+    {
+      cle: "critere",
+      entete: "Critère",
+      render: (f) =>
+        f.critere ? (
+          <span className="whitespace-nowrap font-mono text-xs text-text-muted">
+            {f.typeEtablissement} {f.critere}
+          </span>
+        ) : (
+          <span className="text-xs text-text-faint">Hors catalogue</span>
+        ),
+      valeurTri: (f) => `${f.typeEtablissement ?? "Z"}${String(f.ordre ?? 999).padStart(3, "0")}`,
+      valeurExport: (f) => `${f.typeEtablissement ?? ""} ${f.critere ?? ""}`.trim(),
     },
     {
       cle: "prixIndividuel",
       entete: "Individuel",
       render: (f) => <Prix montant={f.prixIndividuel} />,
-      valeurTri: (f) => f.prixIndividuel,
+      valeurTri: (f) => f.prixIndividuel ?? -1,
       alignement: "right",
     },
     {
       cle: "prixGroupe5",
       entete: "Groupe 5",
       render: (f) => <Prix montant={f.prixGroupe5} />,
-      valeurTri: (f) => f.prixGroupe5,
+      valeurTri: (f) => f.prixGroupe5 ?? -1,
       alignement: "right",
     },
     {
       cle: "prixGroupe10",
       entete: "Groupe 10",
       render: (f) => <Prix montant={f.prixGroupe10} />,
-      valeurTri: (f) => f.prixGroupe10,
+      valeurTri: (f) => f.prixGroupe10 ?? -1,
       alignement: "right",
     },
     {
@@ -69,6 +85,9 @@ export function FormationsTable({ formations }: { formations: Formation[] }) {
     { cle: "toutes", label: "Toutes" },
     { cle: "actives", label: "Actives", filtre: (f) => f.actif },
     { cle: "inactives", label: "Inactives", filtre: (f) => !f.actif },
+    { cle: "eh", label: "EH", filtre: (f) => f.typeEtablissement === "EH" },
+    { cle: "espc", label: "ESPC", filtre: (f) => f.typeEtablissement === "ESPC" },
+    { cle: "a-tarifer", label: "Tarif à définir", filtre: (f) => f.prixIndividuel === null && f.prixGroupe5 === null && f.prixGroupe10 === null },
   ];
 
   return (
@@ -115,7 +134,7 @@ export function FormationsTable({ formations }: { formations: Formation[] }) {
       />
       {dialogue}
 
-      <Modal open={modalCreation} onClose={() => setModalCreation(false)} title="Nouvelle formation">
+      <Modal open={modalCreation} onClose={() => setModalCreation(false)} title="Nouvelle formation" largeur="large">
         <FormationForm action={creerFormationAction} libelleBouton="Créer" onSuccess={() => setModalCreation(false)} />
       </Modal>
 
@@ -123,7 +142,9 @@ export function FormationsTable({ formations }: { formations: Formation[] }) {
         open={formationEnEdition !== null}
         onClose={() => setFormationEnEdition(null)}
         title={`Modifier « ${formationEnEdition?.titre ?? ""} »`}
+        largeur="large"
       >
+        {formationEnEdition && <ImageFormation formation={formationEnEdition} />}
         {formationEnEdition && (
           <FormationForm
             action={modifierFormationAction.bind(null, formationEnEdition.id)}

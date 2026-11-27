@@ -135,3 +135,4 @@ export function aLaPermission(roles: readonly RoleUtilisateur[], permission: Per
 }
 
 export * from "./rapports-statistiques/index.js";
+export * from "./formations/index.js";

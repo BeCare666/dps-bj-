@@ -16,12 +16,17 @@ export class CloudinaryService {
     });
   }
 
-  // 8.13 — pièces jointes EI. Dossier dédié pour retrouver/nettoyer facilement
-  // ces uploads indépendamment des autres médias (rapports PDF, formations...).
-  async uploadBuffer(buffer: Buffer, mimeType: string, nomFichier: string): Promise<ResultatUploadCloudinary> {
+  // 8.13 — pièces jointes EI par défaut. Un dossier par usage pour retrouver et
+  // nettoyer facilement les uploads (formations, évaluations externes...).
+  async uploadBuffer(
+    buffer: Buffer,
+    mimeType: string,
+    nomFichier: string,
+    dossier = "dps-bj/evenements-indesirables",
+  ): Promise<ResultatUploadCloudinary> {
     const dataUri = `data:${mimeType};base64,${buffer.toString("base64")}`;
     const resultat = await cloudinary.uploader.upload(dataUri, {
-      folder: "dps-bj/evenements-indesirables",
+      folder: dossier,
       resource_type: "auto",
       filename_override: nomFichier,
       use_filename: true,

@@ -48,7 +48,8 @@ export function SiteHeader() {
   // pas se relancer à chaque rendu du header (ex. pendant le défilement).
   const fermerTiroir = useCallback(() => setTiroirOuvert(false), []);
   const navRef = useRef<HTMLElement>(null);
-  const surAccueil = usePathname() === "/";
+  const pathname = usePathname();
+  const surAccueil = pathname === "/";
   const baseId = useId();
 
   // Fermeture des menus déroulants : clic en dehors, touche Échap.
@@ -77,21 +78,38 @@ export function SiteHeader() {
         defile ? "border-border/70 bg-bg/90 shadow-[0_8px_30px_-18px_rgba(10,26,56,0.35)]" : "border-transparent bg-bg/70"
       }`}
     >
-      <div className="mx-auto flex h-[4.5rem] max-w-6xl items-center justify-between gap-6 px-5 sm:px-8">
+      {/* Six entrées et deux boutons : navigation complète dès 1280 px, tiroir en dessous. */}
+      <div className="mx-auto flex h-[4.5rem] max-w-7xl items-center justify-between gap-6 px-5 sm:px-8 xl:gap-4 xl:px-6">
         <Logo />
 
-        <nav ref={navRef} aria-label="Navigation principale" className="hidden shrink-0 items-center gap-1 lg:flex">
+        <nav ref={navRef} aria-label="Navigation principale" className="hidden shrink-0 items-center gap-0.5 xl:flex">
           <Link
             href="/"
             aria-current={surAccueil ? "page" : undefined}
             onClick={() => setMenuOuvert(null)}
-            className={`whitespace-nowrap rounded-full px-3.5 py-2 text-sm font-medium transition-colors ${
+            className={`whitespace-nowrap rounded-full px-2.5 py-2 text-sm font-medium transition-colors ${
               surAccueil ? "text-text" : "text-text-muted hover:text-text"
             }`}
           >
             Accueil
           </Link>
           {MENUS_EN_TETE.map((menu, i) => {
+            if (menu.href) {
+              const actif = pathname === menu.href || pathname.startsWith(`${menu.href}/`);
+              return (
+                <Link
+                  key={menu.titre}
+                  href={menu.href}
+                  aria-current={actif ? "page" : undefined}
+                  onClick={() => setMenuOuvert(null)}
+                  className={`whitespace-nowrap rounded-full px-2.5 py-2 text-sm font-medium transition-colors ${
+                    actif ? "text-text" : "text-text-muted hover:text-text"
+                  }`}
+                >
+                  {menu.titre}
+                </Link>
+              );
+            }
             const ouvert = menuOuvert === menu.titre;
             const idPanneau = `${baseId}-menu-${i}`;
             return (
@@ -102,7 +120,7 @@ export function SiteHeader() {
                   aria-expanded={ouvert}
                   aria-controls={idPanneau}
                   onClick={() => setMenuOuvert(ouvert ? null : menu.titre)}
-                  className={`relative flex items-center gap-1.5 whitespace-nowrap rounded-full px-3.5 py-2 text-sm font-medium transition-colors ${
+                  className={`relative flex items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-2 text-sm font-medium transition-colors ${
                     ouvert ? "text-text" : "text-text-muted hover:text-text"
                   }`}
                 >
@@ -187,7 +205,7 @@ export function SiteHeader() {
           })}
         </nav>
 
-        <div className="hidden shrink-0 items-center gap-2 whitespace-nowrap lg:flex">
+        <div className="hidden shrink-0 items-center gap-2 whitespace-nowrap xl:flex">
           <Button href="/login" variant="ghost">
             Se connecter
           </Button>
@@ -201,7 +219,7 @@ export function SiteHeader() {
           onClick={() => setTiroirOuvert(true)}
           aria-label="Ouvrir le menu"
           aria-expanded={tiroirOuvert}
-          className="flex h-11 w-11 items-center justify-center rounded-full border border-border bg-surface text-text shadow-[var(--shadow-card)] transition-colors hover:border-primary/30 hover:text-primary lg:hidden"
+          className="flex h-11 w-11 items-center justify-center rounded-full border border-border bg-surface text-text shadow-[var(--shadow-card)] transition-colors hover:border-primary/30 hover:text-primary xl:hidden"
         >
           <IconMenu width={20} height={20} />
         </button>
@@ -228,7 +246,7 @@ function TiroirNavigation({ ouvert, onFermer }: { ouvert: boolean; onFermer: () 
       if (e.key === "Escape") onFermer();
     }
     // Passage en affichage grand écran : le tiroir n'a plus lieu d'être.
-    const grandEcran = window.matchMedia("(min-width: 1024px)");
+    const grandEcran = window.matchMedia("(min-width: 1280px)");
     function surChangement(e: MediaQueryListEvent) {
       if (e.matches) onFermer();
     }
@@ -246,7 +264,7 @@ function TiroirNavigation({ ouvert, onFermer }: { ouvert: boolean; onFermer: () 
   return createPortal(
     <AnimatePresence>
       {ouvert && (
-        <div className="fixed inset-0 z-[60] lg:hidden">
+        <div className="fixed inset-0 z-[60] xl:hidden">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -297,6 +315,27 @@ function TiroirNavigation({ ouvert, onFermer }: { ouvert: boolean; onFermer: () 
                   </Link>
                 </motion.li>
                 {MENUS_EN_TETE.map((menu, i) => {
+                  if (menu.href) {
+                    return (
+                      <motion.li
+                        key={menu.titre}
+                        initial={{ opacity: 0, x: 24 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.45, delay: 0.12 + i * 0.06, ease: EASE }}
+                      >
+                        <Link
+                          href={menu.href}
+                          onClick={onFermer}
+                          className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-[0.95rem] font-semibold text-text transition-colors hover:bg-bg-subtle"
+                        >
+                          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary-soft text-primary">
+                            <menu.icon width={18} height={18} />
+                          </span>
+                          <span className="flex-1 font-display">{menu.titre}</span>
+                        </Link>
+                      </motion.li>
+                    );
+                  }
                   const deplie = groupeOuvert === menu.titre;
                   return (
                     <motion.li
