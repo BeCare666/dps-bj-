@@ -103,6 +103,10 @@ export interface Grille {
   version: number;
   statut: StatutGrille;
   domaines?: Domaine[];
+  // Liste des grilles (GET /grilles) : effectifs et catégorie des critères.
+  nombreCriteres?: number;
+  nombreQuestions?: number;
+  categorie?: string | null;
 }
 
 export interface Reponse {
@@ -135,6 +139,10 @@ export interface SessionEvaluationResume {
   dateDebut: string;
   dateSoumission: string | null;
   grille: { id: string; nom: string; type: TypeEtablissement; version: number };
+  // Progression d'une session en cours (absents avec une API antérieure).
+  positionQuestion?: number | null;
+  nombreReponses?: number;
+  nombreQuestions?: number;
 }
 
 export interface ScoreParDomaine {

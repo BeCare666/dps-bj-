@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { DataTable, type ColonneTable } from "@/components/ui/data-table";
 import { IconEye } from "@/components/icons";
-import { formaterDate } from "@/lib/format";
+import { formaterDate, formaterPourcentage } from "@/lib/format";
 import type { SessionEvaluationResume } from "@/lib/types";
 
 // Historique des auto-évaluations soumises (score calculé côté serveur, RM2).
@@ -52,8 +52,8 @@ export function HistoriqueTable({ sessions }: { sessions: SessionEvaluationResum
                 style={{ width: `${Math.max(0, Math.min(100, s.scoreGlobal))}%` }}
               />
             </span>
-            <span className="w-12 text-right font-display text-base font-bold text-text tabular-nums">
-              {s.scoreGlobal}%
+            <span className="w-16 text-right font-display text-base font-bold text-text tabular-nums">
+              {formaterPourcentage(s.scoreGlobal)}
             </span>
           </div>
         ),

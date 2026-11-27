@@ -14,7 +14,7 @@ export interface PointEvolution {
 export function EvolutionChart({ points }: { points: PointEvolution[] }) {
   return (
     <ResponsiveContainer width="100%" height={240}>
-      <AreaChart data={points} margin={{ top: 8, right: 8, left: -12, bottom: 0 }}>
+      <AreaChart data={points} margin={{ top: 8, right: 12, left: 4, bottom: 0 }}>
         <defs>
           <linearGradient id="degrade-score" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor={COULEURS.primary} stopOpacity={0.22} />
@@ -26,7 +26,7 @@ export function EvolutionChart({ points }: { points: PointEvolution[] }) {
         <YAxis
           domain={[0, 100]}
           ticks={[0, 25, 50, 75, 100]}
-          tickFormatter={(v: number) => `${v}%`}
+          tickFormatter={(v: number) => `${v} %`}
           tick={AXE.tick}
           axisLine={false}
           tickLine={false}
@@ -34,7 +34,7 @@ export function EvolutionChart({ points }: { points: PointEvolution[] }) {
         />
         <Tooltip
           contentStyle={STYLE_INFOBULLE}
-          formatter={(valeur) => [`${valeur}%`, "Score"]}
+          formatter={(valeur) => [`${Number(valeur).toLocaleString("fr-FR")} %`, "Score"]}
           labelFormatter={(label, charge) => {
             const grille = charge?.[0]?.payload?.grille;
             return grille ? `${label} · ${grille}` : String(label);

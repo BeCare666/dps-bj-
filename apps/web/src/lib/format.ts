@@ -41,3 +41,8 @@ export function formaterIlYa(iso: string, maintenant: Date = new Date()): string
   if (abs < 86400 * 30) return formateurRelatif.format(Math.round(secondes / 86400), "day");
   return formaterDate(iso);
 }
+
+// Pourcentage au format français : « 76,67 % » (espace insécable avant %).
+export function formaterPourcentage(valeur: number): string {
+  return `${valeur.toLocaleString("fr-FR", { maximumFractionDigits: 2 })} %`;
+}

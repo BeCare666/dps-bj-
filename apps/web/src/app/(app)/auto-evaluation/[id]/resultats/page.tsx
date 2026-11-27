@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { apiFetchJson, ApiError } from "@/lib/api-server";
 import Link from "next/link";
-import { formaterDate, formaterDateHeure } from "@/lib/format";
+import { formaterDate, formaterDateHeure, formaterPourcentage } from "@/lib/format";
 import { RapportPdf } from "@/components/auto-evaluation/rapport-pdf";
 import { Reveal } from "@/components/motion/reveal";
 import { Card, CardHeader, StatCard } from "@/components/ui/card";
@@ -58,7 +58,7 @@ export default async function ResultatsPage({ params }: { params: Promise<{ id: 
       </Reveal>
 
       <Reveal delay={0.05} className="grid gap-4 sm:grid-cols-3">
-        <StatCard label="Score global" valeur={`${resultats.scoreGlobal}%`} sousTexte="calculé à la soumission" icone={IconChecklist} />
+        <StatCard label="Score global" valeur={formaterPourcentage(resultats.scoreGlobal)} sousTexte="calculé à la soumission" icone={IconChecklist} />
         <StatCard
           label="Critères respectés"
           valeur={`${criteresValides} / ${criteresApplicables}`}
@@ -88,7 +88,7 @@ export default async function ResultatsPage({ params }: { params: Promise<{ id: 
                 <li key={domaine.domaineId}>
                   <div className="flex items-baseline justify-between gap-3 text-sm">
                     <span className="min-w-0 font-medium text-text">{domaine.nom}</span>
-                    <span className="shrink-0 font-display font-bold text-text tabular-nums">{domaine.scorePct}%</span>
+                    <span className="shrink-0 font-display font-bold text-text tabular-nums">{formaterPourcentage(domaine.scorePct)}</span>
                   </div>
                   <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-bg-subtle">
                     <div className="h-full rounded-full bg-primary" style={{ width: `${domaine.scorePct}%` }} />

@@ -29,7 +29,7 @@ export class GrillesService {
   constructor(private readonly prisma: PrismaService) {}
 
   async lister(query: ListGrillesQueryDto, estAdmin: boolean) {
-    return this.prisma.grille.findMany({
+    const grilles = await this.prisma.grille.findMany({
       where: {
         type: query.type,
         // Un non-admin ne peut jamais voir un brouillon/archive d'un autre statut que PUBLIEE.
@@ -37,6 +37,19 @@ export class GrillesService {
       },
       orderBy: [{ nom: "asc" }, { version: "desc" }],
     });
+    // Effectifs et catégorie (essentiel / fondamental / avancé) de chaque grille,
+    // pour la liste des référentiels de l'auto-évaluation.
+    return Promise.all(
+      grilles.map(async (grille) => {
+        const dansGrille = { norme: { domaine: { grilleId: grille.id } } };
+        const [nombreCriteres, nombreQuestions, premier] = await Promise.all([
+          this.prisma.critere.count({ where: dansGrille }),
+          this.prisma.elementMesurable.count({ where: { critere: dansGrille } }),
+          this.prisma.critere.findFirst({ where: { ...dansGrille, categorie: { not: null } }, select: { categorie: true } }),
+        ]);
+        return { ...grille, nombreCriteres, nombreQuestions, categorie: premier?.categorie ?? null };
+      }),
+    );
   }
 
   async obtenir(id: string, estAdmin: boolean) {

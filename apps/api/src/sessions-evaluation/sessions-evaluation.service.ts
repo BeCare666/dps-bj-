@@ -40,11 +40,29 @@ export class SessionsEvaluationService {
 
   async lister(query: ListSessionsQueryDto, user: JwtAccessPayload) {
     const organisationId = this.exigerOrganisation(user);
-    return this.prisma.sessionEvaluation.findMany({
+    const sessions = await this.prisma.sessionEvaluation.findMany({
       where: { organisationId, statut: query.statut },
-      include: { grille: { select: { id: true, nom: true, type: true, version: true } } },
+      include: {
+        grille: { select: { id: true, nom: true, type: true, version: true } },
+        _count: { select: { reponses: true } },
+      },
       orderBy: { dateDebut: "desc" },
     });
+    // Progression : réponses enregistrées sur le nombre de questions de la grille figée.
+    const grilleIds = [...new Set(sessions.map((s) => s.grilleId))];
+    const totaux = new Map(
+      await Promise.all(
+        grilleIds.map(
+          async (grilleId) =>
+            [grilleId, await this.prisma.elementMesurable.count({ where: { critere: { norme: { domaine: { grilleId } } } } })] as const,
+        ),
+      ),
+    );
+    return sessions.map(({ _count, ...session }) => ({
+      ...session,
+      nombreReponses: _count.reponses,
+      nombreQuestions: totaux.get(session.grilleId) ?? 0,
+    }));
   }
 
   async obtenir(sessionId: string, user: JwtAccessPayload) {
