@@ -106,7 +106,7 @@ export const DOMAINES_STATISTIQUES = [
 ] as const;
 
 // Menus de l'en-tête et du tiroir mobile (demande client du 2026-10-05) :
-// Accueil, À propos, Services, Statistiques. « Accueil » est un lien simple,
+// voir MENUS_EN_TETE pour l'ordre en vigueur. « Accueil » est un lien simple,
 // rendu directement par l'en-tête. « Établissement » et « Informations
 // légales » restent dans le footer ; connexion et inscription sont des boutons.
 function menu(titre: string): MenuVitrine {
@@ -122,10 +122,16 @@ export const MENUS_EN_TETE: MenuEnTete[] = [
     // Premier lien : la page À propos elle-même (présentation générale).
     sections: [{ liens: [{ href: "/a-propos", label: "À propos", icon: IconInfo }, ...menu("À propos").liens] }],
   },
-  { titre: "Services", icon: menu("Services").icon, sections: [{ liens: menu("Services").liens }] },
-  // ROADMAP_FORMATIONS_VERIFICATION.md §6 — liens directs après « Services ».
-  { titre: "Formations", icon: IconGraduationCap, href: "/formations", sections: [] },
+  // Ordre demandé par le client le 27/11/2026 : Accueil, À propos, Vérifier
+  // votre établissement, Évaluation, Statistiques, Formations. « Évaluation »
+  // remplace « Services » dans l'en-tête (Formations y a sa propre entrée) ;
+  // le footer garde la colonne « Services ».
   { titre: "Vérifier votre établissement", icon: IconShieldCheck, href: "/verifier-etablissement", sections: [] },
+  {
+    titre: "Évaluation",
+    icon: menu("Services").icon,
+    sections: [{ liens: menu("Services").liens.filter((l) => l.href !== "/formations") }],
+  },
   {
     titre: "Statistiques",
     icon: IconBarChart,
@@ -135,4 +141,5 @@ export const MENUS_EN_TETE: MenuEnTete[] = [
       },
     ],
   },
+  { titre: "Formations", icon: IconGraduationCap, href: "/formations", sections: [] },
 ];

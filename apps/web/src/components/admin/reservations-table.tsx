@@ -9,13 +9,12 @@ import { IconCalendarClock, IconCheckCircle } from "@/components/icons";
 import { formaterDate, formaterDateHeure, formaterFcfa } from "@/lib/format";
 import { AffecterSessionForm } from "./affecter-session-form";
 import { MarquerRealiseeForm } from "./marquer-realisee-form";
-import type { FormuleFormation, Reservation, SessionFormation, StatutReservation } from "@/lib/types";
+import type { Reservation, SessionFormation, StatutReservation } from "@/lib/types";
 
-const LIBELLES_FORMULE: Record<FormuleFormation, string> = {
-  INDIVIDUEL: "Individuel",
-  GROUPE_5: "Groupe 5",
-  GROUPE_10: "Groupe 10",
-};
+const libellePersonnes = (n: number) => `${n} personne${n > 1 ? "s" : ""}`;
+
+// Filtre par taille de groupe (tranches de prix).
+const trancheGroupe = (n: number) => (n <= 5 ? "1-5" : n <= 10 ? "6-10" : "11+");
 
 const LIBELLES_STATUT: Record<StatutReservation, string> = {
   ATTENTE_PAIEMENT: "En attente de paiement",
@@ -45,7 +44,7 @@ export function ReservationsTable({ reservations, sessions }: { reservations: Re
       render: (r) => (
         <div className="min-w-0">
           <p className="font-medium text-text">{r.formation?.titre ?? "Formation non renseignée"}</p>
-          <p className="text-xs text-text-faint">{LIBELLES_FORMULE[r.formule]}</p>
+          <p className="text-xs text-text-faint">{libellePersonnes(r.nombrePlaces)}</p>
         </div>
       ),
       valeurTri: (r) => r.formation?.titre ?? "",
@@ -71,12 +70,12 @@ export function ReservationsTable({ reservations, sessions }: { reservations: Re
       valeurExport: (r) => nomClient(r),
     },
     {
-      cle: "formule",
-      entete: "Formule",
+      cle: "nombrePlaces",
+      entete: "Personnes",
       masqueeParDefaut: true,
-      render: (r) => LIBELLES_FORMULE[r.formule],
-      valeurTri: (r) => r.formule,
-      valeurExport: (r) => LIBELLES_FORMULE[r.formule],
+      render: (r) => libellePersonnes(r.nombrePlaces),
+      valeurTri: (r) => r.nombrePlaces,
+      valeurExport: (r) => String(r.nombrePlaces),
     },
     {
       cle: "tarif",
@@ -130,10 +129,14 @@ export function ReservationsTable({ reservations, sessions }: { reservations: Re
 
   const filtres: FiltreTable<Reservation>[] = [
     {
-      cle: "formule",
-      label: "Formule",
-      options: Object.entries(LIBELLES_FORMULE).map(([valeur, label]) => ({ valeur, label })),
-      valeur: (r) => r.formule,
+      cle: "groupe",
+      label: "Taille du groupe",
+      options: [
+        { valeur: "1-5", label: "1 à 5 personnes" },
+        { valeur: "6-10", label: "6 à 10 personnes" },
+        { valeur: "11+", label: "Plus de 10 personnes" },
+      ],
+      valeur: (r) => trancheGroupe(r.nombrePlaces),
     },
     {
       cle: "client",
@@ -212,7 +215,7 @@ export function ReservationsTable({ reservations, sessions }: { reservations: Re
         {reservationRealisation && (
           <MarquerRealiseeForm
             reservationId={reservationRealisation.id}
-            places={{ INDIVIDUEL: 1, GROUPE_5: 5, GROUPE_10: 10 }[reservationRealisation.formule]}
+            places={reservationRealisation.nombrePlaces}
             onSuccess={() => setReservationRealisation(null)}
           />
         )}

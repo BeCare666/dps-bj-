@@ -11,15 +11,9 @@ import { KkiapayButton } from "@/components/reservations/kkiapay-button";
 import { AnnulerReservationButton } from "@/components/reservations/annuler-reservation-button";
 import { ParticipantsReservation } from "@/components/reservations/participants-reservation";
 import { IconCheck, IconDownload } from "@/components/icons";
-import type { FormuleFormation, Reservation, StatutReservation } from "@/lib/types";
+import type { Reservation, StatutReservation } from "@/lib/types";
 
-const PLACES: Record<FormuleFormation, number> = { INDIVIDUEL: 1, GROUPE_5: 5, GROUPE_10: 10 };
-
-const LIBELLES_FORMULE: Record<FormuleFormation, string> = {
-  INDIVIDUEL: "Individuel",
-  GROUPE_5: "Groupe de 5",
-  GROUPE_10: "Groupe de 10",
-};
+const libellePersonnes = (n: number) => `${n} personne${n > 1 ? "s" : ""}`;
 
 // Étapes du parcours de réservation (RM5/RM11), déduites du seul statut.
 const ETAPES: { statut: StatutReservation; label: string }[] = [
@@ -89,7 +83,7 @@ export default async function ReservationDetailPage({ params }: { params: Promis
               <StatutReservationBadge statut={reservation.statut} />
             </span>
           }
-          description={`${LIBELLES_FORMULE[reservation.formule]} · réservée le ${formaterDate(reservation.createdAt)}`}
+          description={`${libellePersonnes(reservation.nombrePlaces)} · réservée le ${formaterDate(reservation.createdAt)}`}
         />
       </Reveal>
 
@@ -158,7 +152,7 @@ export default async function ReservationDetailPage({ params }: { params: Promis
                 <ParticipantsReservation
                   reservationId={reservation.id}
                   participants={reservation.participants ?? []}
-                  places={PLACES[reservation.formule]}
+                  places={reservation.nombrePlaces}
                   modifiable={participantsModifiables}
                   sessionTerminee={sessionTerminee}
                 />
@@ -189,7 +183,8 @@ export default async function ReservationDetailPage({ params }: { params: Promis
             <ListeProprietes
               elements={[
                 { label: "Formation", valeur: reservation.formation?.titre },
-                { label: "Formule", valeur: LIBELLES_FORMULE[reservation.formule] },
+                { label: "Personnes", valeur: libellePersonnes(reservation.nombrePlaces) },
+                { label: "Prix par personne", valeur: formaterFcfa(reservation.prixParPersonne) },
                 {
                   label: "Montant",
                   valeur: (

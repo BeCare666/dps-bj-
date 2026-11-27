@@ -24,13 +24,8 @@ export const TEINTES_DOMAINE: Record<string, { fond: string; accent: string }> =
 };
 export const TEINTE_PAR_DEFAUT = { fond: "from-[#3B4656] to-[#1B222C]", accent: "bg-[#8A96A8]" };
 
-export const estReservable = (f: Formation) =>
-  f.prixIndividuel !== null || f.prixGroupe5 !== null || f.prixGroupe10 !== null;
-
-export function prixMinimum(f: Formation): number | null {
-  const prix = [f.prixIndividuel, f.prixGroupe5, f.prixGroupe10].filter((p): p is number => p !== null);
-  return prix.length ? Math.min(...prix) : null;
-}
+// Prix par personne le plus bas (tranche la plus avantageuse).
+export const prixMinimum = (f: Formation) => Math.min(f.prixPersonne1a5, f.prixPersonne6a10, f.prixPersonne11Plus);
 
 // Parcours EH : identifiant stable dans l'URL.
 export const PARCOURS = [
@@ -59,7 +54,6 @@ export interface FiltresCatalogue {
   q?: string;
   public?: string;
   duree?: string;
-  reservable?: boolean;
   tri?: string;
 }
 
@@ -78,7 +72,6 @@ export function filtrerFormations(formations: Formation[], f: FiltresCatalogue):
     if (q && !normaliser([x.titre, x.critere, x.contenus, x.domaine].filter(Boolean).join(" ")).includes(q)) return false;
     if (pub && !normaliser(x.publicCible ?? "").includes(pub)) return false;
     if (tranche && (x.dureeHeures === null || !tranche.test(x.dureeHeures))) return false;
-    if (f.reservable && !estReservable(x)) return false;
     return true;
   });
   const duree = (x: Formation) => x.dureeHeures ?? 0;

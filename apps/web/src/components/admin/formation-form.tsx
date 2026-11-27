@@ -2,6 +2,7 @@
 
 import { useActionState, useEffect } from "react";
 import { useFormStatus } from "react-dom";
+import { TARIFS_FORMATION_DEFAUT, TRANCHES_TARIF_FORMATION } from "@dps/shared";
 import { Field, SelectField } from "@/components/ui/field";
 import type { EtatAction } from "@/lib/admin-actions";
 import type { Formation } from "@/lib/types";
@@ -75,11 +76,21 @@ export function FormationForm({
         <Field label="Ordre d'affichage" name="ordre" type="number" min={0} defaultValue={formation?.ordre ?? undefined} />
       </div>
       <div className="grid gap-4 sm:grid-cols-3">
-        <Field label="Tarif individuel (FCFA)" name="prixIndividuel" type="number" min={0} placeholder="À définir" defaultValue={formation?.prixIndividuel ?? undefined} />
-        <Field label="Tarif groupe de 5 (FCFA)" name="prixGroupe5" type="number" min={0} placeholder="À définir" defaultValue={formation?.prixGroupe5 ?? undefined} />
-        <Field label="Tarif groupe de 10 (FCFA)" name="prixGroupe10" type="number" min={0} placeholder="À définir" defaultValue={formation?.prixGroupe10 ?? undefined} />
+        {TRANCHES_TARIF_FORMATION.map((t) => (
+          <Field
+            key={t.cle}
+            label={`${t.libelle} (FCFA / personne)`}
+            name={t.cle}
+            type="number"
+            min={0}
+            required
+            defaultValue={formation?.[t.cle] ?? TARIFS_FORMATION_DEFAUT[t.cle]}
+          />
+        ))}
       </div>
-      <p className="-mt-2 text-xs text-text-faint">Un tarif vide rend la formule non réservable.</p>
+      <p className="-mt-2 text-xs text-text-faint">
+        Prix par personne selon la taille du groupe réservé. Par défaut : 5 000, 3 000 et 2 000 FCFA.
+      </p>
 
       {etat.erreur && <p className="text-sm text-danger">{etat.erreur}</p>}
       <div>

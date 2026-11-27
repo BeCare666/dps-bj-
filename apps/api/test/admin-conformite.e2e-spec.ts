@@ -86,7 +86,7 @@ describe("Tableau de bord administrateur — conformité CDC §12 (e2e)", () => 
     await app.close();
   });
 
-  it("§9 / §12.5 — objectifs de formation ; clôture de session avec nombre de présents (au plus la formule)", async () => {
+  it("§9 / §12.5 — objectifs de formation ; clôture de session avec nombre de présents (au plus les places réservées)", async () => {
     const admin = await connecter(emails.admin);
     const formation = await request(app.getHttpServer())
       .post("/formations")
@@ -95,9 +95,9 @@ describe("Tableau de bord administrateur — conformité CDC §12 (e2e)", () => 
         titre: `Formation P7 ${suffixe}`,
         description: "Formation de test supprimée après exécution.",
         objectifs: "Savoir déclarer un événement indésirable.",
-        prixIndividuel: 1000,
-        prixGroupe5: 4000,
-        prixGroupe10: 7000,
+        prixPersonne1a5: 1000,
+        prixPersonne6a10: 800,
+        prixPersonne11Plus: 700,
       })
       .expect(201);
     formationId = formation.body.id;
@@ -109,8 +109,9 @@ describe("Tableau de bord administrateur — conformité CDC §12 (e2e)", () => 
         formationId,
         utilisateurId: respId,
         organisationId: orgId,
-        formule: "GROUPE_5",
-        tarifApplique: 4000,
+        nombrePlaces: 5,
+        prixParPersonne: 1000,
+        tarifApplique: 5000,
         statut: StatutReservation.CONFIRMEE,
         dateRdv: new Date(),
       },

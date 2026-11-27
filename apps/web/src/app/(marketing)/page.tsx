@@ -82,7 +82,7 @@ const MODULES = [
     description:
       "Formez vos équipes à la sécurité des patients, seul ou en groupe, avec un paiement en ligne sécurisé.",
     points: [
-      "Formule individuelle, groupe de 5 ou groupe de 10",
+      "Prix par personne dégressif selon la taille du groupe",
       "Paiement sécurisé par KKiaPay, facture émise automatiquement",
       "Date de session communiquée sous 48 heures",
     ],

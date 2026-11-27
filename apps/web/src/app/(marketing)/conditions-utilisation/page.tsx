@@ -144,8 +144,8 @@ const SECTIONS: SectionLegale[] = [
             l&apos;utilisation est soumise à la souscription d&apos;un abonnement.
           </li>
           <li>
-            Les formations sont payantes à l&apos;unité, selon la formule choisie (individuelle, groupe de 5 ou groupe
-            de 10). Le tarif appliqué est celui affiché au moment de la réservation ; il n&apos;est plus modifié
+            Les formations sont payantes par personne, selon la taille du groupe réservé (de 1 à 5 personnes, de 6
+            à 10 personnes, plus de 10 personnes). Le tarif appliqué est celui affiché au moment de la réservation ; il n&apos;est plus modifié
             ensuite, même si le catalogue évolue.
           </li>
         </ul>

@@ -59,7 +59,7 @@ export class OrganisationsService {
         where: { organisationId },
         select: {
           id: true,
-          formule: true,
+          nombrePlaces: true,
           statut: true,
           tarifApplique: true,
           dateRdv: true,

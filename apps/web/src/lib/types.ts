@@ -41,10 +41,10 @@ export interface Formation {
   dureeHeures: number | null;
   imageUrl: string | null;
   ordre: number | null;
-  // Tarifs fixés par DSP ; nuls = « tarif à définir », formule non réservable.
-  prixIndividuel: number | null;
-  prixGroupe5: number | null;
-  prixGroupe10: number | null;
+  // Prix par personne selon la taille du groupe (@dps/shared, tarifs).
+  prixPersonne1a5: number;
+  prixPersonne6a10: number;
+  prixPersonne11Plus: number;
   actif: boolean;
   sessions?: SessionFormationPublique[];
 }
@@ -304,7 +304,7 @@ export interface PaiementAbonnement {
 
 // §11.1 — facture (réservation de formation ou abonnement).
 export interface Facture extends FactureResume {
-  reservation: { id: string; formule: string; formation: { titre: string } } | null;
+  reservation: { id: string; nombrePlaces: number; prixParPersonne: number; formation: { titre: string } } | null;
   paiementAbonnement: { id: string; module: "NEWS" | "EI"; dureeJours: number } | null;
 }
 
@@ -518,7 +518,6 @@ export interface TableauDeBordEi {
 
 // --- Module Formations / Réservations ---
 
-export type FormuleFormation = "INDIVIDUEL" | "GROUPE_5" | "GROUPE_10";
 export type StatutReservation = "ATTENTE_PAIEMENT" | "PAYEE" | "CONFIRMEE" | "REALISEE" | "ANNULEE";
 
 export interface Reservation {
@@ -526,7 +525,9 @@ export interface Reservation {
   formationId: string;
   utilisateurId: string;
   organisationId: string | null;
-  formule: FormuleFormation;
+  // Nombre de personnes réservées et prix par personne figés à la réservation.
+  nombrePlaces: number;
+  prixParPersonne: number;
   tarifApplique: number;
   statut: StatutReservation;
   kkiapayTransactionId: string | null;
@@ -623,7 +624,7 @@ export interface OrganisationDetailAdmin extends Organisation {
   // §12.1 — formations réservées par l'établissement.
   reservationsFormations?: {
     id: string;
-    formule: FormuleFormation;
+    nombrePlaces: number;
     statut: StatutReservation;
     tarifApplique: number;
     dateRdv: string | null;

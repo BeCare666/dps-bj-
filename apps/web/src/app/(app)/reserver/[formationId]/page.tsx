@@ -30,7 +30,7 @@ export default async function ReserverPage({ params }: { params: Promise<{ forma
           filAriane={[{ label: "Formations", href: "/formations" }, { label: formation.titre }]}
           surtitre="Réservation"
           titre={formation.titre}
-          description="Choisissez la formule qui vous convient. Le paiement se fait à l'étape suivante."
+          description="Indiquez le nombre de personnes à former. Le paiement se fait à l'étape suivante."
         />
       </Reveal>
       <Reveal delay={0.05}>

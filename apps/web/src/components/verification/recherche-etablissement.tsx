@@ -6,11 +6,25 @@ import { IconSearch } from "@/components/icons";
 import { formaterDate } from "@/lib/format";
 import type { ResultatVerification, SourceEvaluation } from "@/lib/types";
 
+// Source du niveau : ARS, Ministère ou l'établissement lui-même (auto-évaluation sur DSP).
 const LIBELLES_SOURCE: Record<SourceEvaluation, string> = {
-  AUTO_EVALUATION: "Auto-évaluation sur DSP",
-  ARS: "Évaluation de l'ARS",
-  MINISTERE: "Évaluation du Ministère de la Santé",
+  AUTO_EVALUATION: "L'établissement lui-même (auto-évaluation sur DSP)",
+  ARS: "ARS",
+  MINISTERE: "Ministère de la Santé",
 };
+
+const LIBELLES_SOURCE_COURTS: Record<SourceEvaluation, string> = {
+  AUTO_EVALUATION: "Établissement",
+  ARS: "ARS",
+  MINISTERE: "Ministère",
+};
+
+const categories = (r: ResultatVerification) =>
+  [
+    { label: "Essentiels", valeur: r.pctEssentiels },
+    { label: "Fondamentaux", valeur: r.pctFondamentaux },
+    { label: "Avancés", valeur: r.pctAvances },
+  ] as const;
 
 // Échelle ARS (manuels EH p. 55 et ESPC p. 48, tableau 8).
 const DESCRIPTION_NIVEAU = [
@@ -33,8 +47,8 @@ export function RechercheEtablissement() {
   const [suggestions, setSuggestions] = useState<ResultatVerification[]>([]);
   const [ouvert, setOuvert] = useState(false);
   const [actif, setActif] = useState(-1);
-  const [resultats, setResultats] = useState<ResultatVerification[] | null>(null);
-  const [chargement, setChargement] = useState(false);
+  // Résultats et requête à laquelle ils répondent (chargement = réponse en retard sur l'URL).
+  const [reponse, setReponse] = useState<{ q: string; liste: ResultatVerification[] } | null>(null);
   const idListe = useId();
   const conteneur = useRef<HTMLDivElement>(null);
 
@@ -46,10 +60,7 @@ export function RechercheEtablissement() {
   // Suggestions en direct (après une courte pause de frappe).
   useEffect(() => {
     const q = saisie.trim();
-    if (q.length < 2) {
-      setSuggestions([]);
-      return;
-    }
+    if (q.length < 2) return;
     const controle = new AbortController();
     const minuterie = setTimeout(() => {
       chercher(q, controle.signal).then(setSuggestions).catch(() => {});
@@ -62,16 +73,12 @@ export function RechercheEtablissement() {
 
   // Résultats de la recherche validée (conservée dans l'URL).
   useEffect(() => {
-    if (qUrl.trim().length < 2) {
-      setResultats(null);
-      return;
-    }
+    if (qUrl.trim().length < 2) return;
     const controle = new AbortController();
-    setChargement(true);
-    chercher(qUrl.trim(), controle.signal)
-      .then(setResultats)
-      .catch(() => {})
-      .finally(() => setChargement(false));
+    const q = qUrl.trim();
+    chercher(q, controle.signal)
+      .then((liste) => setReponse({ q, liste }))
+      .catch(() => {});
     return () => controle.abort();
   }, [qUrl]);
 
@@ -91,7 +98,16 @@ export function RechercheEtablissement() {
     router.replace(suivant ? `${pathname}?q=${encodeURIComponent(suivant)}` : pathname, { scroll: false });
   }
 
-  const noms = [...new Map(suggestions.map((s) => [s.nom, s])).values()].slice(0, 8);
+  // Saisie trop courte : ni suggestions ni résultats (valeurs dérivées).
+  const qValide = qUrl.trim().length >= 2 ? qUrl.trim() : null;
+  const chargement = qValide !== null && reponse?.q !== qValide;
+  const resultatsAffiches = qValide !== null && reponse?.q === qValide ? reponse.liste : null;
+  // Une suggestion par établissement : l'évaluation la plus récente (l'API trie
+  // de la plus récente à la plus ancienne).
+  const noms =
+    saisie.trim().length < 2
+      ? []
+      : suggestions.filter((s, i) => suggestions.findIndex((t) => t.nom === s.nom) === i).slice(0, 8);
 
   return (
     <div className="mt-10">
@@ -152,12 +168,23 @@ export function RechercheEtablissement() {
                   e.preventDefault();
                   valider(s.nom);
                 }}
-                className={`flex cursor-pointer items-center justify-between gap-3 px-5 py-2.5 text-sm ${actif === i ? "bg-bg-subtle" : "hover:bg-bg-subtle"}`}
+                className={`flex cursor-pointer flex-wrap items-center justify-between gap-x-4 gap-y-1.5 px-5 py-3 text-sm ${
+                  actif === i ? "bg-bg-subtle" : "hover:bg-bg-subtle"
+                }`}
               >
-                <span className="text-text">{s.nom}</span>
-                <span className="text-xs text-text-faint">
-                  {s.typeEtablissement}
-                  {s.ville ? ` · ${s.ville}` : ""}
+                <span className="min-w-0">
+                  <span className="block font-medium text-text">{s.nom}</span>
+                  <span className="block text-xs text-text-muted">
+                    {s.ville ?? "Localité non renseignée"} · Source : {LIBELLES_SOURCE_COURTS[s.source]}
+                  </span>
+                </span>
+                <span className="flex shrink-0 flex-wrap gap-x-3 gap-y-1 text-xs tabular-nums text-text-muted">
+                  {categories(s).map((c) => (
+                    <span key={c.label}>
+                      <span className="text-text-faint">{c.label} </span>
+                      <span className="font-semibold text-text">{pct(c.valeur)}</span>
+                    </span>
+                  ))}
                 </span>
               </li>
             ))}
@@ -167,14 +194,14 @@ export function RechercheEtablissement() {
 
       <div className="mt-10" aria-live="polite">
         {chargement && <p className="text-center text-sm text-text-muted">Recherche…</p>}
-        {!chargement && resultats && resultats.length === 0 && (
+        {!chargement && resultatsAffiches && resultatsAffiches.length === 0 && (
           <p className="rounded-[var(--radius-lg)] border border-dashed border-border bg-bg-subtle px-6 py-10 text-center text-sm text-text-muted">
             Aucun établissement trouvé pour « {qUrl} ».
           </p>
         )}
-        {!chargement && resultats && resultats.length > 0 && (
+        {!chargement && resultatsAffiches && resultatsAffiches.length > 0 && (
           <ul className="flex flex-col gap-4">
-            {resultats.map((r, i) => (
+            {resultatsAffiches.map((r, i) => (
               <li key={`${r.nom}-${r.source}-${r.date ?? i}`}>
                 <CarteResultat resultat={r} />
               </li>
@@ -197,7 +224,7 @@ function CarteResultat({ resultat: r }: { resultat: ResultatVerification }) {
             {r.ville ? ` · ${r.ville}` : ""}
           </p>
           <p className="mt-2 text-xs text-text-faint">
-            {LIBELLES_SOURCE[r.source]}
+            Source : {LIBELLES_SOURCE[r.source]}
             {r.date ? ` · ${formaterDate(r.date)}` : ""}
           </p>
         </div>
@@ -225,22 +252,20 @@ function CarteResultat({ resultat: r }: { resultat: ResultatVerification }) {
             ))}
           </ol>
           <p className="mt-3 text-sm text-text-muted">{DESCRIPTION_NIVEAU[r.niveau]}</p>
-          {(r.pctEssentiels !== null || r.pctFondamentaux !== null || r.pctAvances !== null) && (
-            <dl className="mt-4 grid grid-cols-3 gap-3 border-t border-border pt-4 text-center">
-              {[
-                ["Essentiels", r.pctEssentiels],
-                ["Fondamentaux", r.pctFondamentaux],
-                ["Avancés", r.pctAvances],
-              ].map(([label, v]) => (
-                <div key={label as string}>
-                  <dt className="text-xs text-text-faint">{label}</dt>
-                  <dd className="font-display text-base font-semibold text-text tabular-nums">{pct(v as number | null)}</dd>
-                </div>
-              ))}
-            </dl>
-          )}
         </>
       )}
+
+      <div className="mt-4 border-t border-border pt-4">
+        <p className="text-xs font-medium uppercase tracking-wide text-text-faint">Conformité par catégorie de critères</p>
+        <dl className="mt-3 grid grid-cols-3 gap-3 text-center">
+          {categories(r).map((c) => (
+            <div key={c.label}>
+              <dt className="text-xs text-text-faint">{c.label}</dt>
+              <dd className="font-display text-base font-semibold text-text tabular-nums">{pct(c.valeur)}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
     </article>
   );
 }

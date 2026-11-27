@@ -21,7 +21,7 @@ export async function creerReservationAction(
       method: "POST",
       body: JSON.stringify({
         formationId,
-        formule: String(formData.get("formule") ?? ""),
+        nombrePlaces: Number(formData.get("nombrePlaces") ?? 0),
         sessionFormationId: String(formData.get("sessionFormationId") ?? "") || undefined,
       }),
     });

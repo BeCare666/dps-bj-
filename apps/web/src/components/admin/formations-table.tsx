@@ -13,8 +13,7 @@ import { ImageFormation } from "./image-formation";
 import { useActionConfirmee } from "./use-action-confirmee";
 import type { Formation } from "@/lib/types";
 
-function Prix({ montant }: { montant: number | null }) {
-  if (montant === null) return <span className="whitespace-nowrap text-text-faint">À définir</span>;
+function Prix({ montant }: { montant: number }) {
   return <span className="whitespace-nowrap font-medium text-text tabular-nums">{formaterFcfa(montant)}</span>;
 }
 
@@ -52,24 +51,24 @@ export function FormationsTable({ formations }: { formations: Formation[] }) {
       valeurExport: (f) => `${f.typeEtablissement ?? ""} ${f.critere ?? ""}`.trim(),
     },
     {
-      cle: "prixIndividuel",
-      entete: "Individuel",
-      render: (f) => <Prix montant={f.prixIndividuel} />,
-      valeurTri: (f) => f.prixIndividuel ?? -1,
+      cle: "prixPersonne1a5",
+      entete: "1 à 5 pers.",
+      render: (f) => <Prix montant={f.prixPersonne1a5} />,
+      valeurTri: (f) => f.prixPersonne1a5,
       alignement: "right",
     },
     {
-      cle: "prixGroupe5",
-      entete: "Groupe 5",
-      render: (f) => <Prix montant={f.prixGroupe5} />,
-      valeurTri: (f) => f.prixGroupe5 ?? -1,
+      cle: "prixPersonne6a10",
+      entete: "6 à 10 pers.",
+      render: (f) => <Prix montant={f.prixPersonne6a10} />,
+      valeurTri: (f) => f.prixPersonne6a10,
       alignement: "right",
     },
     {
-      cle: "prixGroupe10",
-      entete: "Groupe 10",
-      render: (f) => <Prix montant={f.prixGroupe10} />,
-      valeurTri: (f) => f.prixGroupe10 ?? -1,
+      cle: "prixPersonne11Plus",
+      entete: "Plus de 10",
+      render: (f) => <Prix montant={f.prixPersonne11Plus} />,
+      valeurTri: (f) => f.prixPersonne11Plus,
       alignement: "right",
     },
     {
@@ -87,7 +86,6 @@ export function FormationsTable({ formations }: { formations: Formation[] }) {
     { cle: "inactives", label: "Inactives", filtre: (f) => !f.actif },
     { cle: "eh", label: "EH", filtre: (f) => f.typeEtablissement === "EH" },
     { cle: "espc", label: "ESPC", filtre: (f) => f.typeEtablissement === "ESPC" },
-    { cle: "a-tarifer", label: "Tarif à définir", filtre: (f) => f.prixIndividuel === null && f.prixGroupe5 === null && f.prixGroupe10 === null },
   ];
 
   return (

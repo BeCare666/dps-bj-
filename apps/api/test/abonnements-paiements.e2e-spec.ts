@@ -262,12 +262,12 @@ describe("Abonnements, paiements et factures (§5, §10, §11.1, §12.1, e2e)", 
 
   it("§10.4 — webhook : paiement tardif de réservation rattaché par la référence RES-…", async () => {
     const formation = await prisma.formation.create({
-      data: { titre: `Formation P5 ${suffixe}`, description: "Formation de test supprimée après exécution.", prixIndividuel: 5000, prixGroupe5: 20000, prixGroupe10: 35000 },
+      data: { titre: `Formation P5 ${suffixe}`, description: "Formation de test supprimée après exécution.", prixPersonne1a5: 5000, prixPersonne6a10: 3000, prixPersonne11Plus: 2000 },
     });
     const reservation = await request(app.getHttpServer())
       .post("/reservations")
       .set("Cookie", await connecter(emails.resp))
-      .send({ formationId: formation.id, formule: "INDIVIDUEL" })
+      .send({ formationId: formation.id, nombrePlaces: 1 })
       .expect(201);
     await request(app.getHttpServer())
       .post("/paiements/kkiapay/webhook")

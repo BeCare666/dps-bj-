@@ -219,14 +219,6 @@ enum StatutActionCorrective {
   @@map("statut_action_corrective")
 }
 
-enum FormuleFormation {
-  INDIVIDUEL
-  GROUPE_5
-  GROUPE_10
-
-  @@map("formule_formation")
-}
-
 // Niveau d'un critère des manuels ARS (3e chiffre du code : 1, 2 ou 3).
 enum NiveauCritere {
   ESSENTIEL
@@ -990,11 +982,11 @@ model Formation {
   imageUrl       String?  @db.Text @map("image_url")
   imageCloudinaryId String? @map("image_cloudinary_id")
   ordre          Int?
-  // Tarifs fixés par DSP : absents des documents, nuls tant qu'ils ne sont pas
-  // saisis dans l'admin (formation alors non réservable).
-  prixIndividuel Int?     @map("prix_individuel")
-  prixGroupe5    Int?     @map("prix_groupe_5")
-  prixGroupe10   Int?     @map("prix_groupe_10")
+  // Prix par personne selon la taille du groupe (demande client du 27/11/2026),
+  // valeurs par défaut modifiables dans l'admin : voir @dps/shared (tarifs).
+  prixPersonne1a5    Int  @default(5000) @map("prix_personne_1_5")
+  prixPersonne6a10   Int  @default(3000) @map("prix_personne_6_10")
+  prixPersonne11Plus Int  @default(2000) @map("prix_personne_11_plus")
   actif          Boolean  @default(true)
   createdAt      DateTime @default(now()) @map("created_at")
   updatedAt      DateTime @updatedAt @map("updated_at")
@@ -1061,7 +1053,10 @@ model Reservation {
   formationId          String            @map("formation_id")
   utilisateurId        String            @map("utilisateur_id")
   organisationId       String?           @map("organisation_id")
-  formule              FormuleFormation
+  // Nombre de personnes réservées (libre) et prix par personne de la tranche,
+  // figés à la création ; tarifApplique = nombrePlaces × prixParPersonne.
+  nombrePlaces         Int               @map("nombre_places")
+  prixParPersonne      Int               @map("prix_par_personne")
   tarifApplique        Int               @map("tarif_applique")
   statut               StatutReservation @default(ATTENTE_PAIEMENT)
   kkiapayTransactionId String?           @unique @map("kkiapay_transaction_id")

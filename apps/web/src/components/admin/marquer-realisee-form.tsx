@@ -20,7 +20,7 @@ function Bouton() {
 }
 
 // §12.5 — clôture d'une session de formation et suivi des présences
-// (nombre de participants présents, au plus la taille de la formule).
+// (nombre de participants présents, au plus le nombre de places réservées).
 export function MarquerRealiseeForm({
   reservationId,
   places = 1,

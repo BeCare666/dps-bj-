@@ -13,7 +13,6 @@ import {
   TRIS,
   domainesDe,
   filtrerFormations,
-  estReservable,
   prixMinimum,
   type FiltresCatalogue,
 } from "@/lib/catalogue-formations";
@@ -32,7 +31,6 @@ function lireFiltres(p: URLSearchParams): FiltresCatalogue {
     q: p.get("q") ?? undefined,
     public: p.get("public") ?? undefined,
     duree: p.get("duree") ?? undefined,
-    reservable: p.get("reservable") === "1",
     tri: p.get("tri") ?? undefined,
   };
 }
@@ -51,7 +49,7 @@ export function CatalogueFormations({ formations }: { formations: Formation[] })
   const pathname = usePathname();
   const [, demarrer] = useTransition();
   const filtres = lireFiltres(params);
-  const [avances, setAvances] = useState(Boolean(filtres.public || filtres.duree || filtres.reservable));
+  const [avances, setAvances] = useState(Boolean(filtres.public || filtres.duree));
   const [recherche, setRecherche] = useState(filtres.q ?? "");
 
   // Filtres conservés dans l'URL (partage, retour arrière).
@@ -69,7 +67,7 @@ export function CatalogueFormations({ formations }: { formations: Formation[] })
   const domaines = useMemo(() => domainesDe(formations, filtres.type), [formations, filtres.type]);
   const autres = useMemo(() => formations.filter((f) => !f.typeEtablissement), [formations]);
   const parType = (t: TypeEtablissement) => formations.filter((f) => f.typeEtablissement === t).length;
-  const filtresActifs = Boolean(filtres.niveau || filtres.domaine || filtres.parcours || filtres.q || filtres.public || filtres.duree || filtres.reservable);
+  const filtresActifs = Boolean(filtres.niveau || filtres.domaine || filtres.parcours || filtres.q || filtres.public || filtres.duree);
 
   return (
     <div>
@@ -159,10 +157,6 @@ export function CatalogueFormations({ formations }: { formations: Formation[] })
               ))}
             </select>
           </label>
-          <label className="flex items-center gap-2 self-end pb-2 text-sm text-text">
-            <input type="checkbox" checked={filtres.reservable} onChange={(e) => modifier({ reservable: e.target.checked ? "1" : undefined })} />
-            Réservables en ligne uniquement
-          </label>
         </div>
       )}
 
@@ -213,7 +207,7 @@ export function CatalogueFormations({ formations }: { formations: Formation[] })
             className="text-sm font-medium text-primary hover:underline"
             onClick={() => {
               setRecherche("");
-              modifier({ niveau: undefined, domaine: undefined, parcours: undefined, q: undefined, public: undefined, duree: undefined, reservable: undefined });
+              modifier({ niveau: undefined, domaine: undefined, parcours: undefined, q: undefined, public: undefined, duree: undefined });
             }}
           >
             Effacer les filtres
@@ -281,16 +275,12 @@ function CarteFormation({ formation: f }: { formation: Formation }) {
         {f.publicCible && <p className="mt-2 line-clamp-2 text-sm leading-6 text-text-muted">{f.publicCible}</p>}
         <div className="mt-auto flex items-end justify-between gap-3 border-t border-border pt-4">
           <div>
-            {prix !== null ? (
-              <>
-                <span className="text-xs font-medium uppercase tracking-wide text-text-faint">À partir de</span>
-                <p className="font-display text-lg font-bold text-primary">{formaterFcfa(prix)}</p>
-              </>
-            ) : (
-              <p className="text-sm font-medium text-text-faint">Tarif à définir</p>
-            )}
+            <span className="text-xs font-medium uppercase tracking-wide text-text-faint">À partir de</span>
+            <p className="font-display text-lg font-bold text-primary">
+              {formaterFcfa(prix)} <span className="text-xs font-medium text-text-muted">/ personne</span>
+            </p>
           </div>
-          {prochaine && estReservable(f) && (
+          {prochaine && (
             <span className="text-right text-xs text-text-muted">
               Prochaine session
               <br />

@@ -2,14 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useCallback, useEffect, useId, useRef, useState, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from "motion/react";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/shell/logo";
 import { ListeReseauxSociaux } from "@/components/marketing/social-icons";
 import { IconChevronDown, IconClose, IconHome, IconMenu } from "@/components/icons";
-import { MENUS_EN_TETE, type LienVitrine } from "@/lib/navigation-vitrine";
+import { MENUS_EN_TETE, type LienVitrine, type MenuEnTete } from "@/lib/navigation-vitrine";
 import { SITE } from "@/lib/site-config";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -37,20 +37,168 @@ function LienMenu({ lien, className, onClick, children }: { lien: LienVitrine; c
   );
 }
 
+// Entrées de la barre desktop : « Accueil » puis les menus de l'en-tête.
+const ENTREES: MenuEnTete[] = [{ titre: "Accueil", icon: IconHome, href: "/", sections: [] }, ...MENUS_EN_TETE];
+const PLUS = "Plus";
+// Espace entre deux entrées (gap-0.5 de la barre), en pixels.
+const ECART_ENTREES = 2;
+const CLASSE_ENTREE = "whitespace-nowrap rounded-full px-2.5 py-2 text-sm font-medium transition-colors";
+const CLASSE_DECLENCHEUR = `relative flex items-center gap-1.5 ${CLASSE_ENTREE}`;
+
+function estActif(pathname: string, href: string) {
+  return href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`);
+}
+
+// Nombre d'entrées affichées dans la barre : toutes si elles tiennent, sinon
+// les premières, les suivantes passant dans « Plus ».
+function entreesQuiTiennent(disponible: number, largeurs: number[], largeurPlus: number) {
+  let total = largeurs.reduce((a, b) => a + b, 0) + ECART_ENTREES * (largeurs.length - 1);
+  if (total <= disponible) return largeurs.length;
+  let n = largeurs.length;
+  while (n > 0 && total + ECART_ENTREES + largeurPlus > disponible) {
+    n -= 1;
+    total -= largeurs[n] + (n > 0 ? ECART_ENTREES : 0);
+  }
+  return n;
+}
+
+// Panneau déroulant sous une entrée (menus, « Plus »).
+function PanneauMenu({ id, aDroite, children }: { id: string; aDroite?: boolean; children: React.ReactNode }) {
+  return (
+    <motion.div
+      id={id}
+      initial={{ opacity: 0, y: 8, scale: 0.97 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, transition: { duration: 0.1 } }}
+      transition={{ duration: 0.28, ease: EASE }}
+      style={{ transformOrigin: aDroite ? "top right" : "top center" }}
+      className={`absolute top-full z-50 mt-3 w-[19rem] ${aDroite ? "right-0" : "left-1/2 -translate-x-1/2"}`}
+    >
+      {/* Petite flèche reliant le panneau à son menu. */}
+      <span
+        aria-hidden="true"
+        className={`absolute -top-1.5 h-3 w-3 rotate-45 rounded-[3px] border-l border-t border-border bg-surface ${
+          aDroite ? "right-8" : "left-1/2 -translate-x-1/2"
+        }`}
+      />
+      <div className="scrollbar-fin relative max-h-[calc(100dvh-6rem)] overflow-y-auto rounded-2xl border border-border bg-surface p-2 shadow-[var(--shadow-elevated)]">
+        {children}
+      </div>
+    </motion.div>
+  );
+}
+
+function TitrePanneau({ menu, separe }: { menu: MenuEnTete; separe?: boolean }) {
+  return (
+    <p
+      className={`flex items-center gap-2 px-3 pb-2 pt-2.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-text-faint ${
+        separe ? "mx-3 mt-2 border-t border-border !px-0 pt-3.5" : ""
+      }`}
+    >
+      <menu.icon width={14} height={14} />
+      {menu.titre}
+    </p>
+  );
+}
+
+function LignePanneau({ lien, j, onClick }: { lien: LienVitrine; j: number; onClick: () => void }) {
+  return (
+    <motion.li
+      initial={{ opacity: 0, x: -6 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.3, delay: 0.04 + j * 0.035, ease: EASE }}
+    >
+      <LienMenu
+        lien={lien}
+        onClick={onClick}
+        className="group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-text transition-colors hover:bg-bg-subtle"
+      >
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary-soft text-primary transition-colors duration-300 group-hover:bg-primary group-hover:text-white">
+          <lien.icon width={17} height={17} />
+        </span>
+        <span className="flex-1">{lien.label}</span>
+        <IconChevronDown
+          width={14}
+          height={14}
+          className="-rotate-90 text-text-faint opacity-0 transition-all duration-300 group-hover:translate-x-0.5 group-hover:opacity-100"
+        />
+      </LienMenu>
+    </motion.li>
+  );
+}
+
+function ContenuMenu({ menu, onClick }: { menu: MenuEnTete; onClick: () => void }) {
+  return menu.sections.map((section) => (
+    <div key={section.titre ?? menu.titre}>
+      {section.titre && (
+        <p className="mx-3 mt-2 border-t border-border px-0 pb-2 pt-3.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-text-faint">
+          {section.titre}
+        </p>
+      )}
+      <ul className="flex flex-col">
+        {section.liens.map((lien, j) => (
+          <LignePanneau key={lien.label} lien={lien} j={j} onClick={onClick} />
+        ))}
+      </ul>
+    </div>
+  ));
+}
+
+// Libellé d'un déclencheur de menu (sert aussi à la mesure).
+function LibelleDeclencheur({ titre, ouvert }: { titre: string; ouvert?: boolean }) {
+  return (
+    <>
+      <span className="relative">{titre}</span>
+      <IconChevronDown
+        width={15}
+        height={15}
+        className={`relative transition-transform duration-300 ${ouvert ? "rotate-180 text-primary" : ""}`}
+      />
+    </>
+  );
+}
+
 export function SiteHeader() {
   const [menuOuvert, setMenuOuvert] = useState<string | null>(null);
   const [tiroirOuvert, setTiroirOuvert] = useState(false);
   const [defile, setDefile] = useState(false);
+  const [nbVisibles, setNbVisibles] = useState(ENTREES.length);
   const { scrollY } = useScroll();
   useMotionValueEvent(scrollY, "change", (y) => setDefile(y > 12));
 
   // Référence stable : l'effet du tiroir (verrou du défilement, focus) ne doit
   // pas se relancer à chaque rendu du header (ex. pendant le défilement).
   const fermerTiroir = useCallback(() => setTiroirOuvert(false), []);
+  const fermerMenu = useCallback(() => setMenuOuvert(null), []);
   const navRef = useRef<HTMLElement>(null);
+  const mesureRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
-  const surAccueil = pathname === "/";
   const baseId = useId();
+
+  // Calcul de la place : la barre occupe l'espace entre le logo et les
+  // boutons ; ce qui ne tient pas passe dans « Plus ». Les largeurs viennent
+  // d'une copie invisible des entrées (mêmes classes).
+  useLayoutEffect(() => {
+    const nav = navRef.current;
+    const mesure = mesureRef.current;
+    if (!nav || !mesure) return;
+    function recalculer() {
+      if (!nav || !mesure || nav.clientWidth === 0) return;
+      const enfants = [...mesure.children] as HTMLElement[];
+      const largeurs = enfants.slice(0, ENTREES.length).map((e) => e.getBoundingClientRect().width);
+      const largeurPlus = enfants[ENTREES.length].getBoundingClientRect().width;
+      setNbVisibles(entreesQuiTiennent(nav.clientWidth, largeurs, largeurPlus));
+    }
+    recalculer();
+    const observateur = new ResizeObserver(recalculer);
+    observateur.observe(nav);
+    observateur.observe(mesure);
+    document.fonts?.ready.then(recalculer);
+    return () => observateur.disconnect();
+  }, []);
+
+  const visibles = ENTREES.slice(0, nbVisibles);
+  const debordement = ENTREES.slice(nbVisibles);
 
   // Fermeture des menus déroulants : clic en dehors, touche Échap.
   useEffect(() => {
@@ -72,140 +220,118 @@ export function SiteHeader() {
     };
   }, [menuOuvert, baseId]);
 
+  function declencheur(titre: string, idPanneau: string) {
+    const ouvert = menuOuvert === titre;
+    return (
+      <button
+        type="button"
+        id={`${baseId}-btn-${titre}`}
+        aria-expanded={ouvert}
+        aria-controls={idPanneau}
+        onClick={() => setMenuOuvert(ouvert ? null : titre)}
+        className={`${CLASSE_DECLENCHEUR} ${ouvert ? "text-text" : "text-text-muted hover:text-text"}`}
+      >
+        {ouvert && (
+          <motion.span
+            layoutId="vitrine-menu-actif"
+            aria-hidden="true"
+            className="absolute inset-0 rounded-full bg-bg-subtle"
+            transition={{ duration: 0.35, ease: EASE }}
+          />
+        )}
+        <LibelleDeclencheur titre={titre} ouvert={ouvert} />
+      </button>
+    );
+  }
+
   return (
     <header
       className={`sticky top-0 z-50 border-b backdrop-blur-md transition-[background-color,border-color,box-shadow] duration-300 ${
         defile ? "border-border/70 bg-bg/90 shadow-[0_8px_30px_-18px_rgba(10,26,56,0.35)]" : "border-transparent bg-bg/70"
       }`}
     >
-      {/* Six entrées et deux boutons : navigation complète dès 1280 px, tiroir en dessous. */}
-      <div className="mx-auto flex h-[4.5rem] max-w-7xl items-center justify-between gap-6 px-5 sm:px-8 xl:gap-4 xl:px-6">
-        <Logo />
+      {/* Barre complète dès 1024 px ; ce qui ne tient pas passe dans « Plus ». Tiroir en dessous. */}
+      <div className="relative mx-auto flex h-[4.5rem] max-w-7xl items-center justify-between gap-6 px-5 sm:px-8 lg:gap-4 lg:px-6">
+        <Logo className="shrink-0" />
 
-        <nav ref={navRef} aria-label="Navigation principale" className="hidden shrink-0 items-center gap-0.5 xl:flex">
-          <Link
-            href="/"
-            aria-current={surAccueil ? "page" : undefined}
-            onClick={() => setMenuOuvert(null)}
-            className={`whitespace-nowrap rounded-full px-2.5 py-2 text-sm font-medium transition-colors ${
-              surAccueil ? "text-text" : "text-text-muted hover:text-text"
-            }`}
-          >
-            Accueil
-          </Link>
-          {MENUS_EN_TETE.map((menu, i) => {
+        {/* Copie invisible des entrées, pour mesurer leur largeur. */}
+        <div aria-hidden="true" className="pointer-events-none invisible absolute left-0 top-0 h-0 w-0 overflow-hidden">
+        <div ref={mesureRef} className="flex w-max">
+          {ENTREES.map((menu) =>
+            menu.href ? (
+              <span key={menu.titre} className={CLASSE_ENTREE}>
+                {menu.titre}
+              </span>
+            ) : (
+              <span key={menu.titre} className={CLASSE_DECLENCHEUR}>
+                <LibelleDeclencheur titre={menu.titre} />
+              </span>
+            ),
+          )}
+          <span className={CLASSE_DECLENCHEUR}>
+            <LibelleDeclencheur titre={PLUS} />
+          </span>
+        </div>
+        </div>
+
+        <nav ref={navRef} aria-label="Navigation principale" className="hidden min-w-0 flex-1 items-center justify-center gap-0.5 lg:flex">
+          {visibles.map((menu, i) => {
             if (menu.href) {
-              const actif = pathname === menu.href || pathname.startsWith(`${menu.href}/`);
+              const actif = estActif(pathname, menu.href);
               return (
                 <Link
                   key={menu.titre}
                   href={menu.href}
                   aria-current={actif ? "page" : undefined}
-                  onClick={() => setMenuOuvert(null)}
-                  className={`whitespace-nowrap rounded-full px-2.5 py-2 text-sm font-medium transition-colors ${
-                    actif ? "text-text" : "text-text-muted hover:text-text"
-                  }`}
+                  onClick={fermerMenu}
+                  className={`${CLASSE_ENTREE} ${actif ? "text-text" : "text-text-muted hover:text-text"}`}
                 >
                   {menu.titre}
                 </Link>
               );
             }
-            const ouvert = menuOuvert === menu.titre;
             const idPanneau = `${baseId}-menu-${i}`;
             return (
               <div key={menu.titre} className="relative">
-                <button
-                  type="button"
-                  id={`${baseId}-btn-${menu.titre}`}
-                  aria-expanded={ouvert}
-                  aria-controls={idPanneau}
-                  onClick={() => setMenuOuvert(ouvert ? null : menu.titre)}
-                  className={`relative flex items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-2 text-sm font-medium transition-colors ${
-                    ouvert ? "text-text" : "text-text-muted hover:text-text"
-                  }`}
-                >
-                  {ouvert && (
-                    <motion.span
-                      layoutId="vitrine-menu-actif"
-                      aria-hidden="true"
-                      className="absolute inset-0 rounded-full bg-bg-subtle"
-                      transition={{ duration: 0.35, ease: EASE }}
-                    />
-                  )}
-                  <span className="relative">{menu.titre}</span>
-                  <IconChevronDown
-                    width={15}
-                    height={15}
-                    className={`relative transition-transform duration-300 ${ouvert ? "rotate-180 text-primary" : ""}`}
-                  />
-                </button>
-
+                {declencheur(menu.titre, idPanneau)}
                 <AnimatePresence>
-                  {ouvert && (
-                    <motion.div
-                      id={idPanneau}
-                      initial={{ opacity: 0, y: 8, scale: 0.97 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, transition: { duration: 0.1 } }}
-                      transition={{ duration: 0.28, ease: EASE }}
-                      style={{ transformOrigin: "top center" }}
-                      className="absolute left-1/2 top-full z-50 mt-3 w-[19rem] -translate-x-1/2"
-                    >
-                      {/* Petite flèche reliant le panneau à son menu. */}
-                      <span
-                        aria-hidden="true"
-                        className="absolute -top-1.5 left-1/2 h-3 w-3 -translate-x-1/2 rotate-45 rounded-[3px] border-l border-t border-border bg-surface"
-                      />
-                      <div className="relative overflow-hidden rounded-2xl border border-border bg-surface p-2 shadow-[var(--shadow-elevated)]">
-                        <p className="flex items-center gap-2 px-3 pb-2 pt-2.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-text-faint">
-                          <menu.icon width={14} height={14} />
-                          {menu.titre}
-                        </p>
-                        {menu.sections.map((section) => (
-                          <div key={section.titre ?? menu.titre}>
-                            {section.titre && (
-                              <p className="mx-3 mt-2 border-t border-border px-0 pb-2 pt-3.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-text-faint">
-                                {section.titre}
-                              </p>
-                            )}
-                            <ul className="flex flex-col">
-                              {section.liens.map((lien, j) => (
-                                <motion.li
-                                  key={lien.label}
-                                  initial={{ opacity: 0, x: -6 }}
-                                  animate={{ opacity: 1, x: 0 }}
-                                  transition={{ duration: 0.3, delay: 0.04 + j * 0.035, ease: EASE }}
-                                >
-                                  <LienMenu
-                                    lien={lien}
-                                    onClick={() => setMenuOuvert(null)}
-                                    className="group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-text transition-colors hover:bg-bg-subtle"
-                                  >
-                                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary-soft text-primary transition-colors duration-300 group-hover:bg-primary group-hover:text-white">
-                                      <lien.icon width={17} height={17} />
-                                    </span>
-                                    <span className="flex-1">{lien.label}</span>
-                                    <IconChevronDown
-                                      width={14}
-                                      height={14}
-                                      className="-rotate-90 text-text-faint opacity-0 transition-all duration-300 group-hover:translate-x-0.5 group-hover:opacity-100"
-                                    />
-                                  </LienMenu>
-                                </motion.li>
-                              ))}
-                            </ul>
-                          </div>
-                        ))}
-                      </div>
-                    </motion.div>
+                  {menuOuvert === menu.titre && (
+                    <PanneauMenu id={idPanneau}>
+                      <TitrePanneau menu={menu} />
+                      <ContenuMenu menu={menu} onClick={fermerMenu} />
+                    </PanneauMenu>
                   )}
                 </AnimatePresence>
               </div>
             );
           })}
+
+          {debordement.length > 0 && (
+            <div className="relative">
+              {declencheur(PLUS, `${baseId}-menu-plus`)}
+              <AnimatePresence>
+                {menuOuvert === PLUS && (
+                  <PanneauMenu id={`${baseId}-menu-plus`} aDroite>
+                    {debordement.map((menu, i) =>
+                      menu.href ? (
+                        <ul key={menu.titre} className="flex flex-col">
+                          <LignePanneau lien={{ href: menu.href, label: menu.titre, icon: menu.icon }} j={i} onClick={fermerMenu} />
+                        </ul>
+                      ) : (
+                        <div key={menu.titre}>
+                          <TitrePanneau menu={menu} separe={i > 0} />
+                          <ContenuMenu menu={menu} onClick={fermerMenu} />
+                        </div>
+                      ),
+                    )}
+                  </PanneauMenu>
+                )}
+              </AnimatePresence>
+            </div>
+          )}
         </nav>
 
-        <div className="hidden shrink-0 items-center gap-2 whitespace-nowrap xl:flex">
+        <div className="hidden shrink-0 items-center gap-2 whitespace-nowrap lg:flex">
           <Button href="/login" variant="ghost">
             Se connecter
           </Button>
@@ -219,7 +345,7 @@ export function SiteHeader() {
           onClick={() => setTiroirOuvert(true)}
           aria-label="Ouvrir le menu"
           aria-expanded={tiroirOuvert}
-          className="flex h-11 w-11 items-center justify-center rounded-full border border-border bg-surface text-text shadow-[var(--shadow-card)] transition-colors hover:border-primary/30 hover:text-primary xl:hidden"
+          className="flex h-11 w-11 items-center justify-center rounded-full border border-border bg-surface text-text shadow-[var(--shadow-card)] transition-colors hover:border-primary/30 hover:text-primary lg:hidden"
         >
           <IconMenu width={20} height={20} />
         </button>
@@ -246,7 +372,7 @@ function TiroirNavigation({ ouvert, onFermer }: { ouvert: boolean; onFermer: () 
       if (e.key === "Escape") onFermer();
     }
     // Passage en affichage grand écran : le tiroir n'a plus lieu d'être.
-    const grandEcran = window.matchMedia("(min-width: 1280px)");
+    const grandEcran = window.matchMedia("(min-width: 1024px)");
     function surChangement(e: MediaQueryListEvent) {
       if (e.matches) onFermer();
     }
@@ -264,7 +390,7 @@ function TiroirNavigation({ ouvert, onFermer }: { ouvert: boolean; onFermer: () 
   return createPortal(
     <AnimatePresence>
       {ouvert && (
-        <div className="fixed inset-0 z-[60] xl:hidden">
+        <div className="fixed inset-0 z-[60] lg:hidden">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

@@ -32,7 +32,7 @@ const DONNEES = [
   },
   {
     categorie: "Formations",
-    detail: "Réservations, formule choisie, tarif appliqué, identifiant de transaction KKiaPay, facture, date de session et présence.",
+    detail: "Réservations, nombre de personnes, tarif appliqué, identifiant de transaction KKiaPay, facture, date de session et présence.",
   },
   {
     categorie: "Rapports statistiques",

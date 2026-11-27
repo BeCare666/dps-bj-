@@ -2,7 +2,7 @@ import { IsEnum, IsInt, IsNumber, IsOptional, IsString, Min, MinLength } from "c
 import { NiveauCritere, TypeEtablissement } from "../../generated/prisma/enums.js";
 
 // Tous les champs du catalogue officiel (ROADMAP_FORMATIONS_VERIFICATION.md §3.2).
-// Les tarifs sont facultatifs : sans tarif, la formule n'est pas réservable.
+// Tarifs : prix par personne par tranche ; absents → valeurs par défaut (@dps/shared).
 export class CreateFormationDto {
   @IsString()
   @MinLength(3)
@@ -75,15 +75,15 @@ export class CreateFormationDto {
   @IsOptional()
   @IsInt()
   @Min(0)
-  prixIndividuel?: number | null;
+  prixPersonne1a5?: number;
 
   @IsOptional()
   @IsInt()
   @Min(0)
-  prixGroupe5?: number | null;
+  prixPersonne6a10?: number;
 
   @IsOptional()
   @IsInt()
   @Min(0)
-  prixGroupe10?: number | null;
+  prixPersonne11Plus?: number;
 }

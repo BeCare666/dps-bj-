@@ -25,7 +25,7 @@ function statutParticipant(p: ParticipantFormation, sessionTerminee: boolean) {
   return { texte: "Invitation en attente", ton: "text-text-faint" };
 }
 
-// §4.3 — ajout et retrait de participants dans la limite de la formule,
+// §4.3 — ajout et retrait de participants dans la limite des places réservées,
 // jusqu'au début de la session.
 export function ParticipantsReservation({
   reservationId,
@@ -112,7 +112,7 @@ export function ParticipantsReservation({
           </div>
         </form>
       )}
-      {modifiable && complet && <p className="text-xs text-text-faint">Toutes les places de la formule sont attribuées.</p>}
+      {modifiable && complet && <p className="text-xs text-text-faint">Toutes les places réservées sont attribuées.</p>}
       {!modifiable && !sessionTerminee && (
         <p className="text-xs text-text-faint">La liste des participants n&apos;est plus modifiable.</p>
       )}

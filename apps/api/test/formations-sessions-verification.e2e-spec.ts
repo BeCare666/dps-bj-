@@ -11,7 +11,7 @@ import { CloudinaryService } from "../src/cloudinary/cloudinary.service.js";
 import { ReservationsService } from "../src/reservations/reservations.service.js";
 import { RoleUtilisateur, SourceEvaluationExterne, StatutReservation, TypeCompte, TypeEtablissement } from "../src/generated/prisma/enums.js";
 
-// ROADMAP_FORMATIONS_VERIFICATION.md §3 à §5 : tarif à définir, sessions en
+// ROADMAP_FORMATIONS_VERIFICATION.md §3 à §5 : tarifs par personne, sessions en
 // ligne, participants, invitations Meet, présence, registre, vérification.
 describe("Formations en ligne et vérification des établissements (e2e)", () => {
   let app: INestApplication;
@@ -55,16 +55,15 @@ describe("Formations en ligne et vérification des établissements (e2e)", () =>
     return u.id;
   }
 
-  async function creerFormation(prix: number | null) {
+  // Sans prix : tarifs par défaut (5 000 / 3 000 / 2 000 FCFA par personne).
+  async function creerFormation(prix?: number) {
     const f = await prisma.formation.create({
       data: {
         titre: `Formation FSV ${suffixe}`,
         description: "Formation de test supprimée après exécution.",
         typeEtablissement: TypeEtablissement.EH,
         critere: "C.2.1.1",
-        prixIndividuel: prix,
-        prixGroupe5: prix === null ? null : prix * 4,
-        prixGroupe10: null,
+        ...(prix === undefined ? {} : { prixPersonne1a5: prix }),
       },
     });
     idsFormations.push(f.id);
@@ -119,14 +118,15 @@ describe("Formations en ligne et vérification des établissements (e2e)", () =>
     await app.close();
   });
 
-  it("§3.3 — formation sans tarif : réservation refusée", async () => {
-    const formationId = await creerFormation(null);
-    const res = await http()
-      .post("/reservations")
-      .set("Cookie", await connecter(emails.resp))
-      .send({ formationId, formule: "INDIVIDUEL" })
-      .expect(400);
-    expect(res.body.message).toMatch(/Tarif à définir/);
+  it("§3.3 — tarifs par défaut : prix par personne selon la taille du groupe", async () => {
+    const formationId = await creerFormation();
+    const resp = await connecter(emails.resp);
+    const reserver = async (nombrePlaces: number) =>
+      (await http().post("/reservations").set("Cookie", resp).send({ formationId, nombrePlaces }).expect(201)).body;
+    expect(await reserver(5)).toMatchObject({ nombrePlaces: 5, prixParPersonne: 5000, tarifApplique: 25000 });
+    expect(await reserver(7)).toMatchObject({ nombrePlaces: 7, prixParPersonne: 3000, tarifApplique: 21000 });
+    expect(await reserver(11)).toMatchObject({ nombrePlaces: 11, prixParPersonne: 2000, tarifApplique: 22000 });
+    await http().post("/reservations").set("Cookie", resp).send({ formationId, nombrePlaces: 0 }).expect(400);
   });
 
   it("§4 — session, participants, invitations Meet, présence et registre", async () => {
@@ -148,7 +148,7 @@ describe("Formations en ligne et vérification des établissements (e2e)", () =>
     expect(fiche.sessions[0].lienMeet).toBeUndefined();
 
     const reservation = (
-      await http().post("/reservations").set("Cookie", resp).send({ formationId, formule: "GROUPE_5", sessionFormationId: session.id }).expect(201)
+      await http().post("/reservations").set("Cookie", resp).send({ formationId, nombrePlaces: 5, sessionFormationId: session.id }).expect(201)
     ).body;
 
     // Avant paiement : participant inscrit, aucune invitation, lien masqué.
@@ -217,10 +217,10 @@ describe("Formations en ligne et vérification des établissements (e2e)", () =>
     // Scénario complet : une vingtaine d'allers-retours vers TiDB Cloud.
   }, 180_000);
 
-  it("§4.3 — participants limités aux places de la formule", async () => {
+  it("§4.3 — participants limités aux places réservées", async () => {
     const formationId = await creerFormation(5000);
     const resp = await connecter(emails.resp);
-    const reservation = (await http().post("/reservations").set("Cookie", resp).send({ formationId, formule: "INDIVIDUEL" }).expect(201)).body;
+    const reservation = (await http().post("/reservations").set("Cookie", resp).send({ formationId, nombrePlaces: 1 }).expect(201)).body;
     const participant = (n: string) => ({ nom: n, prenom: "Test", fonction: "Infirmier", email: `${n.toLowerCase()}-${suffixe}@example.test` });
     await http().post(`/reservations/${reservation.id}/participants`).set("Cookie", resp).send(participant("Un")).expect(201);
     await http().post(`/reservations/${reservation.id}/participants`).set("Cookie", resp).send(participant("Deux")).expect(400);

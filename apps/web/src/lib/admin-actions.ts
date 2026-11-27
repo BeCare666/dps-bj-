@@ -26,7 +26,7 @@ function nombreOuNull(formData: FormData, champ: string): number | null {
   return v === undefined ? null : Number(v.replace(",", "."));
 }
 
-// Tous les champs du catalogue officiel ; tarifs vides = « tarif à définir ».
+// Tous les champs du catalogue officiel ; tarif vide = valeur par défaut de l'API.
 function dtoFormation(formData: FormData) {
   const ordre = nombreOuNull(formData, "ordre");
   return {
@@ -46,9 +46,11 @@ function dtoFormation(formData: FormData) {
     dureeLibelle: texteOuNull(formData, "dureeLibelle"),
     dureeHeures: nombreOuNull(formData, "dureeHeures"),
     ...(ordre !== null ? { ordre } : {}),
-    prixIndividuel: nombreOuNull(formData, "prixIndividuel"),
-    prixGroupe5: nombreOuNull(formData, "prixGroupe5"),
-    prixGroupe10: nombreOuNull(formData, "prixGroupe10"),
+    ...Object.fromEntries(
+      (["prixPersonne1a5", "prixPersonne6a10", "prixPersonne11Plus"] as const)
+        .map((champ) => [champ, nombreOuNull(formData, champ)] as const)
+        .filter(([, v]) => v !== null),
+    ),
   };
 }
 

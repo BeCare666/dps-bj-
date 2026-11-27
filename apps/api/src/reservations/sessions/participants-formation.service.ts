@@ -1,19 +1,13 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import PDFDocument from "pdfkit";
 import { PrismaService } from "../../prisma/prisma.service.js";
-import { FormuleFormation, StatutReservation, StatutSessionFormation } from "../../generated/prisma/enums.js";
+import { StatutReservation, StatutSessionFormation } from "../../generated/prisma/enums.js";
 import type { JwtAccessPayload } from "../../auth/types/jwt-payload.type.js";
 import { ecrireEnTeteDsp } from "../../pdf-entete.js";
 import { ReservationsService } from "../reservations.service.js";
 import { InvitationsFormationService, formaterDateSession } from "./invitations-formation.service.js";
 import { SessionsFormationService } from "./sessions-formation.service.js";
 import type { AjouterParticipantDto } from "./dto/session-formation.dto.js";
-
-export const PLACES_PAR_FORMULE: Record<FormuleFormation, number> = {
-  [FormuleFormation.INDIVIDUEL]: 1,
-  [FormuleFormation.GROUPE_5]: 5,
-  [FormuleFormation.GROUPE_10]: 10,
-};
 
 const champCsv = (valeur: string | null | undefined) => `"${(valeur ?? "").replace(/"/g, '""')}"`;
 
@@ -39,9 +33,9 @@ export class ParticipantsFormationService {
   async ajouter(reservationId: string, dto: AjouterParticipantDto, user: JwtAccessPayload) {
     const reservation = await this.exigerModifiable(reservationId, user);
     const inscrits = await this.prisma.participantFormation.count({ where: { reservationId } });
-    const places = PLACES_PAR_FORMULE[reservation.formule];
+    const places = reservation.nombrePlaces;
     if (inscrits >= places) {
-      throw new BadRequestException(`La formule réservée compte au plus ${places} participant(s)`);
+      throw new BadRequestException(`La réservation compte au plus ${places} participant(s)`);
     }
     if (reservation.sessionFormation?.placesMax) {
       const total = await this.sessions.compterParticipants(reservation.sessionFormation.id);

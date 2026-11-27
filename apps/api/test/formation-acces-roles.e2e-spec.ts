@@ -71,9 +71,9 @@ describe("Module Formation — accès selon le rôle (§4.2, e2e)", () => {
       data: {
         titre: `Formation test P1b ${suffixe}`,
         description: "Formation de test, supprimée après exécution.",
-        prixIndividuel: 1000,
-        prixGroupe5: 4000,
-        prixGroupe10: 7000,
+        prixPersonne1a5: 1000,
+        prixPersonne6a10: 800,
+        prixPersonne11Plus: 700,
       },
     });
     formationId = formation.id;
@@ -94,7 +94,7 @@ describe("Module Formation — accès selon le rôle (§4.2, e2e)", () => {
     await request(app.getHttpServer())
       .post("/reservations")
       .set("Cookie", cookie)
-      .send({ formationId, formule: "INDIVIDUEL" })
+      .send({ formationId, nombrePlaces: 1 })
       .expect(403);
     await request(app.getHttpServer()).get("/reservations").set("Cookie", cookie).expect(403);
   });
@@ -104,10 +104,10 @@ describe("Module Formation — accès selon le rôle (§4.2, e2e)", () => {
     const res = await request(app.getHttpServer())
       .post("/reservations")
       .set("Cookie", cookie)
-      .send({ formationId, formule: "GROUPE_5" })
+      .send({ formationId, nombrePlaces: 5 })
       .expect(201);
     expect(res.body.organisationId).toBe(orgId);
-    expect(res.body.tarifApplique).toBe(4000);
+    expect(res.body.tarifApplique).toBe(5000);
 
     const liste = await request(app.getHttpServer()).get("/reservations").set("Cookie", cookie).expect(200);
     expect(liste.body.map((r: { id: string }) => r.id)).toContain(res.body.id);
@@ -122,7 +122,7 @@ describe("Module Formation — accès selon le rôle (§4.2, e2e)", () => {
     const res = await request(app.getHttpServer())
       .post("/reservations")
       .set("Cookie", cookie)
-      .send({ formationId, formule: "INDIVIDUEL" })
+      .send({ formationId, nombrePlaces: 1 })
       .expect(201);
     expect(res.body.organisationId).toBeNull();
     await request(app.getHttpServer()).get(`/reservations/${res.body.id}`).set("Cookie", cookie).expect(200);

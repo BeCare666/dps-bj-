@@ -6,7 +6,7 @@
 // critère + titre. Les formations absentes sont créées ; une formation déjà en
 // base n'est jamais modifiée (elle a pu être complétée dans l'admin : tarifs,
 // image, texte). Les documents ne donnant aucun tarif, les formations créées
-// restent non réservables tant que DSP n'a pas fixé leurs tarifs.
+// prennent les prix par personne par défaut (5 000 / 3 000 / 2 000 FCFA).
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";

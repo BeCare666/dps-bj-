@@ -209,10 +209,10 @@ describe("Notifications — conformité CDC §11.2 (e2e)", () => {
 
   it("§9.1 / §11.2 — session en ligne affectée puis rappel avant la session (email + in-app)", async () => {
     formationId = (await prisma.formation.create({
-      data: { titre: `Formation P6 ${suffixe}`, description: "Formation de test supprimée après exécution.", prixIndividuel: 1000, prixGroupe5: 4000, prixGroupe10: 7000 },
+      data: { titre: `Formation P6 ${suffixe}`, description: "Formation de test supprimée après exécution.", prixPersonne1a5: 1000, prixPersonne6a10: 800, prixPersonne11Plus: 700 },
     })).id;
     const reservation = await prisma.reservation.create({
-      data: { formationId, utilisateurId: ids.resp, organisationId: orgId, formule: "INDIVIDUEL", tarifApplique: 1000, statut: StatutReservation.PAYEE },
+      data: { formationId, utilisateurId: ids.resp, organisationId: orgId, nombrePlaces: 1, prixParPersonne: 1000, tarifApplique: 1000, statut: StatutReservation.PAYEE },
     });
     const debut = new Date(Date.now() + 86_400_000);
     const session = await prisma.sessionFormation.create({

@@ -6,7 +6,8 @@ import { formaterFcfa } from "@/lib/format";
 import { Reveal } from "@/components/motion/reveal";
 import { Button } from "@/components/ui/button";
 import { CouvertureFormation } from "@/components/formations/couverture-formation";
-import { LIBELLES_NIVEAU, LIBELLES_TYPE, estReservable } from "@/lib/catalogue-formations";
+import { TRANCHES_TARIF_FORMATION } from "@dps/shared";
+import { LIBELLES_NIVEAU, LIBELLES_TYPE } from "@/lib/catalogue-formations";
 import type { Formation } from "@/lib/types";
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
@@ -35,11 +36,6 @@ export default async function FormationDetailPage({ params }: { params: Promise<
     throw erreur;
   }
 
-  const tarifs = [
-    { label: "Individuel", prix: formation.prixIndividuel },
-    { label: "Groupe de 5", prix: formation.prixGroupe5 },
-    { label: "Groupe de 10", prix: formation.prixGroupe10 },
-  ];
   // Rubriques du programme, reprises telles quelles des documents officiels.
   const programme = [
     { titre: "Objectif", texte: formation.objectifs },
@@ -112,24 +108,18 @@ export default async function FormationDetailPage({ params }: { params: Promise<
           </div>
 
           <div className="rounded-[var(--radius-lg)] border border-border bg-surface p-5">
-            <h2 className="text-xs font-semibold uppercase tracking-wide text-text-faint">Tarifs</h2>
+            <h2 className="text-xs font-semibold uppercase tracking-wide text-text-faint">Tarifs par personne</h2>
             <ul className="mt-3 divide-y divide-border">
-              {tarifs.map((t) => (
-                <li key={t.label} className="flex items-center justify-between py-2.5 text-sm">
-                  <span className="text-text-muted">{t.label}</span>
-                  <span className={t.prix !== null ? "font-display font-bold text-primary" : "text-text-faint"}>
-                    {t.prix !== null ? formaterFcfa(t.prix) : "Tarif à définir"}
-                  </span>
+              {TRANCHES_TARIF_FORMATION.map((t) => (
+                <li key={t.cle} className="flex items-center justify-between py-2.5 text-sm">
+                  <span className="text-text-muted">{t.libelle}</span>
+                  <span className="font-display font-bold text-primary">{formaterFcfa(formation[t.cle])}</span>
                 </li>
               ))}
             </ul>
-            {estReservable(formation) ? (
-              <Button href={`/reserver/${formation.id}`} className="mt-4 w-full">
-                Réserver cette formation
-              </Button>
-            ) : (
-              <p className="mt-4 text-xs leading-5 text-text-faint">Les tarifs de cette formation seront bientôt publiés.</p>
-            )}
+            <Button href={`/reserver/${formation.id}`} className="mt-4 w-full">
+              Réserver cette formation
+            </Button>
           </div>
 
           <div className="rounded-[var(--radius-lg)] border border-border bg-surface p-5">

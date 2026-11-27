@@ -5,13 +5,7 @@ import { DataTable, type ColonneTable, type VueTable } from "@/components/ui/dat
 import { StatutReservationBadge } from "@/components/reservations/badges";
 import { IconEye } from "@/components/icons";
 import { formaterDate, formaterDateHeure, formaterFcfa } from "@/lib/format";
-import type { FormuleFormation, Reservation, StatutReservation } from "@/lib/types";
-
-const LIBELLES_FORMULE: Record<FormuleFormation, string> = {
-  INDIVIDUEL: "Individuel",
-  GROUPE_5: "Groupe 5",
-  GROUPE_10: "Groupe 10",
-};
+import type { Reservation, StatutReservation } from "@/lib/types";
 
 const LIBELLES_STATUT: Record<StatutReservation, string> = {
   ATTENTE_PAIEMENT: "En attente de paiement",
@@ -32,7 +26,9 @@ export function MesReservationsTable({ reservations }: { reservations: Reservati
           <Link href={`/mes-reservations/${r.id}`} className="font-medium text-text hover:text-primary">
             {r.formation?.titre ?? "Formation"}
           </Link>
-          <p className="text-xs text-text-faint">{LIBELLES_FORMULE[r.formule]}</p>
+          <p className="text-xs text-text-faint">
+            {r.nombrePlaces} personne{r.nombrePlaces > 1 ? "s" : ""}
+          </p>
         </div>
       ),
       valeurTri: (r) => r.formation?.titre ?? "",

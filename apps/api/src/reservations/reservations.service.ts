@@ -4,7 +4,8 @@ import { KkiapayService } from "../paiements/kkiapay.service.js";
 import { MailerService } from "../notifications/mailer.service.js";
 import { NotificationsInternesService } from "../notifications-internes/notifications-internes.service.js";
 import { FacturesService } from "../factures/factures.service.js";
-import { FormuleFormation, RoleUtilisateur, StatutReservation, StatutSessionFormation, TypeCompte } from "../generated/prisma/enums.js";
+import { prixParPersonne } from "@dps/shared";
+import { RoleUtilisateur, StatutReservation, StatutSessionFormation, TypeCompte } from "../generated/prisma/enums.js";
 import type { Reservation } from "../generated/prisma/client.js";
 import type { JwtAccessPayload } from "../auth/types/jwt-payload.type.js";
 import type { CreerReservationDto } from "./dto/creer-reservation.dto.js";
@@ -40,8 +41,10 @@ export class ReservationsService {
     }
 
     // RM5 — le tarif catalogue est figé sur la réservation dès sa création
-    // (le paiement suit immédiatement via le widget), jamais recalculé ensuite.
-    const tarifApplique = this.tarifPourFormule(formation, dto.formule);
+    // (le paiement suit immédiatement via le widget), jamais recalculé ensuite :
+    // prix par personne de la tranche × nombre de personnes.
+    const prixUnitaire = prixParPersonne(formation, dto.nombrePlaces);
+    const tarifApplique = prixUnitaire * dto.nombrePlaces;
     if (dto.sessionFormationId) await this.exigerSessionOuverte(dto.sessionFormationId, formation.id);
 
     return this.prisma.reservation.create({
@@ -49,7 +52,8 @@ export class ReservationsService {
         formationId: formation.id,
         utilisateurId: user.sub,
         organisationId: user.organisationId,
-        formule: dto.formule,
+        nombrePlaces: dto.nombrePlaces,
+        prixParPersonne: prixUnitaire,
         tarifApplique,
         sessionFormationId: dto.sessionFormationId ?? null,
       },
@@ -218,9 +222,9 @@ export class ReservationsService {
     if (reservation.statut !== StatutReservation.CONFIRMEE) {
       throw new ConflictException("Seule une réservation confirmée peut être marquée comme réalisée");
     }
-    const places = { [FormuleFormation.INDIVIDUEL]: 1, [FormuleFormation.GROUPE_5]: 5, [FormuleFormation.GROUPE_10]: 10 }[reservation.formule];
+    const places = reservation.nombrePlaces;
     if (dto.participantsPresents !== undefined && dto.participantsPresents > places) {
-      throw new BadRequestException(`La formule réservée compte au plus ${places} participant(s)`);
+      throw new BadRequestException(`La réservation compte au plus ${places} participant(s)`);
     }
     const participantsPresents = dto.participantsPresents ?? (dto.presenceConfirmee === false ? 0 : undefined);
     return this.prisma.reservation.update({
@@ -251,23 +255,6 @@ export class ReservationsService {
       throw new ConflictException("Cette session n'est plus ouverte aux inscriptions");
     }
     return session;
-  }
-
-  // Les tarifs ne figurent pas dans les documents officiels : tant que DSP ne
-  // les a pas fixés dans l'admin, la formule n'est pas réservable.
-  private tarifPourFormule(
-    formation: { prixIndividuel: number | null; prixGroupe5: number | null; prixGroupe10: number | null },
-    formule: FormuleFormation,
-  ): number {
-    const tarif = {
-      [FormuleFormation.INDIVIDUEL]: formation.prixIndividuel,
-      [FormuleFormation.GROUPE_5]: formation.prixGroupe5,
-      [FormuleFormation.GROUPE_10]: formation.prixGroupe10,
-    }[formule];
-    if (tarif === null || tarif === undefined) {
-      throw new BadRequestException("Tarif à définir : cette formule n'est pas encore réservable");
-    }
-    return tarif;
   }
 
   // §11.2 — email + notification dans l'espace personnel.

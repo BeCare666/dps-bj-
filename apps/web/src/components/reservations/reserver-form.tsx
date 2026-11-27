@@ -1,28 +1,16 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { useFormStatus } from "react-dom";
+import { PLACES_RESERVATION_MAX, TRANCHES_TARIF_FORMATION, montantReservation, prixParPersonne } from "@dps/shared";
 import { formaterFcfa } from "@/lib/format";
 import { creerReservationAction, type EtatAction } from "@/lib/reservations-actions";
-import type { Formation, FormuleFormation } from "@/lib/types";
+import type { Formation } from "@/lib/types";
 
 const ETAT_INITIAL: EtatAction = {};
 
-const FORMULES: { valeur: FormuleFormation; label: string; description: string }[] = [
-  { valeur: "INDIVIDUEL", label: "Individuel", description: "Une personne" },
-  { valeur: "GROUPE_5", label: "Groupe de 5", description: "Jusqu'à 5 personnes" },
-  { valeur: "GROUPE_10", label: "Groupe de 10", description: "Jusqu'à 10 personnes" },
-];
-
 const dateSession = (iso: string) =>
   new Date(iso).toLocaleString("fr-FR", { weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit", timeZone: "Africa/Porto-Novo" });
-
-// Formule sans tarif fixé par DSP : non réservable (« tarif à définir »).
-function prixFormule(formation: Formation, formule: FormuleFormation): number | null {
-  if (formule === "INDIVIDUEL") return formation.prixIndividuel;
-  if (formule === "GROUPE_5") return formation.prixGroupe5;
-  return formation.prixGroupe10;
-}
 
 function Bouton() {
   const { pending } = useFormStatus();
@@ -37,40 +25,62 @@ function Bouton() {
   );
 }
 
+// Nombre de personnes libre ; prix par personne selon la tranche du groupe.
 export function ReserverForm({ formation }: { formation: Formation }) {
   const action = creerReservationAction.bind(null, formation.id);
   const [etat, formAction] = useActionState(action, ETAT_INITIAL);
-  const premiere = FORMULES.findIndex((f) => prixFormule(formation, f.valeur) !== null);
+  const [saisie, setSaisie] = useState("1");
   const sessions = formation.sessions ?? [];
-  if (premiere === -1) {
-    return <p className="text-sm text-text-muted">Les tarifs de cette formation ne sont pas encore publiés : elle n&apos;est pas encore réservable.</p>;
-  }
+  const nombre = Number(saisie);
+  const valide = Number.isInteger(nombre) && nombre >= 1 && nombre <= PLACES_RESERVATION_MAX;
 
   return (
     <form action={formAction} className="flex flex-col gap-5">
       <div className="flex flex-col gap-3">
-        {FORMULES.map((f, i) => {
-          const prix = prixFormule(formation, f.valeur);
-          return (
-          <label
-            key={f.valeur}
-            className={`flex items-center justify-between rounded-[var(--radius-lg)] border border-border bg-surface p-4 transition-colors has-[:checked]:border-primary has-[:checked]:bg-primary-soft/40 ${
-              prix === null ? "cursor-not-allowed opacity-60" : "cursor-pointer"
-            }`}
-          >
-            <div className="flex items-center gap-3">
-              <input type="radio" name="formule" value={f.valeur} defaultChecked={i === premiere} disabled={prix === null} required className="h-4 w-4" />
-              <div>
-                <p className="text-sm font-medium text-text">{f.label}</p>
-                <p className="text-xs text-text-muted">{f.description}</p>
-              </div>
-            </div>
-            <span className={prix !== null ? "font-display text-base font-bold text-primary" : "text-sm text-text-faint"}>
-              {prix !== null ? formaterFcfa(prix) : "Tarif à définir"}
-            </span>
-          </label>
-          );
-        })}
+        <label htmlFor="nombrePlaces" className="text-sm font-semibold text-text">
+          Nombre de personnes à former
+        </label>
+        <input
+          id="nombrePlaces"
+          name="nombrePlaces"
+          type="number"
+          inputMode="numeric"
+          min={1}
+          max={PLACES_RESERVATION_MAX}
+          step={1}
+          required
+          value={saisie}
+          onChange={(e) => setSaisie(e.target.value)}
+          className="w-40 rounded-[var(--radius-md)] border border-border bg-surface px-3 py-2.5 text-base text-text focus:border-primary focus:outline-none"
+        />
+        <ul className="grid gap-2 sm:grid-cols-3">
+          {TRANCHES_TARIF_FORMATION.map((t) => {
+            const active = valide && nombre >= t.min && (t.max === null || nombre <= t.max);
+            return (
+              <li
+                key={t.cle}
+                className={`rounded-[var(--radius-lg)] border p-3 transition-colors ${
+                  active ? "border-primary bg-primary-soft/40" : "border-border bg-surface"
+                }`}
+              >
+                <p className="text-xs text-text-muted">{t.libelle}</p>
+                <p className="font-display text-base font-bold text-primary">
+                  {formaterFcfa(formation[t.cle])} <span className="text-xs font-medium text-text-muted">/ personne</span>
+                </p>
+              </li>
+            );
+          })}
+        </ul>
+        <p className="text-sm text-text" aria-live="polite">
+          {valide ? (
+            <>
+              {nombre} personne{nombre > 1 ? "s" : ""} × {formaterFcfa(prixParPersonne(formation, nombre))} ={" "}
+              <strong className="font-display text-primary">{formaterFcfa(montantReservation(formation, nombre))}</strong>
+            </>
+          ) : (
+            <span className="text-danger">Indiquez un nombre entier entre 1 et {PLACES_RESERVATION_MAX}.</span>
+          )}
+        </p>
       </div>
 
       <fieldset className="flex flex-col gap-3">

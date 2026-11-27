@@ -7,13 +7,13 @@ import type { JwtAccessPayload } from "../auth/types/jwt-payload.type.js";
 import { ecrireEnTeteDsp } from "../pdf-entete.js";
 
 const LIBELLES_MODULE: Record<string, string> = { NEWS: "Score NEWS", EI: "Événements indésirables" };
-const LIBELLES_FORMULE: Record<string, string> = { INDIVIDUEL: "individuelle", GROUPE_5: "groupe de 5", GROUPE_10: "groupe de 10" };
 
 const INCLUSION = {
   reservation: {
     select: {
       id: true,
-      formule: true,
+      nombrePlaces: true,
+      prixParPersonne: true,
       organisationId: true,
       utilisateurId: true,
       kkiapayTransactionId: true,
@@ -106,7 +106,7 @@ export class FacturesService {
       const montant = `${f.montant.toLocaleString("fr-FR")} ${f.devise}`;
       const client = f.reservation?.organisation ?? f.paiementAbonnement?.organisation ?? null;
       const designation = f.reservation
-        ? `Formation « ${f.reservation.formation.titre} » — formule ${LIBELLES_FORMULE[f.reservation.formule] ?? f.reservation.formule}`
+        ? `Formation « ${f.reservation.formation.titre} » — ${f.reservation.nombrePlaces} personne(s) × ${f.reservation.prixParPersonne.toLocaleString("fr-FR")} ${f.devise}`
         : f.paiementAbonnement
           ? `Abonnement au module ${LIBELLES_MODULE[f.paiementAbonnement.module] ?? f.paiementAbonnement.module} — ${f.paiementAbonnement.dureeJours} jours`
           : "—";

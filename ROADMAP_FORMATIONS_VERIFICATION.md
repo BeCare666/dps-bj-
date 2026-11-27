@@ -128,6 +128,22 @@ dans les documents est listé dans « Points à valider ».
   invitations, présence, vérification).
 - [x] **12.2** Builds API et web, contrôle navigateur (desktop et mobile).
 
+## 14. Ajustements demandés par le client (27/11/2026)
+
+- [x] **14.1** Menu : Accueil, À propos, Vérifier votre établissement, Évaluation (remplace
+  « Services » dans l'en-tête), Statistiques, Formations. Barre complète dès 1024 px :
+  la place est mesurée, ce qui ne tient pas passe dans « Plus » (contrôlé à 1024, 1100,
+  1180, 1280, 1440, 1920 px et mobile).
+- [x] **14.2** Tarifs par personne selon la taille du groupe, par défaut 5 000 (1 à 5),
+  3 000 (6 à 10), 2 000 FCFA (plus de 10), modifiables par formation ; nombre de
+  personnes libre à la réservation (remplace les formules 1 / 5 / 10). Exemple :
+  7 personnes × 3 000 = 21 000 FCFA.
+- [x] **14.3** Migration `20261127180000_tarifs_par_personne` appliquée le 27/11/2026
+  (`migrate diff` vide) ; e2e formations / réservations / paiements : 27 tests OK.
+- [x] **14.4** Page de vérification : texte d'introduction du client ; chaque suggestion
+  affiche nom, localité, pourcentages essentiels / fondamentaux / avancés et source
+  (ARS, Ministère, l'établissement lui-même).
+
 ## 13. Documents techniques — proposition (à valider)
 
 Les documents listent, par critère, les procédures, politiques, protocoles et lignes

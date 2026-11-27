@@ -14,8 +14,8 @@ export default function VerifierEtablissementPage() {
       <div className="text-center">
         <h1 className="font-display text-3xl font-bold text-text sm:text-4xl">Vérifier votre établissement</h1>
         <p className="mx-auto mt-4 max-w-xl text-base leading-7 text-text-muted">
-          Recherchez un hôpital ou un centre de santé pour connaître son niveau sur l&apos;échelle de sécurité des
-          patients de l&apos;ARS, de 0 à 5.
+          Rechercher un établissement de santé pour connaître son niveau de conformité au dispositif de la sécurité
+          des patients
         </p>
       </div>
       <Suspense>
