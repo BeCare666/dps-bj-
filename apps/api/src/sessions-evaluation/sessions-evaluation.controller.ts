@@ -3,6 +3,7 @@ import type { Response } from "express";
 import { SessionsEvaluationService } from "./sessions-evaluation.service.js";
 import { DemarrerSessionDto } from "./dto/demarrer-session.dto.js";
 import { EnregistrerReponseDto } from "./dto/enregistrer-reponse.dto.js";
+import { EnregistrerPositionDto } from "./dto/enregistrer-position.dto.js";
 import { EvolutionQueryDto, ListSessionsQueryDto } from "./dto/list-sessions-query.dto.js";
 import { Roles } from "../auth/decorators/roles.decorator.js";
 import { CurrentUser } from "../auth/decorators/current-user.decorator.js";
@@ -44,6 +45,11 @@ export class SessionsEvaluationController {
     @CurrentUser() user: JwtAccessPayload,
   ) {
     return this.sessionsService.enregistrerReponse(id, elementMesurableId, dto, user);
+  }
+
+  @Put(":id/position")
+  enregistrerPosition(@Param("id") id: string, @Body() dto: EnregistrerPositionDto, @CurrentUser() user: JwtAccessPayload) {
+    return this.sessionsService.enregistrerPosition(id, dto, user);
   }
 
   @Post(":id/soumettre")

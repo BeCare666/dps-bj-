@@ -187,17 +187,17 @@ describe("Auto-évaluation — conformité CDC §6 (e2e)", () => {
       .expect(201);
     sessionId = session.body.id;
 
-    const repondre = (libelle: string, valeur: boolean) =>
+    const repondre = (libelle: string, valeur: "PRESENT" | "ABSENT" | "OBSERVATION") =>
       request(app.getHttpServer())
         .put(`/sessions-evaluation/${sessionId}/reponses/${elements[libelle]}`)
         .set("Cookie", cookie)
         .send({ valeur })
         .expect(200);
-    await repondre("Procédure écrite", true);
-    await repondre("Registre des chutes", true);
-    await repondre("Entretien avec le cadre", false); // n'invalide pas C1
-    await repondre("Sols secs", true); // C2 : aucun document → non validé
-    await repondre("Protocole hygiène des mains", false); // C3 : document manquant
+    await repondre("Procédure écrite", "PRESENT");
+    await repondre("Registre des chutes", "PRESENT");
+    await repondre("Entretien avec le cadre", "ABSENT"); // n'invalide pas C1
+    await repondre("Sols secs", "PRESENT"); // C2 : aucun document → non validé
+    await repondre("Protocole hygiène des mains", "ABSENT"); // C3 : document manquant
 
     // §8.4 — EI de l'établissement rattaché au critère C3.
     await prisma.evenementIndesirable.create({
@@ -225,7 +225,7 @@ describe("Auto-évaluation — conformité CDC §6 (e2e)", () => {
     expect(Object.keys(parCode).sort()).toEqual(["C2", "C3"]);
     expect(parCode.C2.documentsNonValides).toEqual([]);
     expect(parCode.C3.documentsNonValides).toEqual([
-      { elementMesurableId: elements["Protocole hygiène des mains"], libelle: "Protocole hygiène des mains", reponse: "NON" },
+      { elementMesurableId: elements["Protocole hygiène des mains"], libelle: "Protocole hygiène des mains", reponse: "ABSENT" },
     ]);
     expect(parCode.C3.recommandation).toBe("Afficher et diffuser le protocole d'hygiène des mains.");
     expect(res.body.eiLies).toEqual([expect.objectContaining({ critereId: criteres.C3 })]);

@@ -545,6 +545,9 @@ model SessionEvaluation {
   soumiseParId     String?                 @map("soumise_par_id")
   statut           StatutSessionEvaluation @default(EN_COURS)
   scoreGlobal      Float?                  @map("score_global")
+  // §6.2 — reprise exacte : rang (0-based, ordre de la grille figée) de la
+  // question affichée en dernier ; égal au nombre de questions = récapitulatif.
+  positionQuestion Int?                    @map("position_question")
   dateDebut        DateTime                @default(now()) @map("date_debut")
   dateSoumission   DateTime?               @map("date_soumission")
   createdAt        DateTime                @default(now()) @map("created_at")
@@ -568,7 +571,8 @@ model Reponse {
   sessionId          String   @map("session_id")
   elementMesurableId String   @map("element_mesurable_id")
   valeur             Json
-  commentaire        String?
+  // Texte saisi avec la réponse « Observations » (jusqu'à 2000 caractères).
+  commentaire        String?  @db.Text
   createdAt          DateTime @default(now()) @map("created_at")
   updatedAt          DateTime @updatedAt @map("updated_at")
 

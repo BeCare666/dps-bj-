@@ -148,3 +148,82 @@ Rapport, section 5.
   - `next dev` par défaut (Turbopack, ce que lance `npm run dev:web`) : **HTTP 500 sur toutes les pages**, `Cannot find module 'picocolors'` (globals.css) et, côté navigateur, `Cannot find module '@swc/helpers/_/_interop_require_default'`. Même constat d'environnement qu'en 6.2.
   - Données du compte de l'utilisateur (ESPC) vérifiées en base : même grille publiée, réponses valides, aucune anomalie.
   - Aucun code modifié. En attente du message d'erreur exact vu par l'utilisateur et de son mode de lancement.
+
+## Étape 8 — Mise à jour du 26/11/2026 (dossier `mise_a_jour/`)
+
+Sources : 6 grilles Excel fournies par le client (EH et ESPC × essentiels, fondamentaux, avancés). Les fichiers Excel font foi.
+
+### 8.1 Analyse
+
+- [x] **Effectifs** identiques aux manuels ARS : EH 25 + 94 + 15 = **134** critères ; ESPC 30 + 78 + 17 = **125**.
+- [x] **Règle de notation** (onglet « Synthèse » de chaque fichier, manuels EH et ESPC § 2.2, tableau 7) :
+  - essentiel : 1 si tous les documents sont présents, sinon 0 (règle déjà en place) ;
+  - fondamental et avancé : 1 si au moins 80 % des documents sont présents, 0,5 entre 30 et 79 %, 0 en dessous de 30 % ;
+  - pourcentage = score obtenu ÷ critères applicables.
+- [x] **Grille EH Essentiel « corrigée »** : mêmes 25 critères que la v1. Changements :
+  - questions d'entretien et d'observation de C.1.1.5, C.2.1.3, C.4.1.1 et C.4.1.2 corrigées (point 7.3 résolu par le client) ;
+  - C.1.1.3 : « Procédures de surveillance des patients » devient un document à part entière (6 → 7 documents).
+- [x] **Grille ESPC Essentiels** : profondément révisée (libellés, preuves, entretiens). 113 → 91 documents. La mention « Registre … » n'y figure plus.
+
+### 8.2 Données
+
+- [x] Conversion : `apps/api/prisma/grilles-ars/convertir_xlsx.py`. Elle lit les 6 fichiers et produit `eh.json`, `eh-fondamental.json`, `eh-avance.json`, `espc.json`, `espc-fondamental.json` et `espc-avance.json`.
+- [x] Corrections appliquées, toutes dans la grille EH Essentiel et toutes affichées par le script :
+  - domaine B sans nom et domaine E écrit deux fois : noms repris de la v1 ;
+  - 7 libellés de normes abîmés (« patientse », « hôpial », « system. », reste de texte anglais en E.1) : les 12 libellés sont repris de la v1, contrôlée sur le manuel ;
+  - catégorie « Essentielle » → « Essentiel » (D.2.1.1 et E.1.1.1) ;
+  - un guillemet isolé en tête d'une question de C.1.1.2.
+- [x] Import versionné (`importer.ts`) :
+  - grilles essentielles EH et ESPC publiées en **v2**, les v1 archivées : leurs sessions restent consultables ;
+  - 4 nouvelles grilles publiées en v1 ;
+  - 2ᵉ exécution : « déjà à jour » pour les 6 grilles, ce qui prouve que le contenu en base est identique aux JSON.
+
+### 8.3 Fonctionnalités
+
+- [x] **Réponses « Présent / Absent / Observations »** à la place de « Oui / Non ».
+  - « Observations » ouvre un champ de texte de 2 000 caractères au plus.
+  - L'élément observé **n'est pas calculé** : il ne compte ni comme présent, ni comme absent.
+  - Un critère dont tous les documents sont à « Observations » est exclu du dénominateur.
+  - L'API refuse toute autre valeur (400). Les réponses `true` / `false` des sessions antérieures restent lues : true = présent, false = absent.
+- [x] **Score selon la catégorie du critère** (règle ci-dessus). Les résultats et le PDF indiquent :
+  - les critères partiellement respectés ;
+  - les critères non calculés ;
+  - les observations saisies.
+- [x] **Reprise exacte** : la question affichée est enregistrée à chaque déplacement, côté serveur (`sessions_evaluation.position_question`) et dans le navigateur.
+  - Au retour (« Continuer » ou rechargement), la session rouvre sur cette question.
+  - Avant, elle rouvrait sur la 1ʳᵉ question sans réponse.
+- [x] Boutons **« Précédent » / « Suivant »** (au masculin).
+- [x] **Inscription unique** :
+  - `/inscription` affiche directement le formulaire de l'établissement ;
+  - l'option « Compte individuel » est retirée de la page et de « Comment ça marche » ;
+  - les anciennes adresses `/inscription/individuel` et `/inscription/organisation` redirigent vers `/inscription`.
+- [x] Grilles proposées dans l'ordre essentiels → fondamentaux → avancés.
+- [x] Migrations, purement additives : `20261126100000_session_position_question` et `20261126110000_reponse_commentaire_texte` (commentaire VARCHAR(191) → TEXT). Elles sont appliquées sur `dps_bj`, et `migrate diff` est vide.
+
+### 8.4 Tests
+
+- [x] Unitaires : `scoring.util.spec.ts` + `grilles-ars.spec.ts`, **51/51**.
+- [x] e2e : `auto-evaluation-conformite` + `grilles-ars-parcours`, **36/36**.
+  - Le parcours couvre les 6 grilles officielles ; le score attendu est recalculé indépendamment dans le test.
+  - Il vérifie aussi la position, les valeurs refusées, les observations et le PDF.
+- [x] `tsc` API (seule subsiste l'erreur connue de `test/app.e2e-spec.ts`) et `tsc` web : sans erreur.
+- [x] Build de production `next build --webpack` : code 0, TypeScript sans erreur, 79 pages.
+- [x] **Navigateur réel** (27/11/2026) : Chrome headless avec un profil vierge, sur `next start` et l'API locale, avec un compte ESPC de test. **18/18 contrôles OK, 0 erreur JavaScript.**
+  - Inscription : page unique, plus d'option « compte individuel », ancienne adresse redirigée.
+  - Les 3 grilles ESPC sont proposées dans l'ordre ; aucune grille EH n'apparaît.
+  - Boutons Présent / Absent / Observations et « Précédent » / « Suivant ».
+  - « Observations » ouvre le champ de texte sans passer à la question suivante.
+  - Reprise exacte à la question 5, via « Continuer » comme après un rechargement. Avant, la reprise se faisait à la 1ʳᵉ question sans réponse (la 4).
+  - Réponses et texte d'observation conservés ; récapitulatif, soumission, puis page Résultats avec la section Observations.
+  - Compte, sessions et réponses de test supprimés après le test.
+- [x] **Correctif issu du test navigateur** : quand on quitte la page juste après un clic, l'enregistrement serveur de la position (2 à 5 s sur cette machine) pouvait ne pas aboutir. La position est donc aussi gardée dans le navigateur, et au retour la plus récente des deux l'emporte.
+- Constat d'environnement : avec 4 Go de RAM, `next dev` (plus de 800 Mo) sature la machine et provoque des délais. Après une mise en veille, le pool de connexions de l'API reste bloqué jusqu'au redémarrage de l'API.
+
+### 8.5 Points à faire valider (rien n'a été inventé)
+
+- [!] **Seuil de 30 %** : le manuel dit « 31 à 79 % » pour 0,5 et « moins de 30 % » pour 0. Un résultat d'exactement 30 % est noté **0,5**, puisqu'il n'est pas « moins de 30 % ».
+- [!] **Fiches des critères du manuel et tableau 7** : certaines fiches disent « tous les éléments = respecté, moins = partiellement ». La plateforme suit le tableau 7 et l'onglet Synthèse des Excel, où 80 % suffisent pour 1.
+- [!] **« Sans objet »** : l'Excel le propose par critère. Ici, il est obtenu en mettant tous les documents du critère à « Observations ». Le même mécanisme s'applique aux critères essentiels, ce qui permet d'exclure un critère essentiel du calcul.
+- [!] **Lignes à puces de l'Excel** : chaque ligne est un document à part, conformément au fichier. Exemples : ESPC A.1.1.4 « – les catastrophes naturelles ; » et C.1.1.3 « – restriction de leur utilisation ».
+- [!] L'API d'inscription individuelle (`/auth/register/individuel`) est conservée : les comptes individuels existants continuent de fonctionner. Seule l'option d'inscription est retirée de l'interface.
+

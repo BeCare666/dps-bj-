@@ -93,28 +93,6 @@ export async function inscrireOrganisationAction(
   redirect(`/verification-email?email=${encodeURIComponent(payload.responsableEmail)}`);
 }
 
-export async function inscrireIndividuelAction(
-  _etat: EtatFormulaire,
-  formData: FormData,
-): Promise<EtatFormulaire> {
-  if (formData.get("accepteCgu") !== "on") return { erreur: ERREUR_CGU };
-
-  const payload = {
-    nom: valeur(formData, "nom"),
-    prenom: valeur(formData, "prenom"),
-    email: valeur(formData, "email"),
-    telephone: valeurOptionnelle(formData, "telephone"),
-    motDePasse: valeur(formData, "motDePasse"),
-  };
-
-  const { res, corps } = await appelerApiPublic("/auth/register/individuel", payload);
-  if (!res.ok) {
-    return { erreur: messageErreurApi(corps) };
-  }
-
-  redirect(`/verification-email?email=${encodeURIComponent(payload.email)}`);
-}
-
 export async function connexionAction(_etat: EtatFormulaire, formData: FormData): Promise<EtatFormulaire> {
   const payload = {
     email: valeur(formData, "email"),

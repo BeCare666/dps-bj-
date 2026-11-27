@@ -1,11 +1,48 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { motion } from "motion/react";
-import { enregistrerReponseAction, soumettreSessionAction } from "@/lib/session-actions";
+import { enregistrerPositionAction, enregistrerReponseAction, soumettreSessionAction } from "@/lib/session-actions";
 import type { SessionEvaluation, TypeElementMesurable } from "@/lib/types";
 
-type ValeurReponse = boolean | string | undefined;
+type ValeurReponse = string | undefined;
+
+// Réponses d'un élément « Présent / Absent / Observations » (typeReponse OUI_NON).
+const PRESENT = "PRESENT";
+const ABSENT = "ABSENT";
+const OBSERVATION = "OBSERVATION";
+
+const OPTIONS_PRESENCE = [
+  { valeur: PRESENT, label: "Présent" },
+  { valeur: ABSENT, label: "Absent" },
+  { valeur: OBSERVATION, label: "Observations" },
+] as const;
+
+// Délai avant l'enregistrement du texte d'une observation pendant la frappe.
+const DELAI_ENREGISTREMENT_TEXTE_MS = 700;
+
+// Reprise exacte : la position est aussi gardée dans le navigateur, de façon
+// immédiate. L'enregistrement serveur peut ne pas aboutir si la page est
+// quittée juste après un clic ; au retour, la plus récente des deux l'emporte.
+const clePosition = (sessionId: string) => `dps:auto-evaluation:position:${sessionId}`;
+
+function lirePositionLocale(sessionId: string): { position: number; le: number } | null {
+  try {
+    const brut = window.localStorage.getItem(clePosition(sessionId));
+    const valeur = brut ? (JSON.parse(brut) as { position?: unknown; le?: unknown }) : null;
+    return valeur && typeof valeur.position === "number" && typeof valeur.le === "number" ? { position: valeur.position, le: valeur.le } : null;
+  } catch {
+    return null;
+  }
+}
+
+function ecrirePositionLocale(sessionId: string, position: number) {
+  try {
+    window.localStorage.setItem(clePosition(sessionId), JSON.stringify({ position, le: Date.now() }));
+  } catch {
+    // Stockage indisponible (navigation privée stricte) : la position serveur suffit.
+  }
+}
 
 interface Question {
   index: number;
@@ -61,6 +98,14 @@ function aplatir(session: SessionEvaluation): Question[] {
   return questions;
 }
 
+// Réponses booléennes des sessions démarrées avant le passage à
+// « Présent / Absent / Observations » : true = présent, false = absent.
+function normaliser(valeur: unknown): ValeurReponse {
+  if (valeur === true) return PRESENT;
+  if (valeur === false) return ABSENT;
+  return typeof valeur === "string" ? valeur : undefined;
+}
+
 function estRepondu(v: ValeurReponse): boolean {
   return v !== undefined && v !== "";
 }
@@ -69,11 +114,19 @@ export function Questionnaire({ session }: { session: SessionEvaluation }) {
   const questions = useMemo(() => aplatir(session), [session]);
   const [reponses, setReponses] = useState<Record<string, ValeurReponse>>(() => {
     const etat: Record<string, ValeurReponse> = {};
-    for (const r of session.reponses) etat[r.elementMesurableId] = r.valeur as ValeurReponse;
+    for (const r of session.reponses) etat[r.elementMesurableId] = normaliser(r.valeur);
     return etat;
   });
-  // §6.2 — reprise là où la session s'est arrêtée : première question sans réponse.
+  const [commentaires, setCommentaires] = useState<Record<string, string>>(() => {
+    const etat: Record<string, string> = {};
+    for (const r of session.reponses) if (r.commentaire) etat[r.elementMesurableId] = r.commentaire;
+    return etat;
+  });
+  // §6.2 — reprise exacte : la question affichée en dernier ; à défaut
+  // (session démarrée avant cet enregistrement), la première sans réponse.
   const [courante, setCourante] = useState(() => {
+    const position = session.positionQuestion;
+    if (position !== null && position !== undefined && position >= 0 && position <= questions.length) return position;
     const premiere = questions.findIndex((q) => !estRepondu(reponses[q.elementId]));
     return premiere === -1 ? questions.length : premiere;
   });
@@ -81,6 +134,8 @@ export function Questionnaire({ session }: { session: SessionEvaluation }) {
   const [enregistrement, setEnregistrement] = useState(false);
   const [erreur, setErreur] = useState<string | undefined>();
   const [pendingSoumission, startSoumission] = useTransition();
+  // Texte d'observation pas encore envoyé (frappe en cours).
+  const texteEnAttente = useRef<{ elementId: string; texte: string; minuteur: ReturnType<typeof setTimeout> } | null>(null);
 
   const nombreRepondus = questions.filter((q) => estRepondu(reponses[q.elementId])).length;
   const progression = questions.length > 0 ? Math.round((nombreRepondus / questions.length) * 100) : 0;
@@ -95,17 +150,56 @@ export function Questionnaire({ session }: { session: SessionEvaluation }) {
     return liste;
   }, [questions]);
 
-  function aller(index: number) {
-    setBrouillonTexte(null);
-    setErreur(undefined);
-    setCourante(Math.max(0, Math.min(index, questions.length)));
+  // Position locale plus récente que la dernière mise à jour serveur de la
+  // session (même appareil, enregistrement serveur interrompu) : elle l'emporte.
+  useEffect(() => {
+    const locale = lirePositionLocale(session.id);
+    if (!locale || locale.position < 0 || locale.position > questions.length) return;
+    if (locale.le > Date.parse(session.updatedAt) && locale.position !== courante) {
+      setCourante(locale.position);
+      void enregistrerPositionAction(session.id, locale.position);
+    }
+    // Lecture unique à l'ouverture de la session.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session.id]);
+
+  // Le texte en cours de frappe est envoyé si la page est quittée.
+  useEffect(() => {
+    return () => {
+      const attente = texteEnAttente.current;
+      if (attente) {
+        clearTimeout(attente.minuteur);
+        void enregistrerReponseAction(session.id, attente.elementId, OBSERVATION, attente.texte);
+      }
+    };
+  }, [session.id]);
+
+  async function envoyerTexteEnAttente() {
+    const attente = texteEnAttente.current;
+    if (!attente) return;
+    clearTimeout(attente.minuteur);
+    texteEnAttente.current = null;
+    const resultat = await enregistrerReponseAction(session.id, attente.elementId, OBSERVATION, attente.texte);
+    if (!resultat.succes) setErreur(resultat.erreur);
   }
 
-  async function repondre(valeur: ValeurReponse, avancer: boolean) {
+  function aller(index: number) {
+    void envoyerTexteEnAttente();
+    setBrouillonTexte(null);
+    setErreur(undefined);
+    const cible = Math.max(0, Math.min(index, questions.length));
+    setCourante(cible);
+    // Mémorisée dans le navigateur et côté serveur : au retour, la session
+    // rouvre sur cette question.
+    ecrirePositionLocale(session.id, cible);
+    void enregistrerPositionAction(session.id, cible);
+  }
+
+  async function repondre(valeur: ValeurReponse, avancer: boolean, commentaire?: string) {
     if (!question) return;
     setReponses((prev) => ({ ...prev, [question.elementId]: valeur }));
     setEnregistrement(true);
-    const resultat = await enregistrerReponseAction(session.id, question.elementId, valeur);
+    const resultat = await enregistrerReponseAction(session.id, question.elementId, valeur, commentaire);
     setEnregistrement(false);
     if (!resultat.succes) {
       setErreur(resultat.erreur);
@@ -114,14 +208,43 @@ export function Questionnaire({ session }: { session: SessionEvaluation }) {
     if (avancer) aller(courante + 1);
   }
 
+  function choisirPresence(valeur: string) {
+    if (!question) return;
+    // Un texte d'observation en attente ne doit pas écraser la nouvelle réponse.
+    if (texteEnAttente.current?.elementId === question.elementId) {
+      clearTimeout(texteEnAttente.current.minuteur);
+      texteEnAttente.current = null;
+    }
+    if (valeur === OBSERVATION) {
+      // Pas d'avance automatique : la personne peut saisir son observation.
+      void repondre(OBSERVATION, false, commentaires[question.elementId]);
+      return;
+    }
+    void repondre(valeur, true);
+  }
+
+  function saisirObservation(texte: string) {
+    if (!question) return;
+    const elementId = question.elementId;
+    setCommentaires((prev) => ({ ...prev, [elementId]: texte }));
+    if (texteEnAttente.current) clearTimeout(texteEnAttente.current.minuteur);
+    texteEnAttente.current = {
+      elementId,
+      texte,
+      minuteur: setTimeout(() => void envoyerTexteEnAttente(), DELAI_ENREGISTREMENT_TEXTE_MS),
+    };
+  }
+
   function soumettre() {
     startSoumission(async () => {
+      await envoyerTexteEnAttente();
       const resultat = await soumettreSessionAction(session.id);
       if (resultat?.erreur) setErreur(resultat.erreur);
     });
   }
 
   const sansReponse = questions.filter((q) => !estRepondu(reponses[q.elementId]));
+  const nombreObservations = questions.filter((q) => reponses[q.elementId] === OBSERVATION).length;
 
   return (
     <div className="mx-auto flex max-w-6xl gap-8 px-5 py-10 sm:px-8">
@@ -195,35 +318,52 @@ export function Questionnaire({ session }: { session: SessionEvaluation }) {
                 <span className="rounded-full bg-bg-subtle px-2.5 py-0.5 text-xs text-text-faint">N&apos;entre pas dans le score</span>
               )}
             </div>
-            <h2 className="mt-3 font-display text-xl font-semibold text-text">{question.libelle}</h2>
+            <h2 className="mt-3 whitespace-pre-line font-display text-xl font-semibold text-text">{question.libelle}</h2>
 
             <div className="mt-6">
               {question.typeReponse === "OUI_NON" && (
-                <div className="flex gap-3">
-                  {[
-                    { valeur: true, label: "Oui" },
-                    { valeur: false, label: "Non" },
-                  ].map((option) => (
-                    <button
-                      key={option.label}
-                      type="button"
-                      disabled={enregistrement}
-                      onClick={() => repondre(option.valeur, true)}
-                      className={`min-w-28 rounded-[var(--radius-md)] px-6 py-3 text-sm font-semibold transition-colors disabled:opacity-60 ${
-                        reponses[question.elementId] === option.valeur
-                          ? "bg-primary text-primary-foreground"
-                          : "border border-border bg-bg text-text hover:border-primary/40"
-                      }`}
-                    >
-                      {option.label}
-                    </button>
-                  ))}
-                </div>
+                <>
+                  <div className="flex flex-wrap gap-3">
+                    {OPTIONS_PRESENCE.map((option) => (
+                      <button
+                        key={option.valeur}
+                        type="button"
+                        disabled={enregistrement}
+                        aria-pressed={reponses[question.elementId] === option.valeur}
+                        onClick={() => choisirPresence(option.valeur)}
+                        className={`min-w-28 rounded-[var(--radius-md)] px-6 py-3 text-sm font-semibold transition-colors disabled:opacity-60 ${
+                          reponses[question.elementId] === option.valeur
+                            ? "bg-primary text-primary-foreground"
+                            : "border border-border bg-bg text-text hover:border-primary/40"
+                        }`}
+                      >
+                        {option.label}
+                      </button>
+                    ))}
+                  </div>
+                  {reponses[question.elementId] === OBSERVATION && (
+                    <div className="mt-5">
+                      <label htmlFor={`observation-${question.elementId}`} className="text-sm font-medium text-text">
+                        Observations
+                      </label>
+                      <p className="mt-0.5 text-xs text-text-muted">Cet élément n&apos;est pas pris en compte dans le calcul du score.</p>
+                      <textarea
+                        id={`observation-${question.elementId}`}
+                        rows={3}
+                        maxLength={2000}
+                        value={commentaires[question.elementId] ?? ""}
+                        onChange={(e) => saisirObservation(e.target.value)}
+                        onBlur={() => void envoyerTexteEnAttente()}
+                        className="mt-2 w-full rounded-[var(--radius-md)] border border-border bg-bg px-3 py-2.5 text-sm text-text"
+                      />
+                    </div>
+                  )}
+                </>
               )}
 
               {question.typeReponse === "CHOIX" && question.optionsChoix && (
                 <select
-                  value={(reponses[question.elementId] as string) ?? ""}
+                  value={reponses[question.elementId] ?? ""}
                   onChange={(e) => repondre(e.target.value, false)}
                   className="w-full max-w-md rounded-[var(--radius-md)] border border-border bg-bg px-3 py-2.5 text-sm text-text"
                 >
@@ -239,7 +379,7 @@ export function Questionnaire({ session }: { session: SessionEvaluation }) {
               {question.typeReponse === "TEXTE" && (
                 <textarea
                   rows={3}
-                  value={brouillonTexte ?? ((reponses[question.elementId] as string) ?? "")}
+                  value={brouillonTexte ?? reponses[question.elementId] ?? ""}
                   onChange={(e) => setBrouillonTexte(e.target.value)}
                   // Enregistré à la sortie du champ, pas à chaque frappe.
                   onBlur={() => {
@@ -262,14 +402,14 @@ export function Questionnaire({ session }: { session: SessionEvaluation }) {
                 disabled={courante === 0}
                 className="rounded-[var(--radius-md)] border border-border px-4 py-2 text-sm font-medium text-text disabled:opacity-40"
               >
-                Précédente
+                Précédent
               </button>
               <button
                 type="button"
                 onClick={() => aller(courante + 1)}
                 className="rounded-[var(--radius-md)] bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary-hover"
               >
-                {courante === questions.length - 1 ? "Récapitulatif" : "Suivante"}
+                {courante === questions.length - 1 ? "Récapitulatif" : "Suivant"}
               </button>
             </div>
           </div>
@@ -280,10 +420,15 @@ export function Questionnaire({ session }: { session: SessionEvaluation }) {
               {nombreRepondus} question{nombreRepondus > 1 ? "s" : ""} répondue{nombreRepondus > 1 ? "s" : ""} sur {questions.length}.
               Une fois soumise, l&apos;évaluation est définitive et ne peut plus être modifiée.
             </p>
+            {nombreObservations > 0 && (
+              <p className="mt-2 text-sm text-text-muted">
+                {nombreObservations} élément{nombreObservations > 1 ? "s" : ""} à « Observations » : non pris en compte dans le calcul.
+              </p>
+            )}
             {sansReponse.length > 0 && (
               <div className="mt-4">
                 <p className="text-sm font-medium text-warning">
-                  {sansReponse.length} question{sansReponse.length > 1 ? "s" : ""} sans réponse (comptée{sansReponse.length > 1 ? "s" : ""} comme non validée
+                  {sansReponse.length} question{sansReponse.length > 1 ? "s" : ""} sans réponse (comptée{sansReponse.length > 1 ? "s" : ""} comme absente
                   {sansReponse.length > 1 ? "s" : ""} si ce sont des documents à examiner) :
                 </p>
                 <ul className="mt-2 flex max-h-56 flex-col gap-1 overflow-auto text-sm">

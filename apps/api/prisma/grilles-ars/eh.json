@@ -1,5 +1,5 @@
 {
-  "_source": "GRILLES/GRILLE AUTOEVALUATION DES CRITERES ESSENTIELS EH.pdf (ARS Bénin) ; libellés manquants ou corrompus complétés d'après GRILLES/MANUEL sécu des patients EH_vfinale.pdf — détail dans GRILLES/RAPPORT_INTEGRATION_GRILLES.md",
+  "_source": "mise_a_jour/Grille_d_evaluation_EH_Essentiel_corrigee.xlsx (ARS Bénin), converti par prisma/grilles-ars/convertir_xlsx.py",
   "nom": "Grille d'auto-évaluation des critères essentiels des EH",
   "type": "EH",
   "domaines": [
@@ -10,12 +10,14 @@
         {
           "code": "A.1",
           "libelle": "La direction et la gestion sont engagées en faveur de la sécurité des patients.",
+          "ordre": 1,
           "criteres": [
             {
               "code": "A.1.1.1",
               "libelle": "La sécurité des patients est une priorité dans le projet d’établissement hospitalier (PEH) ou tout autre document de planification mis en place par l’établissement hospitalier",
               "categorie": "Essentiel",
               "registre": null,
+              "ordre": 1,
               "elementsMesurables": [
                 {
                   "libelle": "Engagement : politique écrite et diffusée dans tous les services.",
@@ -66,14 +68,14 @@
                   "entreDansScore": false,
                   "ordre": 7
                 }
-              ],
-              "ordre": 1
+              ]
             },
             {
               "code": "A.1.1.2",
               "libelle": "L’établissement hospitalier dispose d’un organigramme qui prend en compte l’ensemble du personnel.",
               "categorie": "Essentiel",
               "registre": null,
+              "ordre": 2,
               "elementsMesurables": [
                 {
                   "libelle": "Organigramme montrant la hiérarchie et les relations hiérarchiques entre l’ensemble du personnel et des services",
@@ -110,14 +112,14 @@
                   "entreDansScore": false,
                   "ordre": 5
                 }
-              ],
-              "ordre": 2
+              ]
             },
             {
               "code": "A.1.1.3",
               "libelle": "La direction promeut une culture de la sécurité des patients dans les services et unités de soins en menant des visites administratives mensuelles sur la sécurité des patients afin d’identifier les problèmes de sécurité et prendre les mesures pour y remédier",
               "categorie": "Essentiel",
               "registre": null,
+              "ordre": 3,
               "elementsMesurables": [
                 {
                   "libelle": "Rapports de visites administratives de la direction relatives à la sécurité des patients, effectuées une fois par mois.",
@@ -154,21 +156,21 @@
                   "entreDansScore": false,
                   "ordre": 5
                 }
-              ],
-              "ordre": 3
+              ]
             }
-          ],
-          "ordre": 1
+          ]
         },
         {
           "code": "A.2",
           "libelle": "L’hôpital a un programme de sécurité des patients",
+          "ordre": 2,
           "criteres": [
             {
               "code": "A.2.1.1",
               "libelle": "La direction veille à ce qu’un cadre supérieur qualifié soit responsable, redevable et habilité en matière de sécurité des patients.",
               "categorie": "Essentiel",
               "registre": null,
+              "ordre": 1,
               "elementsMesurables": [
                 {
                   "libelle": "Contrat ou Mandat du responsable de la sécurité des patients ou document équivalent",
@@ -198,21 +200,21 @@
                   "entreDansScore": false,
                   "ordre": 4
                 }
-              ],
-              "ordre": 1
+              ]
             }
-          ],
-          "ordre": 2
+          ]
         },
         {
           "code": "A.4",
           "libelle": "L’hôpital possède des équipements et appareils essentiels fonctionnels pour fournir ses services",
+          "ordre": 3,
           "criteres": [
             {
               "code": "A.4.1.1",
               "libelle": "La direction s’assure de la disponibilité des équipements et des matériels essentiels au bon fonctionnement de l’établissement.",
               "categorie": "Essentiel",
               "registre": null,
+              "ordre": 1,
               "elementsMesurables": [
                 {
                   "libelle": "Manuel d’utilisation des équipements et conduite à tenir en cas de panne.",
@@ -256,21 +258,21 @@
                   "entreDansScore": false,
                   "ordre": 6
                 }
-              ],
-              "ordre": 1
+              ]
             }
-          ],
-          "ordre": 3
+          ]
         },
         {
           "code": "A.5",
           "libelle": "L’hôpital dispose de personnel compétent au plan technique à tout moment pour dispenser des soins sûrs afin d’assurer la sécurité des patients.",
+          "ordre": 4,
           "criteres": [
             {
               "code": "A.5.1.1",
               "libelle": "La direction assure la disponibilité permanente du personnel compétent et en nombre suffisant pour dispenser des soins sûrs aux patients à tout moment.",
               "categorie": "Essentiel",
               "registre": null,
+              "ordre": 1,
               "elementsMesurables": [
                 {
                   "libelle": "Fichier du personnel de l’établissement.",
@@ -321,14 +323,14 @@
                   "entreDansScore": false,
                   "ordre": 7
                 }
-              ],
-              "ordre": 1
+              ]
             },
             {
               "code": "A.5.1.2",
               "libelle": "Il existe une procédure pour s’assurer que tout le personnel clinique est inscrit auprès d’un organisme approprié qui l’autorise à exercer.",
               "categorie": "Essentiel",
               "registre": null,
+              "ordre": 2,
               "elementsMesurables": [
                 {
                   "libelle": "Quittance de paiement des cotisations de l’année à son ordre professionnel",
@@ -379,11 +381,9 @@
                   "entreDansScore": false,
                   "ordre": 7
                 }
-              ],
-              "ordre": 2
+              ]
             }
-          ],
-          "ordre": 4
+          ]
         }
       ]
     },
@@ -394,12 +394,14 @@
         {
           "code": "B.2",
           "libelle": "L'hôpital sensibilise les patients et leurs aidants pour leur donner les moyens de partager les bonnes décisions concernant leurs soins",
+          "ordre": 1,
           "criteres": [
             {
               "code": "B.2.1.1",
               "libelle": "Le consentement éclairé est obtenu avant une procédure figurant sur la liste dédiée, par du personnel formé selon des modalités et dans une langue que le patient ou la personne autorisée peut comprendre",
               "categorie": "Essentiel",
               "registre": null,
+              "ordre": 1,
               "elementsMesurables": [
                 {
                   "libelle": "La liste des actes pour lesquels le consentement éclairé est nécessaire comprend, sans s’y limiter : les actes invasifs, les actes chirurgicaux, les anesthésies, les transfusions de sang, les actes et les traitements à haut risque, les dons et les greffes d’organes",
@@ -485,24 +487,24 @@
                   "entreDansScore": false,
                   "ordre": 12
                 }
-              ],
-              "ordre": 1
+              ]
             }
-          ],
-          "ordre": 1
+          ]
         },
         {
           "code": "B.3",
           "libelle": "L'hôpital garantit les meilleures pratiques d'identification et de vérification des patients à toutes les étapes des soins",
+          "ordre": 2,
           "criteres": [
             {
               "code": "B.3.1.1",
               "libelle": "La procédure d’identification utilisée dans tout l’établissement hospitalier nécessite au moins deux moyens d’identifier un patient",
               "categorie": "Essentiel",
               "registre": null,
+              "ordre": 1,
               "elementsMesurables": [
                 {
-                  "libelle": "Procédures d’identification et de vérification de l’identité des patients, incluant deux identifiants connus du patient. Les identifiants du patient comprennent son nom complet (jusqu’à la deuxième génération), ses prénoms; sa date et lieu de naissance; le nom du médecin traitant, le numéro de chambre ou de lit. Ces identifiants sont utilisés systématiquement dans tout l’établissement hospitalier",
+                  "libelle": "Procédures d’identification et de vérification de l’identité des patients, incluant deux identifiants connus du patient. Les identifiants du patient comprennent son nom complet (jusqu’à la deuxième génération), ses prénoms ; sa date et lieu de naissance ; le nom du médecin traitant, le numéro de chambre ou de lit. Ces identifiants sont utilisés systématiquement dans tout l’établissement hospitalier",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
@@ -579,17 +581,15 @@
                   "ordre": 11
                 },
                 {
-                  "libelle": "Identifiants des patients dans les dossiers médicaux et tout autre demande médicale",
+                  "libelle": "Identifiants des patients dans les dossiers médicaux et tout autre\ndemande médicale",
                   "typeElement": "OBSERVATION",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": false,
                   "ordre": 12
                 }
-              ],
-              "ordre": 1
+              ]
             }
-          ],
-          "ordre": 2
+          ]
         }
       ]
     },
@@ -600,12 +600,14 @@
         {
           "code": "C.1",
           "libelle": "L'hôpital a une gouvernance clinique efficace qui garantit l'inclusion de la sécurité des patients",
+          "ordre": 1,
           "criteres": [
             {
               "code": "C.1.1.1",
               "libelle": "L’établissement hospitalier conserve des canaux de communication efficaces dans toute son enceinte, y compris pour les résultats cliniques et paracliniques critiques et urgents",
               "categorie": "Essentiel",
               "registre": null,
+              "ordre": 1,
               "elementsMesurables": [
                 {
                   "libelle": "Liste des résultats cliniques et paracliniques critiques et urgents établie par un comité pluridisciplinaire",
@@ -649,14 +651,14 @@
                   "entreDansScore": false,
                   "ordre": 6
                 }
-              ],
-              "ordre": 1
+              ]
             },
             {
               "code": "C.1.1.2",
               "libelle": "L’établissement hospitalier a instauré l’utilisation d’une liste de contrôle de la sécurité chirurgicale et respecte les lignes directrices se rapportant à ce domaine",
               "categorie": "Essentiel",
               "registre": null,
+              "ordre": 2,
               "elementsMesurables": [
                 {
                   "libelle": "Procédure employée pour vérifier l’identité du patient, le site chirurgical et le déroulement de l’intervention",
@@ -700,79 +702,86 @@
                   "entreDansScore": false,
                   "ordre": 6
                 }
-              ],
-              "ordre": 2
+              ]
             },
             {
               "code": "C.1.1.3",
               "libelle": "L’établissement hospitalier a instauré des systèmes pour s’assurer que tous les services soient à même de détecter rapidement une détérioration de l’état clinique d’un patient et d’y réagir",
               "categorie": "Essentiel",
               "registre": null,
+              "ordre": 3,
               "elementsMesurables": [
                 {
-                  "libelle": "Procédures de surveillance des patients : Procédure d’élaboration, de mise en œuvre et de conservation d’un système à l’échelle de l’établissement hospitalier permettant de détecter et de réagir à la détérioration de l’état clinique d’un patient",
+                  "libelle": "Procédures de surveillance des patients",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 1
                 },
                 {
-                  "libelle": "Procédures de surveillance des patients : Procédure de mesure et de recueil des observations par le biais de grilles d’observation, incluant la fréquence respiratoire, la saturation en oxygène, la tension artérielle, la fréquence cardiaque, la température, l’état de conscience, etc",
+                  "libelle": "Procédure d’élaboration, de mise en œuvre et de conservation d’un système à l’échelle de l’établissement hospitalier permettant de détecter et de réagir à la détérioration de l’état clinique d’un patient",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 2
                 },
                 {
-                  "libelle": "Procédures de surveillance des patients : Procédure de formation d’équipes d’intervention rapide et exercices d’intervention réguliers",
+                  "libelle": "Procédure de mesure et de recueil des observations par le biais de grilles d’observation, incluant la fréquence respiratoire, la saturation en oxygène, la tension artérielle, la fréquence cardiaque, la température, l’état de conscience, etc",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 3
                 },
                 {
-                  "libelle": "Procédures de surveillance des patients : Procédures de détection et de réaction à la détérioration de l’état clinique d’un patient",
+                  "libelle": "Procédure de formation d’équipes d’intervention rapide et exercices d’intervention réguliers",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 4
                 },
                 {
-                  "libelle": "Registre du personnel formé aux procédures concernant la détection; la réaction à la détérioration de l’état clinique et à la communication; les détériorations de l’état clinique d’un patient",
+                  "libelle": "Procédures de détection et de réaction à la détérioration de l’état clinique d’un patient",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 5
                 },
                 {
-                  "libelle": "Rapport d’évaluation de la conformité aux procédures concernant la détection et la réaction à la détérioration de l’état clinique d’un patient",
+                  "libelle": "Registre du personnel formé aux procédures concernant la détection ; la réaction à la détérioration de l’état clinique et à la communication ; les détériorations de l’état clinique d’un patient",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 6
                 },
                 {
+                  "libelle": "Rapport d’évaluation de la conformité aux procédures concernant la détection et la réaction à la détérioration de l’état clinique d’un patient",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 7
+                },
+                {
                   "libelle": "Personnel qualifié: existe-t-il des preuves de systèmes en place pour garantir la reconnaissance et la réponse à l'échelle de l'hôpital à la détérioration clinique?",
                   "typeElement": "ENTRETIEN",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": false,
-                  "ordre": 7
+                  "ordre": 8
                 },
                 {
                   "libelle": "tableau d'observation : fréquence respiratoire, saturation en oxygène, tension artérielle, fréquence cardiaque, température, niveau de conscience, etc.",
                   "typeElement": "OBSERVATION",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": false,
-                  "ordre": 8
+                  "ordre": 9
                 }
-              ],
-              "ordre": 3
+              ]
             },
             {
               "code": "C.1.1.4",
               "libelle": "L’établissement hospitalier veille à réduire au strict nécessaire la transmission orale ou téléphonique d’ordonnances et de résultats et, le cas échéant, les informations reçues doivent obligatoirement être notées puis répétées par le destinataire",
               "categorie": "Essentiel",
               "registre": null,
+              "ordre": 4,
               "elementsMesurables": [
                 {
                   "libelle": "Procédures assurant une communication efficace, incluant la notation des ordonnances par le destinataire lorsque celles-ci sont communiquées à l’oral ou par téléphone et leur lecture afin que le prescripteur les confirme ou les corrige",
@@ -795,14 +804,14 @@
                   "entreDansScore": true,
                   "ordre": 3
                 }
-              ],
-              "ordre": 4
+              ]
             },
             {
               "code": "C.1.1.5",
               "libelle": "L’établissement hospitalier a mis en place des systèmes pour assurer une transmission des informations concernant les patients dans de bonnes conditions de sécurité entre les équipes cliniques et lors de la passation de service",
               "categorie": "Essentiel",
               "registre": null,
+              "ordre": 5,
               "elementsMesurables": [
                 {
                   "libelle": "Procédures relatives à la transmission des informations concernant les patients",
@@ -826,27 +835,27 @@
                   "ordre": 3
                 },
                 {
-                  "libelle": "Personnel qualifié: existe-t-il des preuves de systèmes en place pour garantir la reconnaissance et la réponse à l'échelle de l'hôpital à la détérioration clinique?",
+                  "libelle": "Personnel qualifié : l’établissement hospitalier a-t-il mis en place des systèmes pour assurer une passation exhaustive et sécurisée des informations concernant les patients entre les équipes ?",
                   "typeElement": "ENTRETIEN",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": false,
                   "ordre": 4
                 },
                 {
-                  "libelle": "tableau d'observation : fréquence respiratoire, saturation en oxygène, tension artérielle, fréquence cardiaque, température, niveau de conscience, etc.",
+                  "libelle": "Transmission des informations concernant le transfert des patients (supports de transmission et de passation de service renseignés).",
                   "typeElement": "OBSERVATION",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": false,
                   "ordre": 5
                 }
-              ],
-              "ordre": 5
+              ]
             },
             {
               "code": "C.1.1.6",
               "libelle": "L’établissement hospitalier applique les lignes directrices relatives à la sécurité de l’accouchement et aux parcours de soins",
               "categorie": "Essentiel",
               "registre": null,
+              "ordre": 6,
               "elementsMesurables": [
                 {
                   "libelle": "Informations données aux patients par le personnel à propos de la sécurité de l’accouchement",
@@ -876,21 +885,21 @@
                   "entreDansScore": true,
                   "ordre": 4
                 }
-              ],
-              "ordre": 6
+              ]
             }
-          ],
-          "ordre": 1
+          ]
         },
         {
           "code": "C.2",
           "libelle": "L'hôpital dispose d'un système pour réduire le risque des infections associées aux soins",
+          "ordre": 2,
           "criteres": [
             {
               "code": "C.2.1.1",
               "libelle": "L’établissement hospitalier a mis en place un programme coordonné couvrant l’ensemble des activités de prévention et de contrôle des infections impliquant toutes les disciplines",
               "categorie": "Essentiel",
               "registre": null,
+              "ordre": 1,
               "elementsMesurables": [
                 {
                   "libelle": "Directives, plan et manuel sur la prévention et le contrôle des infections.",
@@ -955,14 +964,14 @@
                   "entreDansScore": false,
                   "ordre": 9
                 }
-              ],
-              "ordre": 1
+              ]
             },
             {
               "code": "C.2.1.2",
               "libelle": "L’établissement hospitalier s’assure que tous les équipements sont nettoyés, désinfectés et stérilisés correctement",
               "categorie": "Essentiel",
               "registre": null,
+              "ordre": 2,
               "elementsMesurables": [
                 {
                   "libelle": "Procédures de nettoyage, de désinfection et de stérilisation des équipements",
@@ -999,14 +1008,14 @@
                   "entreDansScore": false,
                   "ordre": 5
                 }
-              ],
-              "ordre": 2
+              ]
             },
             {
               "code": "C.2.1.3",
               "libelle": "Il existe une personne qualifiée, désignée responsable de l’ensemble des activités de prévention et de contrôle des infections",
               "categorie": "Essentiel",
               "registre": null,
+              "ordre": 3,
               "elementsMesurables": [
                 {
                   "libelle": "Document indiquant la structure organisationnelle concernant la prévention et le contrôle des infections",
@@ -1030,34 +1039,34 @@
                   "ordre": 3
                 },
                 {
-                  "libelle": "Personnel compétent: existe-t-il des preuves que l'hôpital assure un nettoyage, une désinfection et une stérilisation appropriés de tous les équipements en mettant particulièrement l'accent sur les zones à haut risque?",
+                  "libelle": "Personnel compétent : l’établissement hospitalier dispose-t-il d’une personne qualifiée, désignée responsable de la prévention et du contrôle des infections, et d’un organigramme des personnels impliqués dans ces activités ?",
                   "typeElement": "ENTRETIEN",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": false,
                   "ordre": 4
                 },
                 {
-                  "libelle": "Nettoyage, désinfection et stérilisation adéquats des équipements, en mettant particulièrement l'accent sur les zones à haut risque",
+                  "libelle": "Organigramme de la prévention et du contrôle des infections identifiant la personne qualifiée désignée responsable.",
                   "typeElement": "OBSERVATION",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": false,
                   "ordre": 5
                 }
-              ],
-              "ordre": 3
+              ]
             }
-          ],
-          "ordre": 2
+          ]
         },
         {
           "code": "C.3",
           "libelle": "L’hôpital assure la sécurité du sang et des produits sanguins",
+          "ordre": 3,
           "criteres": [
             {
               "code": "C.3.1.1",
               "libelle": "L’établissement hospitalier met en place des lignes directrices sur l’utilisation sans risque des produits sanguins labiles de qualité.",
               "categorie": "Essentiel",
               "registre": null,
+              "ordre": 1,
               "elementsMesurables": [
                 {
                   "libelle": "Lignes directrices sur l’utilisation sans risque et relatives à l’administration sécurisée des produits sanguins labiles.",
@@ -1094,14 +1103,14 @@
                   "entreDansScore": false,
                   "ordre": 5
                 }
-              ],
-              "ordre": 1
+              ]
             },
             {
               "code": "C.3.1.2",
               "libelle": "L’établissement hospitalier s’assure que les échantillons de sang prélevés des patients en vue d’un test de compatibilité croisé sont identifiés de façon sécurisée au moyen de deux identifiants uniques",
               "categorie": "Essentiel",
               "registre": null,
+              "ordre": 2,
               "elementsMesurables": [
                 {
                   "libelle": "Procédures concernant l’identification des échantillons prélevés pour les tests de compatibilité croisés",
@@ -1138,21 +1147,21 @@
                   "entreDansScore": false,
                   "ordre": 5
                 }
-              ],
-              "ordre": 2
+              ]
             }
-          ],
-          "ordre": 3
+          ]
         },
         {
           "code": "C.4",
           "libelle": "L'hôpital assure des injections, des perfusions et des vaccinations en toute sécurité",
+          "ordre": 4,
           "criteres": [
             {
               "code": "C.4.1.1",
               "libelle": "Un pharmacien agréé fournit un système de gestion des médicaments qui répond aux besoins des patients, satisfait à la règlementation en vigueur",
               "categorie": "Essentiel",
               "registre": null,
+              "ordre": 1,
               "elementsMesurables": [
                 {
                   "libelle": "Lignes directrices relatives à la sécurité et au système de gestion des médicaments",
@@ -1176,27 +1185,27 @@
                   "ordre": 3
                 },
                 {
-                  "libelle": "Personnel compétent: existe-t-il des preuves que l'hôpital applique des guidelines, y compris ceux de l'OMS, sur la sécurité transfusionnelle?",
+                  "libelle": "Personnel compétent : existe-t-il des preuves qu’un pharmacien agréé participe directement au système de gestion des médicaments et que ce système répond aux besoins des patients ?",
                   "typeElement": "ENTRETIEN",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": false,
                   "ordre": 4
                 },
                 {
-                  "libelle": "Respect des guidelines, y compris les guidelines de l'OMS, pour la sécurité transfusionnelle",
+                  "libelle": "Échantillon aléatoire de dossiers attestant du rôle du pharmacien clinique dans la mise en place d’un système de gestion des médicaments adéquat au sein de l’établissement hospitalier.",
                   "typeElement": "OBSERVATION",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": false,
                   "ordre": 5
                 }
-              ],
-              "ordre": 1
+              ]
             },
             {
               "code": "C.4.1.2",
               "libelle": "L’établissement hospitalier conserve de grandes quantités d’électrolytes dans un lieu sécurisé",
               "categorie": "Essentiel",
               "registre": null,
+              "ordre": 2,
               "elementsMesurables": [
                 {
                   "libelle": "Procédures de retrait des grandes quantités d’électrolytes (notamment le chlorure de potassium, le phosphate de potassium et le chlorure de sodium) des services où des patients sont hospitalisés pour les stocker dans un lieu sécurisé",
@@ -1220,27 +1229,27 @@
                   "ordre": 3
                 },
                 {
-                  "libelle": "Personnel concerné: existe-t-il des preuves que l'hôpital met en œuvre des procédures de sécurité pré-transfusionnelle, y compris pour le recrutement et la sélection de donneurs de sang volontaires et le dépistage sanguin (par exemple, le VIH et virus de l'hépatite B et C)",
+                  "libelle": "Personnel concerné : existe-t-il des preuves que les grandes quantités d’électrolytes (chlorure de potassium, phosphate de potassium, chlorure de sodium) sont retirées des services d’hospitalisation et stockées dans un lieu sécurisé ?",
                   "typeElement": "ENTRETIEN",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": false,
                   "ordre": 4
                 },
                 {
-                  "libelle": "Conformité aux procédures pré-transfusionnelles sécurisées",
+                  "libelle": "Solutions concentrées d’électrolytes : stockage dans un lieu sécurisé et contrôle de délivrance.",
                   "typeElement": "OBSERVATION",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": false,
                   "ordre": 5
                 }
-              ],
-              "ordre": 2
+              ]
             },
             {
               "code": "C.4.1.3",
               "libelle": "L’établissement hospitalier s’assure de la disponibilité des médicaments d’importance vitale à tout moment",
               "categorie": "Essentiel",
               "registre": null,
+              "ordre": 3,
               "elementsMesurables": [
                 {
                   "libelle": "Liste des médicaments vitaux fournis en fonction des besoins de chaque service",
@@ -1277,11 +1286,9 @@
                   "entreDansScore": false,
                   "ordre": 5
                 }
-              ],
-              "ordre": 3
+              ]
             }
-          ],
-          "ordre": 4
+          ]
         }
       ]
     },
@@ -1292,12 +1299,14 @@
         {
           "code": "D.2",
           "libelle": "L’hôpital a un système de gestion des déchets sécurisé.",
+          "ordre": 1,
           "criteres": [
             {
               "code": "D.2.1.1",
               "libelle": "L‘établissement hospitalier se conforme aux lignes directrices relatives à la gestion des déchets piquants, coupants ou tranchants",
               "categorie": "Essentiel",
               "registre": null,
+              "ordre": 1,
               "elementsMesurables": [
                 {
                   "libelle": "Lignes directrices relatives à la gestion des déchets piquants, coupants ou tranchants",
@@ -1334,11 +1343,9 @@
                   "entreDansScore": false,
                   "ordre": 5
                 }
-              ],
-              "ordre": 1
+              ]
             }
-          ],
-          "ordre": 1
+          ]
         }
       ]
     },
@@ -1349,12 +1356,14 @@
         {
           "code": "E.1",
           "libelle": "L’établissement hospitalier a pour le personnel, un programme de développement professionnel continu, dans lequel la sécurité des patients est un thème transversal.",
+          "ordre": 1,
           "criteres": [
             {
               "code": "E.1.1.1",
               "libelle": "L’ensemble du personnel de l’établissement hospitalier suit un programme de formation centré sur la sécurité des patients",
               "categorie": "Essentiel",
               "registre": null,
+              "ordre": 1,
               "elementsMesurables": [
                 {
                   "libelle": "Programme centré sur la sécurité des patients, incluant des procédures et des lignes directrices",
@@ -1398,11 +1407,9 @@
                   "entreDansScore": false,
                   "ordre": 6
                 }
-              ],
-              "ordre": 1
+              ]
             }
-          ],
-          "ordre": 1
+          ]
         }
       ]
     }

@@ -27,13 +27,22 @@ function TitreSection({ children, compteur }: { children: ReactNode; compteur?: 
   );
 }
 
+// Ordre des niveaux des manuels ARS : essentiels, puis fondamentaux, puis avancés.
+const NIVEAUX = ["essentiel", "fondamenta", "avanc"];
+function rangNiveau(nom: string): number {
+  const n = nom.toLowerCase();
+  const rang = NIVEAUX.findIndex((mot) => n.includes(mot));
+  return rang === -1 ? NIVEAUX.length : rang;
+}
+
 export default async function AutoEvaluationPage() {
   const organisation = await silencieux(apiFetchJson<Organisation | null>("/organisations/me"), null);
-  const [grilles, sessions] = await Promise.all([
+  const [grillesBrutes, sessions] = await Promise.all([
     silencieux(apiFetchJson<Grille[]>(`/grilles${organisation ? `?type=${organisation.type}` : ""}`), []),
     silencieux(apiFetchJson<SessionEvaluationResume[]>("/sessions-evaluation"), []),
   ]);
 
+  const grilles = [...grillesBrutes].sort((a, b) => rangNiveau(a.nom) - rangNiveau(b.nom) || a.nom.localeCompare(b.nom, "fr"));
   const enCours = sessions.filter((s) => s.statut === "EN_COURS");
   const soumises = sessions.filter((s) => s.statut === "SOUMISE");
 

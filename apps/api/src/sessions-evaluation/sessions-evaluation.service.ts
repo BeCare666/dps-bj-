@@ -1,12 +1,13 @@
 import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service.js";
 import { grilleStructureInclude } from "../grilles/grilles.service.js";
-import { StatutGrille, StatutRapportPdf, StatutSessionEvaluation } from "../generated/prisma/enums.js";
+import { StatutGrille, StatutRapportPdf, StatutSessionEvaluation, TypeReponse } from "../generated/prisma/enums.js";
 import type { Prisma, SessionEvaluation } from "../generated/prisma/client.js";
-import { calculerScore } from "./scoring.util.js";
+import { calculerScore, REPONSE_OBSERVATION, VALEURS_PRESENCE } from "./scoring.util.js";
 import type { JwtAccessPayload } from "../auth/types/jwt-payload.type.js";
 import type { DemarrerSessionDto } from "./dto/demarrer-session.dto.js";
 import type { EnregistrerReponseDto } from "./dto/enregistrer-reponse.dto.js";
+import type { EnregistrerPositionDto } from "./dto/enregistrer-position.dto.js";
 import type { EvolutionQueryDto, ListSessionsQueryDto } from "./dto/list-sessions-query.dto.js";
 
 const sessionAvecStructureInclude = {
@@ -75,12 +76,41 @@ export class SessionsEvaluationService {
       throw new NotFoundException("Élément mesurable introuvable pour cette grille");
     }
 
+    // Élément « Présent / Absent / Observations » : seules ces trois valeurs
+    // sont acceptées ; le texte de l'observation n'est conservé que pour
+    // « Observations ».
+    let commentaire = dto.commentaire?.trim() || null;
+    if (element.typeReponse === TypeReponse.OUI_NON) {
+      if (!VALEURS_PRESENCE.includes(dto.valeur as (typeof VALEURS_PRESENCE)[number])) {
+        throw new BadRequestException(`Réponse invalide : valeurs acceptées ${VALEURS_PRESENCE.join(", ")}`);
+      }
+      if (dto.valeur !== REPONSE_OBSERVATION) commentaire = null;
+    }
+
     const valeur = dto.valeur as Prisma.InputJsonValue;
     return this.prisma.reponse.upsert({
       where: { sessionId_elementMesurableId: { sessionId, elementMesurableId } },
-      update: { valeur, commentaire: dto.commentaire },
-      create: { sessionId, elementMesurableId, valeur, commentaire: dto.commentaire },
+      update: { valeur, commentaire },
+      create: { sessionId, elementMesurableId, valeur, commentaire },
     });
+  }
+
+  // §6.2 — reprise exacte : la question affichée est mémorisée à chaque
+  // déplacement dans le questionnaire.
+  async enregistrerPosition(sessionId: string, dto: EnregistrerPositionDto, user: JwtAccessPayload) {
+    const session = await this.prisma.sessionEvaluation.findUnique({ where: { id: sessionId } });
+    this.verifierAppartenance(session, user);
+    if (session.statut !== StatutSessionEvaluation.EN_COURS) {
+      throw new ConflictException("Session déjà soumise");
+    }
+    const nombreQuestions = await this.prisma.elementMesurable.count({
+      where: { critere: { norme: { domaine: { grilleId: session.grilleId } } } },
+    });
+    if (dto.position > nombreQuestions) {
+      throw new BadRequestException("Position hors du questionnaire");
+    }
+    await this.prisma.sessionEvaluation.update({ where: { id: sessionId }, data: { positionQuestion: dto.position } });
+    return { positionQuestion: dto.position };
   }
 
   async soumettre(sessionId: string, user: JwtAccessPayload) {
@@ -124,8 +154,11 @@ export class SessionsEvaluationService {
       throw new ConflictException("La session n'est pas encore soumise");
     }
 
-    const reponsesParElement = new Map(session.reponses.map((r) => [r.elementMesurableId, r.valeur]));
-    const score = calculerScore(session.grille, reponsesParElement);
+    const score = calculerScore(
+      session.grille,
+      new Map(session.reponses.map((r) => [r.elementMesurableId, r.valeur])),
+      new Map(session.reponses.map((r) => [r.elementMesurableId, r.commentaire])),
+    );
     const [eiLies, rapport] = await Promise.all([
       this.eiLiesAuxCriteres(session.organisationId, score.criteresNonValides.map((c) => c.critereId)),
       this.prisma.rapportPdf.findUnique({ where: { sessionId }, select: { statut: true, genereLe: true } }),

@@ -1,0 +1,879 @@
+{
+  "_source": "mise_a_jour/Grille_d_evaluation_EH_Avance.xlsx (ARS Bénin), converti par prisma/grilles-ars/convertir_xlsx.py",
+  "nom": "Grille d'auto-évaluation des critères avancés des EH",
+  "type": "EH",
+  "domaines": [
+    {
+      "nom": "A. Normes relatives à la direction et à la gestion",
+      "ordre": 1,
+      "normes": [
+        {
+          "code": "A.1",
+          "libelle": "Les organes d’administration et de direction de l’établissement hospitalier sont engagés en faveur de la sécurité des patients.",
+          "ordre": 1,
+          "criteres": [
+            {
+              "code": "A.1.3.1",
+              "libelle": "Le plan stratégique de l’établissement hospitalier comporte les déclarations de mission, de vision et de valeurs qui témoignent d’une réelle culture de la sécurité des patients.",
+              "categorie": "Avancé",
+              "registre": null,
+              "ordre": 1,
+              "elementsMesurables": [
+                {
+                  "libelle": "Document(s) présentant la mission, la vision et les valeurs de l’établissement hospitalier dans des déclarations claires.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 1
+                },
+                {
+                  "libelle": "Éléments démontrant la prise en compte de la sécurité des patients dans ces déclarations.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 2
+                },
+                {
+                  "libelle": "Direction : La sécurité des patients est-elle une priorité stratégique ? Y a-t-il des éléments indiquant l’existence d’un plan d’actions détaillé pour la sécurité des patients ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 3
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "code": "A.2",
+          "libelle": "L’établissement hospitalier a un programme pour la sécurité des patients.",
+          "ordre": 2,
+          "criteres": [
+            {
+              "code": "A.2.3.1",
+              "libelle": "Le responsable de la sécurité des patients établit des rapports sur les différentes activités en matière de sécurité/ risques et les diffuse en externe.",
+              "categorie": "Avancé",
+              "registre": null,
+              "ordre": 1,
+              "elementsMesurables": [
+                {
+                  "libelle": "Rapports sur les différentes activités liées à la sécurité des patients, diffusés en externe au ministère de la Santé ou aux organisations œuvrant pour la sécurité des patients au moins une fois par an.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 1
+                },
+                {
+                  "libelle": "Rapports incluant, soit des actions du plan d’actions pour la sécurité des patients réalisées, soit des obstacles rencontrés, soit encore de nouveaux problèmes de sécurité des patients devant être résolus, ou des statistiques sur la fréquence des événements indésirables, et communiquant les enseignements tirés de ces activités.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 2
+                },
+                {
+                  "libelle": "Responsable de la sécurité des patients : L’établissement hospitalier rédige-t-il des rapports sur les différentes activités relatives à la sécurité des patients et les diffuse-t-il ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 3
+                },
+                {
+                  "libelle": "Responsable de la sécurité des patients : L’établissement hospitalier publie-t-il des rapports d’études internes comprenant des statistiques sur la fréquence des événements indésirables associés aux soins et communique-t-il des résultats permettant d’agir en interne et en externe ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 4
+                },
+                {
+                  "libelle": "Responsable de la sécurité des patients : L’établissement hospitalier envoie-t-il les fiches de conduite à tenir pour la sécurité des patients une fois par mois à l’organe national chargé de la supervision des établissements de santé (par exemple le ministère de la Santé) à des fins de comparaison avec d’autres établissements de santé ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 5
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "code": "A.3",
+          "libelle": "La direction générale de l’établissement hospitalier collecte, analyse et utilise des données pour améliorer ses performances en matière de sécurité.",
+          "ordre": 3,
+          "criteres": [
+            {
+              "code": "A.3.3.1",
+              "libelle": "L’établissement hospitalier compare ses indicateurs sur la durée et/ou avec d’autres établissements hospitaliers respectant les normes de sécurité des patients et/ou les meilleures pratiques.",
+              "categorie": "Avancé",
+              "registre": null,
+              "ordre": 1,
+              "elementsMesurables": [
+                {
+                  "libelle": "Procédure employée par l’établissement hospitalier pour comparer ses indicateurs de processus et de résultats sur la durée (par exemple avant et après la mise en œuvre d’un programme d’amélioration de la sécurité), avec ceux d’autres établissements de santé respectant les normes de sécurité des patients et avec les meilleures pratiques connues (par exemple taux zéro de pneumonie acquise sous ventilation mécanique) et les normes (par exemple les dispositions règlementaires sur l’hygiène des mains).",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 1
+                },
+                {
+                  "libelle": "Rapports des études comparatives.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 2
+                },
+                {
+                  "libelle": "Responsable de la sécurité des patients : L’établissement hospitalier envoie-t-il les fiches de conduite à tenir pour la sécurité des patients une fois par mois à l’organe national chargé de la supervision des établissements de santé (par exemple le ministère de la Santé) à des fins de comparaison avec d’autres établissements de santé ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 3
+                },
+                {
+                  "libelle": "Responsable de la sécurité des patients : L’établissement hospitalier entreprend-il des actions en fonction des résultats des comparaisons, par le biais d’un plan d’action et de l’élaboration de projet/plan d’amélioration de la sécurité des patients ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 4
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "nom": "B. Normes relatives à l’implication des patients et du public",
+      "ordre": 2,
+      "normes": [
+        {
+          "code": "B.2",
+          "libelle": "L’établissement hospitalier sensibilise ses patients et leurs accompagnants sur les moyens qu’elle leur donne de participer à la prise de décisions appropriées concernant les soins.",
+          "ordre": 1,
+          "criteres": [
+            {
+              "code": "B.2.3.1",
+              "libelle": "L’établissement hospitalier invite les patients à participer à la planification et aux décisions relatives aux soins de santé qui les concernent, y compris au moment de la sortie ou de l’orientation vers un autre établissement",
+              "categorie": "Avancé",
+              "registre": null,
+              "ordre": 1,
+              "elementsMesurables": [
+                {
+                  "libelle": "Procédure suivie pour inviter les patients à participer à la planification et aux décisions relatives aux soins de santé qui les concernent.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 1
+                },
+                {
+                  "libelle": "Procédure visant à encourager les patients à participer à la planification de leur sortie ou de leur orientation vers un autre établissement.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 2
+                },
+                {
+                  "libelle": "Registres du personnel formé aux procédures visant à inviter les patients à participer à la planification et aux décisions relatives aux soins de santé qui les concernent.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 3
+                },
+                {
+                  "libelle": "Rapport d’évaluation de la conformité aux procédures visant à inviter les patients à participer à la planification et aux décisions relatives aux soins de santé qui les concernent.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 4
+                },
+                {
+                  "libelle": "Formulaires signés et horodatés par les patients, concernant leur participation à la planification et aux décisions relatives aux soins de santé qui les concernent.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 5
+                },
+                {
+                  "libelle": "Patients : Avez-vous participé aux prises de décision concernant vos soins de santé ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 6
+                },
+                {
+                  "libelle": "Responsable des soins infirmiers : Prenez-vous en considération les avis des patients et de leurs accompagnants durant tous les processus de soins ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 7
+                },
+                {
+                  "libelle": "Formulaires signés et horodatés par les patients, concernant leur participation à la planification et aux décisions relatives aux soins de santé qui les concernent.",
+                  "typeElement": "OBSERVATION",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 8
+                },
+                {
+                  "libelle": "Les dossiers médicaux du patient indiquent son implication dans la planification de sa sortie ou de son orientation vers un autre établissement hospitalier.",
+                  "typeElement": "OBSERVATION",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 9
+                }
+              ]
+            },
+            {
+              "code": "B.2.3.2",
+              "libelle": "L’établissement hospitalier réalise des sensibilisations sur la sécurité des patients au moyen de différents supports, y compris des documents imprimés, des médias sociaux et un site Web accessible au public.",
+              "categorie": "Avancé",
+              "registre": null,
+              "ordre": 2,
+              "elementsMesurables": [
+                {
+                  "libelle": "Liste des supports d’information sur la sécurité des patients.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 1
+                },
+                {
+                  "libelle": "Documents d’information sur la sécurité des patients sont fournies par de multiples moyens, y compris des documents imprimés, des médias sociaux et des sites Web.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 2
+                },
+                {
+                  "libelle": "document décrivant le site Web de l’établissement hospitalier accessible au patient",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 3
+                },
+                {
+                  "libelle": "Liste des réseaux sociaux de l’établissement hospitalier accessibles au public.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 4
+                },
+                {
+                  "libelle": "Responsable de la sécurité des patients : L’établissement hospitalier offre-t-il un accès à des documents informatisés concernant la sécurité, l’éducation en santé et le bien-être des patients ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 5
+                },
+                {
+                  "libelle": "Responsable de la sécurité des patients : L’établissement hospitalier réalise-t-il des campagnes sur la sécurité des patients ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 6
+                },
+                {
+                  "libelle": "Éducation sanitaire : outils utilisés pour faire passer les messages d’éducation sanitaire (hygiène des mains, sécurité médicamenteuse).",
+                  "typeElement": "OBSERVATION",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 7
+                },
+                {
+                  "libelle": "Informations sur la sécurité des patients et la santé, notamment sur la manière de préserver et d’améliorer leur propre bien-être.",
+                  "typeElement": "OBSERVATION",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 8
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "code": "B.3",
+          "libelle": "L’établissement hospitalier veille à la vérification de l’identité de chaque patient à chaque étape des soins de manière à permettre de l’identifier sans ambiguïté ni risque de confusion entre deux patients.",
+          "ordre": 2,
+          "criteres": [
+            {
+              "code": "B.3.3.1",
+              "libelle": "L’établissement hospitalier identifie les patients au moyen de codes- barres.",
+              "categorie": "Avancé",
+              "registre": null,
+              "ordre": 1,
+              "elementsMesurables": [
+                {
+                  "libelle": "Système de codes-barres avec clé de contrôle pour l’identification des patients.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 1
+                },
+                {
+                  "libelle": "Personnel concerné : y a-t-il des éléments indiquant que l’établissement hospitalier identifie les patients au moyen de codes- barres ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 2
+                },
+                {
+                  "libelle": "Identification des patients : numéro unique attribué dès l’accueil et tracé par tous les services et pour chaque intervention de santé.",
+                  "typeElement": "OBSERVATION",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 3
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "code": "B.4",
+          "libelle": "L’établissement hospitalier implique le public dans différentes activités liées à la sécurité des patients.",
+          "ordre": 3,
+          "criteres": [
+            {
+              "code": "B.4.3.1",
+              "libelle": "L’établissement hospitalier implique la communauté dans la conception et la mise en œuvre de programmes de sécurité des patients et de projets d’amélioration.",
+              "categorie": "Avancé",
+              "registre": null,
+              "ordre": 1,
+              "elementsMesurables": [
+                {
+                  "libelle": "Document de stratégie d’implication du public (ex. organisations non gouvernementales, et associations de défense des patients).",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 1
+                },
+                {
+                  "libelle": "Liste des informations orales et écrites données aux responsables communautaires concernant leur rôle dans l’amélioration de la sécurité des patients.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 2
+                },
+                {
+                  "libelle": "Procédures concernant l’implication du public.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 3
+                },
+                {
+                  "libelle": "Registres du personnel formé pour suivre le respect des procédures concernant l’implication du public.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 4
+                },
+                {
+                  "libelle": "Rapports incluant une évaluation de la conformité aux procédures concernant l’implication du public.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 5
+                },
+                {
+                  "libelle": "Comptes rendus des réunions du Comité d’établissement pour la sécurité des patients.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 6
+                },
+                {
+                  "libelle": "Responsable de la sécurité des patients : Comment l’établissement hospitalier fait-il participer sa communauté aux activités relatives à la sécurité des patients ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 7
+                },
+                {
+                  "libelle": "Responsable de la sécurité des patients : L’établissement hospitalier fait-il participer les patients et leurs accompagnants à la définition des politiques et à la mise en œuvre de l’amélioration de la qualité, ainsi qu’aux activités relatives à la sécurité des patients ? Si oui, de quelle manière ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 8
+                }
+              ]
+            },
+            {
+              "code": "B.4.3.2",
+              "libelle": "Les patients ont accès à leur dossier médical et ont la possibilité de demander des éclaircissements au médecin concerné.",
+              "categorie": "Avancé",
+              "registre": null,
+              "ordre": 2,
+              "elementsMesurables": [
+                {
+                  "libelle": "Procédures d’accès aux dossiers médicaux par les patients.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 1
+                },
+                {
+                  "libelle": "Registres du personnel formé aux procédures d’accès aux dossiers médicaux par les patients.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 2
+                },
+                {
+                  "libelle": "Rapport d’évaluation de la conformité aux procédures d’accès aux dossiers médicaux par les patients.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 3
+                },
+                {
+                  "libelle": "Personnel concerné : y a-t-il des éléments indiquant que les patients ont accès à leur dossier médical et ont la possibilité de demander des éclaircissements au médecin concerné ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 4
+                },
+                {
+                  "libelle": "Accessibilité des dossiers médicaux.",
+                  "typeElement": "OBSERVATION",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 5
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "code": "B.6",
+          "libelle": "L’établissement hospitalier invite les patients à exprimer leurs commentaires et prend en compte leurs préoccupations et leurs avis positifs.",
+          "ordre": 4,
+          "criteres": [
+            {
+              "code": "B.6.3.1",
+              "libelle": "L’établissement hospitalier implique les patients et/ou les associations de défense des patients dans les structures de gouvernance, l’élaboration des politiques et la mise en œuvre des améliorations de la qualité ainsi que des projets concernant la sécurité des patients.",
+              "categorie": "Avancé",
+              "registre": null,
+              "ordre": 1,
+              "elementsMesurables": [
+                {
+                  "libelle": "Document de stratégie visant à inciter et à donner les moyens aux patients d’œuvrer pour leur sécurité. Les domaines dans lesquels les patients sont impliqués incluent : l’identification des patients, le contrôle de l’hygiène des mains et l’usage unique des seringues.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 1
+                },
+                {
+                  "libelle": "Liste des supports pédagogiques et/ou de transmission orale ou écrite d’informations aux patients leur permettant de jouer un rôle déterminant et de devenir acteurs de la promotion de la sécurité des patients.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 2
+                },
+                {
+                  "libelle": "Procédures concernant l’implication et l’autonomisation des patients.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 3
+                },
+                {
+                  "libelle": "Procédures de redevabilité (reddition de compte par l’établissement hospitalier)",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 4
+                },
+                {
+                  "libelle": "Registres du personnel formé pour suivre le respect des procédures.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 5
+                },
+                {
+                  "libelle": "Rapport d’évaluation de la conformité aux procédures.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 6
+                },
+                {
+                  "libelle": "Comptes rendus de réunions faisant état de l’implication des patients et de leurs accompagnants dans l’application des politiques et la suggestion d’améliorations de la qualité et de projets concernant la sécurité des patients.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 7
+                },
+                {
+                  "libelle": "Responsable de la sécurité des patients : L’établissement hospitalier fait-il participer les patients et leurs accompagnants à la définition des politiques et à la mise en œuvre de l’amélioration de la qualité, ainsi qu’aux activités relatives à la sécurité des patients ? Si oui, de quelle manière ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 8
+                },
+                {
+                  "libelle": "Responsable de la sécurité des patients : L’établissement hospitalier fournit-il un forum de discussion/une messagerie permettant aux patients et à leurs accompagnants d’exprimer leurs préoccupations et de partager leurs idées ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 9
+                }
+              ]
+            },
+            {
+              "code": "B.6.3.2",
+              "libelle": "L’établissement hospitalier met à disposition des informations et sensibilise les usagers à la sécurité, à l’éducation sanitaire et au bien-être des patients.",
+              "categorie": "Avancé",
+              "registre": null,
+              "ordre": 2,
+              "elementsMesurables": [
+                {
+                  "libelle": "Liste des informations destinée à la sensibilisation des usagers à la sécurité des patients et aux questions de santé, notamment sur la manière de préserver et d’améliorer leur propre bien-être.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 1
+                },
+                {
+                  "libelle": "Liste des activités permettant de préserver et améliorer leur propre bien-être :\n– programmes de sevrage tabagique\n– conseils pour la gestion du stress\n– recommandations en matière de régime alimentaire et d’exercice physique et prise en charge de l’abus de substances psychoactives.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 2
+                },
+                {
+                  "libelle": "Responsable de la sécurité des patients : L’établissement hospitalier offre-t-il un accès à des documents informatisés concernant la sécurité, l’éducation en santé et le bien-être des patients ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 3
+                },
+                {
+                  "libelle": "Informations sur la sécurité des patients et la santé, notamment sur la manière de préserver et d’améliorer leur propre bien-être.",
+                  "typeElement": "OBSERVATION",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 4
+                },
+                {
+                  "libelle": "Documents relatifs aux programmes de sevrage tabagique, aux conseils pour la gestion du stress, aux recommandations en matière de régime alimentaire et d’exercice physique et de prise en charge de l’abus de substances psychoactives.",
+                  "typeElement": "OBSERVATION",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 5
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "nom": "C. Normes relatives aux pratiques cliniques sécurisées fondées sur des bases factuelles",
+      "ordre": 3,
+      "normes": [
+        {
+          "code": "C.2",
+          "libelle": "L’établissement hospitalier a un système permettant de réduire le risque d’infections nosocomiales.",
+          "ordre": 1,
+          "criteres": [
+            {
+              "code": "C.2.3.1",
+              "libelle": "L’établissement hospitalier a un système de surveillance des infections associées aux soins.",
+              "categorie": "Avancé",
+              "registre": null,
+              "ordre": 1,
+              "elementsMesurables": [
+                {
+                  "libelle": "Procédures de surveillance des infections associées aux soins.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 1
+                },
+                {
+                  "libelle": "Procédure de suivi des taux d’infections associées aux soins, d’analyse des données pour déterminer les groupes, les tendances, les flambées et le partage de l’information.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 2
+                },
+                {
+                  "libelle": "Registre du personnel formé pour suivre les procédures de surveillance des infections associées aux soins.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 3
+                },
+                {
+                  "libelle": "Rapports d’évaluation de la conformité aux procédures de surveillance des infections associées aux soins.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 4
+                },
+                {
+                  "libelle": "Responsable de la prévention et du contrôle des infections : L’établissement hospitalier dispose-t-il d’un système de surveillance des infections nosocomiales ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 5
+                },
+                {
+                  "libelle": "Responsable de la prévention et du contrôle des infections : L’établissement hospitalier évalue-t-il la lutte contre les infections ? Si oui, de quelle manière ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 6
+                },
+                {
+                  "libelle": "Responsable de la prévention et du contrôle des infections : L’établissement hospitalier réalise-t-il des investigations sur les flambées épidémiologiques ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 7
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "code": "C.4",
+          "libelle": "L’établissement hospitalier a un système pour assurer la sécurité des médicaments.",
+          "ordre": 2,
+          "criteres": [
+            {
+              "code": "C.4.3.1",
+              "libelle": "L’établissement hospitalier a des pharmaciens cliniciens qui participent à la prescription de médicaments, ainsi qu’un système d’identification des interactions médicamenteuses et des interactions entre les médicaments et les aliments",
+              "categorie": "Avancé",
+              "registre": null,
+              "ordre": 1,
+              "elementsMesurables": [
+                {
+                  "libelle": "Procédures pour l’identification des interactions entre médicaments et entre les médicaments et les aliments.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 1
+                },
+                {
+                  "libelle": "Procédure de contrôle des médicaments prescrits, système d’alerte pour les interactions entre médicaments et entre les médicaments et les aliments et alternatives suggérées en cas d’interactions.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 2
+                },
+                {
+                  "libelle": "Registre du personnel formé aux procédures pour l’identification des interactions entre médicaments et entre les médicaments et les aliments.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 3
+                },
+                {
+                  "libelle": "Rapport d’évaluation de la conformité aux procédures pour l’identification des interactions entre médicaments et entre les médicaments et les aliments.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 4
+                },
+                {
+                  "libelle": "Personnel concerné : y a-t-il des éléments indiquant que l’établissement hospitalier a des pharmaciens cliniciens qui participent à la prescription de médicaments, ainsi qu’un système d’identification des interactions médicamenteuses et des interactions entre les médicaments et les aliments ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 5
+                },
+                {
+                  "libelle": "Échantillon aléatoire de dossiers attestant du rôle du pharmacien clinique dans la mise en place d’un système de gestion des médicaments adéquat.",
+                  "typeElement": "OBSERVATION",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 6
+                },
+                {
+                  "libelle": "Existence d’un système informatisé de saisie des ordonnances (limite les erreurs).",
+                  "typeElement": "OBSERVATION",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 7
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "nom": "D. Normes relatives à la sécurité de l’environnement",
+      "ordre": 4,
+      "normes": [
+        {
+          "code": "D.1",
+          "libelle": "L’établissement hospitalier a un environnement physique sûr et sécurisé pour les patients, le personnel, les bénévoles et les visiteurs.",
+          "ordre": 1,
+          "criteres": [
+            {
+              "code": "D.1.3.1",
+              "libelle": "L’établissement hospitalier a un système de gestion des informations et des dossiers médicaux informatisés, avec un système de sauvegarde adéquat.",
+              "categorie": "Avancé",
+              "registre": null,
+              "ordre": 1,
+              "elementsMesurables": [
+                {
+                  "libelle": "Système de gestion des informations et des dossiers médicaux informatisés fonctionnel et pourvu d’une sauvegarde adéquate.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 1
+                },
+                {
+                  "libelle": "Procédures concernant la gestion des informations et des dossiers médicaux informatisés.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 2
+                },
+                {
+                  "libelle": "Registre du personnel formé aux procédures concernant la gestion des informations et des dossiers médicaux informatisés.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 3
+                },
+                {
+                  "libelle": "Procédure d’évaluation de la conformité aux procédures concernant la gestion des informations et des dossiers médicaux informatisés.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 4
+                },
+                {
+                  "libelle": "Responsable des dossiers médicaux : L’établissement hospitalier dispose-t-il d’une gestion automatisée des informations et de dossiers médicaux électroniques ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 5
+                },
+                {
+                  "libelle": "Système de gestion fonctionnel des informations et des dossiers médicaux informatisés, avec un système de sauvegarde adéquat.",
+                  "typeElement": "OBSERVATION",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 6
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "nom": "E. Normes relatives à l’apprentissage continu",
+      "ordre": 5,
+      "normes": [
+        {
+          "code": "E.2",
+          "libelle": "L’établissement hospitalier initie et met en œuvre en permanence des projets de recherche et d’amélioration de la qualité dans le domaine de la sécurité des patients.",
+          "ordre": 1,
+          "criteres": [
+            {
+              "code": "E.2.3.1",
+              "libelle": "L’établissement hospitalier mène des études prospectives, rétrospectives et/ou transversales pour évaluer l’ampleur et la nature des événements indésirables afin d’améliorer la sécurité des soins, sur une base annuelle.",
+              "categorie": "Avancé",
+              "registre": null,
+              "ordre": 1,
+              "elementsMesurables": [
+                {
+                  "libelle": "Études prospectives, rétrospectives et/ou transversales et leurs rapports pour évaluer l’ampleur et la nature des événements indésirables graves, réalisés régulièrement, au moins une fois par an afin d’améliorer la qualité des soins.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 1
+                },
+                {
+                  "libelle": "Procédures pour reporter les préjudices subis par les patients.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 2
+                },
+                {
+                  "libelle": "Responsable de la sécurité des patients : L’établissement hospitalier réalise-t-il des études transversales afin d’évaluer l’ampleur et la nature des événements indésirables ? Si oui, à quelle fréquence ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 3
+                },
+                {
+                  "libelle": "Responsable de la sécurité des patients : L’établissement hospitalier réalise-t-il des études fondées sur l’examen rétrospectif des dossiers afin d’évaluer l’ampleur et la nature des événements indésirables ? Si oui, à quelle fréquence ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 4
+                },
+                {
+                  "libelle": "Responsable de la sécurité des patients : L’établissement hospitalier utilise-t-il des données et des études prospectives afin d’évaluer l’ampleur et la nature des événements indésirables ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 5
+                },
+                {
+                  "libelle": "Responsable de la sécurité des patients : L’organe interne chargé de la sécurité des patients approuve-t-il et surveille-t-il les études sur la sécurité des patients ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 6
+                }
+              ]
+            },
+            {
+              "code": "E.2.3.2",
+              "libelle": "L’établissement hospitalier mène des projets d’amélioration de la qualité pour promouvoir les activités liées à la sécurité des patients",
+              "categorie": "Avancé",
+              "registre": null,
+              "ordre": 2,
+              "elementsMesurables": [
+                {
+                  "libelle": "Planification de la mise en œuvre, du suivi et de l’évaluation des projets d’amélioration de la qualité visant à promouvoir la sécurité des patients.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 1
+                },
+                {
+                  "libelle": "Registre du personnel formé à la mise en œuvre des projets d’amélioration de la qualité et des activités liées à la sécurité des patients.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 2
+                },
+                {
+                  "libelle": "Rapports de suivi de la mise en œuvre des projets d’amélioration de la qualité évolutifs et durables.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 3
+                },
+                {
+                  "libelle": "Responsable de la sécurité des patients : Actuellement, existe-t-il des projets/plans d’amélioration de la sécurité des patients ? Si oui, quels sont les détails des projets/plans ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 4
+                },
+                {
+                  "libelle": "Responsable de la sécurité des patients : Le groupe de travail sur la sécurité des patients utilise-t-il des outils scientifiques, par exemple des outils d’analyse des causes profondes et d’amélioration (PDCA : plan, do, check and act) ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 5
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

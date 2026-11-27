@@ -1,0 +1,764 @@
+{
+  "_source": "mise_a_jour/Grille_autoevaluation_ESPC_Avances.xlsx (ARS Bénin), converti par prisma/grilles-ars/convertir_xlsx.py",
+  "nom": "Grille d'auto-évaluation des critères avancés des ESPC",
+  "type": "ESPC",
+  "domaines": [
+    {
+      "nom": "A. Leadership et gestion",
+      "ordre": 1,
+      "normes": [
+        {
+          "code": "A.1",
+          "libelle": "L’établissement de santé de 1er contact est engagé en faveur de la sécurité des patients",
+          "ordre": 1,
+          "criteres": [
+            {
+              "code": "A.1.3.1",
+              "libelle": "L’établissement de santé de 1er contact dispose de déclarations de mission, de vision et de valeurs qui témoignent d’une culture de la sécurité des patients.",
+              "categorie": "Avancé",
+              "registre": null,
+              "ordre": 1,
+              "elementsMesurables": [
+                {
+                  "libelle": "Plan d’action détaillé à court terme au niveau des établissements, basé sur un plan stratégique de niveau supérieur (État/Département/Zone sanitaire)",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 1
+                },
+                {
+                  "libelle": "Documents de déclaration prenant en compte la sécurité des patients : de la vision",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 2
+                },
+                {
+                  "libelle": "Documents de déclaration prenant en compte la sécurité des patients : des missions",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 3
+                },
+                {
+                  "libelle": "Documents de déclaration prenant en compte la sécurité des patients : des valeurs",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 4
+                },
+                {
+                  "libelle": "Direction de l’ESPC : L’établissement de santé de 1er contact dispose-t-il d’un plan stratégique dans lequel la sécurité des patients est une priorité ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 5
+                }
+              ]
+            },
+            {
+              "code": "A.1.3.2",
+              "libelle": "Les plans à long terme de l’établissement de santé de 1er contact sont le fruit d’une consultation avec les patients et les parties prenantes.",
+              "categorie": "Avancé",
+              "registre": null,
+              "ordre": 2,
+              "elementsMesurables": [
+                {
+                  "libelle": "Rapports de co-planification des services impliquant la communauté.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 1
+                },
+                {
+                  "libelle": "Rapports de co-réalisation d’activités impliquant la communauté.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 2
+                },
+                {
+                  "libelle": "Direction de l’ESPC : Décrire le processus d’identification des besoins de la population dans la communauté.",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 3
+                },
+                {
+                  "libelle": "Direction de l’ESPC : Comment l’établissement de santé de 1er contact fait-il participer sa communauté aux activités relatives à la sécurité des patients ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 4
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "code": "A.2",
+          "libelle": "L’établissement de santé de 1er contact dispose d’un programme de sécurité des patients.",
+          "ordre": 2,
+          "criteres": [
+            {
+              "code": "A.2.3.1",
+              "libelle": "L’établissement de santé de 1er contact établit des rapports sur les différentes activités en matière de sécurité et les diffuse en externe.",
+              "categorie": "Avancé",
+              "registre": null,
+              "ordre": 1,
+              "elementsMesurables": [
+                {
+                  "libelle": "Rapports sur les différentes activités liées à la sécurité des patients, diffusés en externe au Ministère de la Santé.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 1
+                },
+                {
+                  "libelle": "Rapports d’enquête Sécurité des patients au niveau des soins de santé primaires comparés à ceux d’autres l’établissement de santé de 1er contact.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 2
+                },
+                {
+                  "libelle": "Direction de l’ESPC : Les rapports sur la sécurité des patients sont-ils partagés avec l’organe national en charge de la supervision de la sécurité des patients ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 3
+                },
+                {
+                  "libelle": "Direction de l’ESPC : L’établissement de santé de 1er contact prépare-t-il des rapports sur les différentes activités relatives à la sécurité des patients et les diffuse-t-il ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 4
+                }
+              ]
+            },
+            {
+              "code": "A.2.3.2",
+              "libelle": "L’établissement de santé de 1er contact dispose d’une procédure relative à la déclaration des incidents et donne des retours d’informations au personnel, aux patients et à leurs proches.",
+              "categorie": "Avancé",
+              "registre": null,
+              "ordre": 2,
+              "elementsMesurables": [
+                {
+                  "libelle": "Procédures concernant : la déclaration des incidents ;",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 1
+                },
+                {
+                  "libelle": "Procédures concernant : le recueil de commentaires.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 2
+                },
+                {
+                  "libelle": "Rapports de transmission des retours d’expériences : aux patients/à la communauté ;",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 3
+                },
+                {
+                  "libelle": "Rapports de transmission des retours d’expériences : au personnel.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 4
+                },
+                {
+                  "libelle": "Direction de l’ESPC : La sécurité des patients et les incidents indésirables font-ils l’objet de rapports et d’analyses ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 5
+                },
+                {
+                  "libelle": "Direction de l’ESPC : La culture actuelle sur la sécurité des patients permet-elle de faciliter le signalement ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 6
+                },
+                {
+                  "libelle": "Personnel : Connaissez-vous la procédure de signalement et les mesures à prendre pendant ou après un événement indésirable ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 7
+                },
+                {
+                  "libelle": "Responsable médical : La direction apporte-t-elle un soutien au personnel impliqué dans les incidents liés à la sécurité des patients, pour autant qu’il n’y ait ni faute intentionnelle, ni négligence ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 8
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "code": "A.3",
+          "libelle": "L’établissement de santé de 1er contact collecte, analyse et utilise les données pour améliorer ses performances en matière de sécurité.",
+          "ordre": 3,
+          "criteres": [
+            {
+              "code": "A.3.3.1",
+              "libelle": "L’établissement de santé de 1er contact compare les données dont il dispose sur l’indicateur de sécurité des patients dans le temps avec celles d’autres établissements de santé de 1er contact.",
+              "categorie": "Avancé",
+              "registre": null,
+              "ordre": 1,
+              "elementsMesurables": [
+                {
+                  "libelle": "Rapports sur les données d’études comparatives dans le temps montrant une corrélation avec les meilleures pratiques internationales",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 1
+                },
+                {
+                  "libelle": "Rapports sur les données d’études comparatives avec d’autres établissements de santé de 1er contact participants au cadre pour la sécurité des patients.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 2
+                },
+                {
+                  "libelle": "Direction de l’ESPC : Les rapports sur la sécurité des patients sont-ils partagés avec l’organe national en charge de la supervision de la sécurité des patients ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 3
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "code": "A.6",
+          "libelle": "L’établissement de santé de 1er contact dispose d’un système de gestion de l’information favorisant des pratiques sûres pour tous les services offerts.",
+          "ordre": 4,
+          "criteres": [
+            {
+              "code": "A.6.3.1",
+              "libelle": "L’établissement de santé de 1er contact dispose d’un système de gestion automatisée des informations et des dossiers médicaux informatisés, avec un système de sauvegarde adéquat.",
+              "categorie": "Avancé",
+              "registre": null,
+              "ordre": 1,
+              "elementsMesurables": [
+                {
+                  "libelle": "Document décrivant le système automatisé de gestion de l’information.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 1
+                },
+                {
+                  "libelle": "Procédures relatives à la création, à la gestion et au contrôle des dossiers médicaux informatisés.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 2
+                },
+                {
+                  "libelle": "Personnel concerné : y a-t-il des éléments indiquant que l’établissement de santé de 1er contact dispose d’un système de gestion automatisée des informations et des dossiers médicaux informatisés, avec un système de sauvegarde adéquat ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 3
+                },
+                {
+                  "libelle": "Dossiers médicaux : système d’archivage.",
+                  "typeElement": "OBSERVATION",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 4
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "nom": "B. Implication des patients et de la communauté",
+      "ordre": 2,
+      "normes": [
+        {
+          "code": "B.2",
+          "libelle": "L’établissement de santé de 1er contact sensibilise ses patients et leurs accompagnants sur les moyens qu’il leur donne de participer à la prise de décisions appropriées concernant leurs soins.",
+          "ordre": 1,
+          "criteres": [
+            {
+              "code": "B.2.3.1",
+              "libelle": "L’établissement de santé de 1er contact effectue une analyse des besoins et des ressources de la population en fonction de la prévalence des maladies et des besoins en soins de santé au sein de la communauté qu’il dessert.",
+              "categorie": "Avancé",
+              "registre": null,
+              "ordre": 1,
+              "elementsMesurables": [
+                {
+                  "libelle": "Guide de promotion de la santé sur la base des résultats de l’analyse de la population.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 1
+                },
+                {
+                  "libelle": "Plan de coordination avec d’autres établissements de la zone sanitaire ou du département.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 2
+                },
+                {
+                  "libelle": "Direction de l’ESPC : Décrire le processus d’identification des besoins de la population dans la communauté.",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 3
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "code": "B.3",
+          "libelle": "L’établissement de santé de 1er contact veille à la vérification de l’identité de chaque patient à chaque étape des soins de manière à permettre de l’identifier sans ambiguïté ni risque de confusion entre deux patients.",
+          "ordre": 2,
+          "criteres": [
+            {
+              "code": "B.3.3.1",
+              "libelle": "L’établissement de santé de 1er contact identifie les patients au moyen de codes-barres.",
+              "categorie": "Avancé",
+              "registre": null,
+              "ordre": 1,
+              "elementsMesurables": [
+                {
+                  "libelle": "Procédure relative à l’utilisation de codes-barres pour identifier les patients lors de l’administration de médicaments.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 1
+                },
+                {
+                  "libelle": "Rapport d’évaluation de la conformité à la procédure d’utilisation",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 2
+                },
+                {
+                  "libelle": "Personnel concerné : y a-t-il des éléments indiquant que l’établissement de santé de 1er contact identifie les patients au moyen de codes-barres ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 3
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "code": "B.4",
+          "libelle": "L’établissement de santé de 1er contact encourage les patients à faire le retour d’information et prend en compte leurs préoccupations et leurs avis positifs.",
+          "ordre": 3,
+          "criteres": [
+            {
+              "code": "B.4.3.1",
+              "libelle": "L’établissement de santé de 1er contact a mis en place des structures pour veiller à ce que la communauté puisse exprimer son avis et que celui-ci soit pris en compte.",
+              "categorie": "Avancé",
+              "registre": null,
+              "ordre": 1,
+              "elementsMesurables": [
+                {
+                  "libelle": "Procédures de capture des avis de la communauté.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 1
+                },
+                {
+                  "libelle": "Retours d’informations des réunions communautaires.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 2
+                },
+                {
+                  "libelle": "Rapport de mise en place des structures de veille communautaire.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 3
+                },
+                {
+                  "libelle": "Direction de l’ESPC : Comment l’établissement de santé de 1er contact fait-il participer sa communauté aux activités relatives à la sécurité des patients ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 4
+                },
+                {
+                  "libelle": "Patient(s) : Souhaiteriez-vous que l’établissement de santé de 1er contact apporte des améliorations aux services ou à l’environnement physique ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 5
+                },
+                {
+                  "libelle": "Boîtes de suggestions.",
+                  "typeElement": "OBSERVATION",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 6
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "nom": "C. Pratiques cliniques sécurisées fondées sur des bases factuelles",
+      "ordre": 3,
+      "normes": [
+        {
+          "code": "C.1",
+          "libelle": "L’établissement de santé de 1er contact a mis en place un audit clinique et une surveillance efficace afin d’assurer la prise en compte de la sécurité des patients.",
+          "ordre": 1,
+          "criteres": [
+            {
+              "code": "C.1.3.1",
+              "libelle": "L’établissement de santé de 1er contact évalue annuellement l’efficacité de sa stratégie de communication.",
+              "categorie": "Avancé",
+              "registre": null,
+              "ordre": 1,
+              "elementsMesurables": [
+                {
+                  "libelle": "Document de la stratégie de communication.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 1
+                },
+                {
+                  "libelle": "Rapport d’évaluation de la stratégie.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 2
+                },
+                {
+                  "libelle": "Direction de l’ESPC : Quelle est la stratégie de communication avec le personnel, le grand public, d’autres établissements de soins de santé primaires et les bases de données nationales ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 3
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "code": "C.2",
+          "libelle": "L’établissement de santé de 1er contact dispose d’un programme fonctionnel de prévention et de contrôle des infections permettant de réduire les risques d’infections associées aux soins.",
+          "ordre": 2,
+          "criteres": [
+            {
+              "code": "C.2.3.1",
+              "libelle": "Les patients et la communauté sont impliqués dans les campagnes pour l’hygiène des mains.",
+              "categorie": "Avancé",
+              "registre": null,
+              "ordre": 1,
+              "elementsMesurables": [
+                {
+                  "libelle": "Procédure d’implication des patients.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 1
+                },
+                {
+                  "libelle": "Rapports de campagnes communautaires pour l’hygiène des mains.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 2
+                },
+                {
+                  "libelle": "Direction de l’ESPC : L’établissement de santé de 1er contact organise-t-il des campagnes sur la sécurité des patients ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 3
+                },
+                {
+                  "libelle": "Affiches de l’OMS : « Les 5 indications de l’hygiène des mains » et « Le lavage des mains : Comment ? ».",
+                  "typeElement": "OBSERVATION",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 4
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "code": "C.3",
+          "libelle": "L’établissement de santé de 1er contact dispose d’un système pour assurer la sécurité des médicaments.",
+          "ordre": 3,
+          "criteres": [
+            {
+              "code": "C.3.3.1",
+              "libelle": "L’établissement de santé de 1er contact peut consulter un pharmacien clinique ou un dispensateur en pharmacie, à l’appui de son système de gestion des médicaments.",
+              "categorie": "Avancé",
+              "registre": null,
+              "ordre": 1,
+              "elementsMesurables": [
+                {
+                  "libelle": "Disponibilité d’un pharmacien clinique, d’un dispensateur en pharmacie ou d’un document d’orientation clair pour les contacts à distance si ce personnel n’est pas disponible sur le site.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 1
+                },
+                {
+                  "libelle": "Notes de nomination ou contrats du pharmacien clinique ou du dispensateur.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 2
+                },
+                {
+                  "libelle": "Personnel concerné : y a-t-il des éléments indiquant que l’établissement de santé de 1er contact peut consulter un pharmacien clinique ou un dispensateur en pharmacie, à l’appui de son système de gestion des médicaments ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 3
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "code": "C.4",
+          "libelle": "L’établissement de santé de 1er contact a mis en place des systèmes pour gérer et contrôler les situations d’urgence en cas d’épidémie de maladies infectieuses.",
+          "ordre": 4,
+          "criteres": [
+            {
+              "code": "C.4.3.1",
+              "libelle": "Les établissements de santé de 1er contact disposent des mécanismes leur permettant de dépasser leurs frontières institutionnelles pour gérer des crises sanitaires ou pour fournir des services essentiels.",
+              "categorie": "Avancé",
+              "registre": null,
+              "ordre": 1,
+              "elementsMesurables": [
+                {
+                  "libelle": "Procédures de dialogue avec les communautés.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 1
+                },
+                {
+                  "libelle": "Procédures de partage des données.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 2
+                },
+                {
+                  "libelle": "Procédures de partage des dossiers des patients.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 3
+                },
+                {
+                  "libelle": "Procédure organisant les interventions hors zone institutionnelle",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 4
+                },
+                {
+                  "libelle": "Personnel concerné : y a-t-il des éléments indiquant que les établissements de santé de 1er contact disposent des mécanismes leur permettant de dépasser leurs frontières institutionnelles pour gérer des crises sanitaires ou pour fournir des services essentiels ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 5
+                }
+              ]
+            },
+            {
+              "code": "C.4.3.2",
+              "libelle": "L’établissement de santé de 1er contact est en mesure d’établir un système de suivi des indicateurs.",
+              "categorie": "Avancé",
+              "registre": null,
+              "ordre": 2,
+              "elementsMesurables": [
+                {
+                  "libelle": "Tableau de suivi et d’évaluation des principaux indicateurs se rapportant à la santé publique.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 1
+                },
+                {
+                  "libelle": "Tableau de suivi et d’évaluation des principaux indicateurs se rapportant aux services de santé essentiels.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 2
+                },
+                {
+                  "libelle": "Personnel concerné : y a-t-il des éléments indiquant que l’établissement de santé de 1er contact est en mesure d’établir un système de suivi des indicateurs ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 3
+                }
+              ]
+            },
+            {
+              "code": "C.4.3.3",
+              "libelle": "L’établissement de santé de 1er contact peut prendre en charge les patients ayant des besoins spéciaux pendant une flambée épidémique.",
+              "categorie": "Avancé",
+              "registre": null,
+              "ordre": 3,
+              "elementsMesurables": [
+                {
+                  "libelle": "Procédure de communication",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 1
+                },
+                {
+                  "libelle": "Procédures en situations particulières, notamment en cas de port de masque, avec la lecture labiale, avec recours aux interprètes.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 2
+                },
+                {
+                  "libelle": "Procédures d’accès aux fauteuils roulants.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 3
+                },
+                {
+                  "libelle": "Personnel concerné : y a-t-il des éléments indiquant que l’établissement de santé de 1er contact peut prendre en charge les patients ayant des besoins spéciaux pendant une flambée épidémique ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 4
+                },
+                {
+                  "libelle": "Traitement réservé aux groupes vulnérables (personnes âgées, femmes enceintes, résidents des établissements de soins, résidents de milieux à forte densité de population, personnes sans abri et situations d’urgence humanitaire).",
+                  "typeElement": "OBSERVATION",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 5
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "nom": "D. Environnement sécurisé",
+      "ordre": 4,
+      "normes": [
+        {
+          "code": "D.2",
+          "libelle": "L’établissement de santé de 1er contact a accès aux services d’eau, assainissement et hygiène (WASH) et de gestion sécurisée des déchets.",
+          "ordre": 1,
+          "criteres": [
+            {
+              "code": "D.2.3.1",
+              "libelle": "L’établissement de santé de 1er contact dispose de procédures garantissant une récupération ou un recyclage d’autant de matières que possible afin de limiter les besoins en termes de traitement et d’élimination des déchets.",
+              "categorie": "Avancé",
+              "registre": null,
+              "ordre": 1,
+              "elementsMesurables": [
+                {
+                  "libelle": "Procédures de recyclage du papier",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 1
+                },
+                {
+                  "libelle": "Procédures de recyclage des matières plastiques.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 2
+                },
+                {
+                  "libelle": "Personnel concerné : y a-t-il des éléments indiquant que l’établissement de santé de 1er contact dispose de procédures garantissant une récupération ou un recyclage d’autant de matières que possible afin de limiter les besoins en termes de traitement et d’élimination des déchets ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 3
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "nom": "E. Apprentissage continu",
+      "ordre": 5,
+      "normes": [
+        {
+          "code": "E.2",
+          "libelle": "L’établissement de santé de 1er contact initie et met en œuvre en permanence des projets de recherche et d’amélioration de la qualité dans le domaine de la sécurité des patients.",
+          "ordre": 1,
+          "criteres": [
+            {
+              "code": "E.2.3.1",
+              "libelle": "L’établissement de santé de 1er contact réalise des projets d’amélioration de la qualité dans la communauté pour promouvoir la sécurité des patients.",
+              "categorie": "Avancé",
+              "registre": null,
+              "ordre": 1,
+              "elementsMesurables": [
+                {
+                  "libelle": "Documents de projets d’amélioration de la qualité dans la communauté",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 1
+                },
+                {
+                  "libelle": "Documents de projets d’amélioration de la qualité en collaboration avec d’autres établissements de santé de 1er contact.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 2
+                },
+                {
+                  "libelle": "Direction de l’ESPC : L’établissement est-il impliqué dans des projets de recherche ou d’amélioration de la qualité ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 3
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

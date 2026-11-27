@@ -119,7 +119,10 @@ export interface SessionEvaluation {
   grilleId: string;
   statut: StatutSessionEvaluation;
   scoreGlobal: number | null;
+  // Rang de la dernière question affichée (récapitulatif = nombre de questions).
+  positionQuestion: number | null;
   dateDebut: string;
+  updatedAt: string;
   dateSoumission: string | null;
   grille: Grille;
   reponses: Reponse[];
@@ -137,15 +140,22 @@ export interface SessionEvaluationResume {
 export interface ScoreParDomaine {
   domaineId: string;
   nom: string;
+  // Critères notés 1.
   criteresValides: number;
+  // Critères notés 0,5 (fondamentaux et avancés).
+  criteresPartiels: number;
   criteresTotal: number;
+  // Critères dont tous les documents sont à « Observations » : non calculés.
+  criteresNonCalcules: number;
+  criteresApplicables: number;
+  scoreObtenu: number;
   scorePct: number;
 }
 
 export interface DocumentNonValide {
   elementMesurableId: string;
   libelle: string;
-  reponse: "NON" | "SANS_REPONSE";
+  reponse: "ABSENT" | "SANS_REPONSE";
 }
 
 export interface CritereNonValide {
@@ -153,9 +163,27 @@ export interface CritereNonValide {
   code: string;
   libelle: string;
   domaineNom: string;
+  // 0 = non respecté ; 0,5 = partiellement respecté.
+  score: number;
+  documentsPresents: number;
+  documentsEvalues: number;
   // §6.4 — documents à examiner manquants et recommandation synthétique.
   documentsNonValides: DocumentNonValide[];
   recommandation: string | null;
+}
+
+export interface CritereNonCalcule {
+  critereId: string;
+  code: string;
+  libelle: string;
+  domaineNom: string;
+}
+
+export interface ObservationSaisie {
+  elementMesurableId: string;
+  critereCode: string;
+  libelle: string;
+  commentaire: string | null;
 }
 
 // §8.4 — EI de l'établissement rattachés à un critère en écart.
@@ -174,6 +202,8 @@ export interface ResultatScore {
   scoreGlobal: number;
   parDomaine: ScoreParDomaine[];
   criteresNonValides: CritereNonValide[];
+  criteresNonCalcules: CritereNonCalcule[];
+  observations: ObservationSaisie[];
   eiLies?: EiLieCritere[];
   rapport?: { statut: StatutRapportPdf; genereLe: string | null } | null;
 }

@@ -6,7 +6,7 @@ import { archiverGrilleAction, nouvelleVersionGrilleAction, type EtatAction } fr
 import type { Grille } from "@/lib/types";
 
 const LIBELLES_TYPE_REPONSE: Record<string, string> = {
-  OUI_NON: "Oui / Non",
+  OUI_NON: "Présent / Absent / Observations",
   TEXTE: "Texte libre",
   CHOIX: "Choix multiple",
 };

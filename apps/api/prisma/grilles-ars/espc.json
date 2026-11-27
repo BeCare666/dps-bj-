@@ -1,447 +1,419 @@
 {
-  "_source": "GRILLES/GRILLE D’AUTO-EVALUATION DES CRITERES ESSENTIELS DES ESPC A3.pdf (ARS Bénin) ; libellés manquants complétés d'après GRILLES/Manuel sécu des patients ESPC_vfinale.pdf — détail dans GRILLES/RAPPORT_INTEGRATION_GRILLES.md",
+  "_source": "mise_a_jour/Grille_autoevaluation_ESPC_Essentiels.xlsx (ARS Bénin), converti par prisma/grilles-ars/convertir_xlsx.py",
   "nom": "Grille d'auto-évaluation des critères essentiels des ESPC",
   "type": "ESPC",
   "domaines": [
     {
-      "nom": "A. Normes relatives à la direction et la gestion",
+      "nom": "A. Leadership et gestion",
       "ordre": 1,
       "normes": [
         {
           "code": "A.1",
           "libelle": "L’établissement de santé de 1er contact est engagé en faveur de la sécurité des patients",
+          "ordre": 1,
           "criteres": [
             {
               "code": "A.1.1.1",
-              "libelle": "Une organisation pour la bonne gestion des soins, mise en place par l’établissement de santé de 1er contact est fonctionnelle",
+              "libelle": "Une organisation pour la bonne gestion des soins, mise en place par l’établissement de santé de 1er contact est fonctionnelle.",
               "categorie": "Essentiel",
-              "registre": "Registre CQSP",
+              "registre": null,
+              "ordre": 1,
               "elementsMesurables": [
                 {
-                  "libelle": "Organigramme présentant les rapports hiérarchiques pour l’ensemble du personnel",
+                  "libelle": "Organigramme présentant les rapports hiérarchiques pour l’ensemble du personnel et des secteurs de l’établissement.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 1
                 },
                 {
-                  "libelle": "Documents qui montrent les rôles et responsabilités ou profils de poste du : l'établissement de santé du 1er contact",
+                  "libelle": "Documents qui montrent les rôles et responsabilités ou profils de poste du responsable de l’offre de soins dans l’établissement de santé de 1er contact.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 2
                 },
                 {
-                  "libelle": "Documents qui montrent les rôles et responsabilités ou profils de poste du : Responsable clinique de l’établissement de santé de 1er contact",
-                  "typeElement": "DOCUMENT_A_EXAMINER",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": true,
-                  "ordre": 3
-                },
-                {
-                  "libelle": "Documents qui montrent les rôles et responsabilités ou profils de poste du : Responsable de la sécurité des patients",
-                  "typeElement": "DOCUMENT_A_EXAMINER",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": true,
-                  "ordre": 4
-                },
-                {
-                  "libelle": "Documents qui montrent les rôles et responsabilités ou profils de poste du : Responsable de la prévention et du contrôle des infections",
-                  "typeElement": "DOCUMENT_A_EXAMINER",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": true,
-                  "ordre": 5
-                },
-                {
-                  "libelle": "Responsable de l'ESPC : Décrire la structure organisationnelle et les structures hiérarchiques au sein de l’établissement.",
+                  "libelle": "Direction de l’ESPC : Décrire la structure organisationnelle et les structures hiérarchiques au sein de l’établissement ou du réseau.",
                   "typeElement": "ENTRETIEN",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": false,
-                  "ordre": 6
+                  "ordre": 3
                 },
                 {
-                  "libelle": "Tableau d'affichage de l’organigramme présentant les rapports hiérarchiques pour l’ensemble du personnel",
+                  "libelle": "Tableau d’affichage de l’organigramme présentant les rapports hiérarchiques pour l’ensemble du personnel.",
                   "typeElement": "OBSERVATION",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": false,
-                  "ordre": 7
+                  "ordre": 4
                 }
-              ],
-              "ordre": 1
+              ]
             },
             {
               "code": "A.1.1.2",
-              "libelle": "L’établissement de santé de 1er contact dispose de plan de travail annuel montrant que la sécurité des patients constitue une priorité",
+              "libelle": "L’établissement de santé de 1er contact dispose de plan de travail annuel montrant que la sécurité des patients constitue une priorité.",
               "categorie": "Essentiel",
-              "registre": "Registre CQSP",
+              "registre": null,
+              "ordre": 2,
               "elementsMesurables": [
                 {
-                  "libelle": "Plan de travail annuel montrant : Activité liée à la sécurité des patients",
+                  "libelle": "Plan de travail annuel.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 1
                 },
                 {
-                  "libelle": "Plan de travail annuel montrant : Besoins de la population identifiés au sein de la communauté",
+                  "libelle": "Rapport d’activités en lien avec la sécurité des patients",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 2
                 },
                 {
-                  "libelle": "Plan de travail annuel montrant : Rapport d’activités en lien avec la sécurité des patients",
+                  "libelle": "Objectifs de sécurité des patients à court et à long terme.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 3
                 },
                 {
-                  "libelle": "Avec le Responsble de l'ESPC: L’établissement de santé de 1er contact dispose-t-il d’un plan stratégique dans lequel la sécurité des patients est une priorité ?",
-                  "typeElement": "ENTRETIEN",
+                  "libelle": "Besoins de la population identifiés au sein de la communauté.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
-                  "entreDansScore": false,
+                  "entreDansScore": true,
                   "ordre": 4
                 },
                 {
-                  "libelle": "Avec le Responsble de l'ESPC: Quelles preuves avez-vous de la mise en œuvre de ce plan ?",
+                  "libelle": "Direction de l’ESPC : L’établissement de santé de 1er contact dispose-t-il d’un plan stratégique dans lequel la sécurité des patients est une priorité ?",
                   "typeElement": "ENTRETIEN",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": false,
                   "ordre": 5
                 },
                 {
-                  "libelle": "Avec le Responsble de l'ESPC: Décrivez le processus d’identification des besoins de la population dans la communauté",
+                  "libelle": "Direction de l’ESPC : Décrire le processus d’identification des besoins de la population dans la communauté.",
                   "typeElement": "ENTRETIEN",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": false,
                   "ordre": 6
+                },
+                {
+                  "libelle": "Direction de l’ESPC : Quelles preuves avez-vous de la mise en œuvre de ce plan ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 7
                 }
-              ],
-              "ordre": 2
+              ]
             },
             {
               "code": "A.1.1.3",
-              "libelle": "L’établissement de santé de 1er contact fournit des ressources, notamment un budget annuel alloué aux activités liées à la sécurité des patients, qui sont documentées dans un plan d’action",
+              "libelle": "L’établissement de santé de 1er contact fournit des ressources, notamment un budget annuel alloué aux activités liées à la sécurité des patients, qui sont documentées dans un plan d’action.",
               "categorie": "Essentiel",
-              "registre": "Registre CQSP",
+              "registre": null,
+              "ordre": 3,
               "elementsMesurables": [
                 {
-                  "libelle": "Plan d'action budgetisé",
+                  "libelle": "Plan d’action budgétisé.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 1
                 },
                 {
-                  "libelle": "Objectifs de sécurité des patients à court et à long terme",
+                  "libelle": "Budget de l’établissement de santé de 1er contact, comprenant une ligne dédiée aux activités de fonctionnement du Comité pour la sécurité des patients.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 2
                 },
                 {
-                  "libelle": "Budget de l’établissement de santé de 1er contact, comprenant une ligne dédiée aux activités de fonctionnement du Comité pour la sécurité des patients",
+                  "libelle": "Ressources financières pour :\n– la PCI ;\n– la formation du personnel.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 3
                 },
                 {
-                  "libelle": "Ressources financières pour la PCI",
-                  "typeElement": "DOCUMENT_A_EXAMINER",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": true,
-                  "ordre": 4
-                },
-                {
-                  "libelle": "Ressources financières pour la formation du personnel",
-                  "typeElement": "DOCUMENT_A_EXAMINER",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": true,
-                  "ordre": 5
-                },
-                {
-                  "libelle": "Avec le Responsble de l'ESPC: L’établissement de santé a-t-il défini un budget annuel alloué aux activités liées à la sécurité des patients, fondé sur un plan d’action détaillé ?",
+                  "libelle": "Direction de l’ESPC : Le plan d’action comporte-t-il un budget alloué à la sécurité des patients et des ressources financières pour la PCI et la formation du personnel ?",
                   "typeElement": "ENTRETIEN",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": false,
-                  "ordre": 6
+                  "ordre": 4
+                },
+                {
+                  "libelle": "Direction de l’ESPC : L’établissement de santé a-t-il défini un budget annuel alloué aux activités liées à la sécurité des patients, fondé sur un plan d’action détaillé ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 5
                 }
-              ],
-              "ordre": 3
+              ]
             },
             {
               "code": "A.1.1.4",
-              "libelle": "L’établissement de santé de 1er contact dispose d’un plan de préparation aux situations d’urgence qui a été testé et communiqué à l’ensemble du personnel",
+              "libelle": "L’établissement de santé de 1er contact dispose d’un plan de préparation aux situations d’urgence qui a été testé et communiqué à l’ensemble du personnel.",
               "categorie": "Essentiel",
-              "registre": "Registre CQSP",
+              "registre": null,
+              "ordre": 4,
               "elementsMesurables": [
                 {
-                  "libelle": "Un plan développé pour les pandémies et les flambées épidémiques",
+                  "libelle": "Ce type de plan documente la gestion des risques, les préparations et les mesures à prendre pour toutes les situations qui perturbent le fonctionnement normal de l’établissement. Cela inclut les urgences internes et externes. Un plan sera développé respectivement pour :\n– les pandémies et les flambées épidémiques ;",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 1
                 },
                 {
-                  "libelle": "Un plan développé pour les les situations d’urgence interne telles que panne d’électricité, violation de données, incendie et inondations",
+                  "libelle": "– les catastrophes naturelles ;",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 2
                 },
                 {
-                  "libelle": "Un plan développé respectivement pour les catastrophes naturelles",
+                  "libelle": "– les situations d’urgence interne telles que panne d’électricité, violation de données, incendie et inondations.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 3
                 },
                 {
-                  "libelle": "Rapports de réalisation de tests de simulation au moins une fois par an",
+                  "libelle": "Rapports de réalisation de tests au moins une fois par an ;",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 4
                 },
                 {
-                  "libelle": "Rapports d’évaluation des plans de continuité des services",
+                  "libelle": "Rapports d’évaluation des plans de continuité des services.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 5
                 },
                 {
-                  "libelle": "Avec le Responsble de l'ESPC: L’établissement de santé de 1er contact dispose-t-il de plans de gestion des catastrophes externes ou internes ?",
+                  "libelle": "Direction de l’ESPC : L’établissement de santé de 1er contact dispose-t-il de plans de gestion des catastrophes externes ou internes ? Si oui, à quelle fréquence font-ils l’objet d’un exercice de répétition ?",
                   "typeElement": "ENTRETIEN",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": false,
                   "ordre": 6
                 },
                 {
-                  "libelle": "Si oui, à quelle fréquence font-ils l’objet d’un exercice de simulation ?",
+                  "libelle": "Direction de l’ESPC : Comment l’établissement de santé de 1er contact peut-il s’adapter pendant une pandémie ?",
                   "typeElement": "ENTRETIEN",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": false,
                   "ordre": 7
                 }
-              ],
-              "ordre": 4
+              ]
             }
-          ],
-          "ordre": 1
+          ]
         },
         {
           "code": "A.2",
-          "libelle": "L’établissement de santé de 1er contact dispose d’un programme de sécurité des patients",
+          "libelle": "L’établissement de santé de 1er contact dispose d’un programme de sécurité des patients.",
+          "ordre": 2,
           "criteres": [
             {
               "code": "A.2.1.1",
-              "libelle": "L’établissement de santé de 1er contact veille à ce qu’un professionnel de santé qualifié soit responsable, redevable et habilité en matière de sécurité des patients",
+              "libelle": "L’établissement de santé de 1er contact veille à ce qu’un professionnel de santé qualifié soit responsable, redevable et habilité en matière de sécurité des patients.",
               "categorie": "Essentiel",
-              "registre": "Registre SP",
+              "registre": null,
+              "ordre": 1,
               "elementsMesurables": [
                 {
-                  "libelle": "Profil de poste du responsable de la sécurité des patients",
+                  "libelle": "Profil de poste du responsable de la sécurité des patients.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 1
                 },
                 {
-                  "libelle": "Lettre de notification de la désignation du responsable de la sécurité des patients ou document équivalent",
+                  "libelle": "Lettre de notification de la désignation du responsable de la sécurité des patients ou document équivalent.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 2
                 },
                 {
-                  "libelle": "Avec le Responsble de l'ESPC: L’établissement de santé a-t-il désigné une personne pour assumer la responsabilité et l'obligation de rendre compte en matière de sécurité des patients ?",
+                  "libelle": "Direction de l’ESPC : L’établissement de santé a-t-il désigné une personne pour assumer la responsabilité et l’obligation de rendre compte en matière de sécurité des patients ?",
                   "typeElement": "ENTRETIEN",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": false,
                   "ordre": 3
                 }
-              ],
-              "ordre": 1
+              ]
             }
-          ],
-          "ordre": 2
+          ]
         },
         {
           "code": "A.4",
-          "libelle": "L’établissement de santé de 1er contact dispose d’équipements et d’appareils essentiels fonctionnels pour fournir ses services",
+          "libelle": "L’établissement de santé de 1er contact dispose d’équipements et d’appareils essentiels fonctionnels pour fournir ses services.",
+          "ordre": 3,
           "criteres": [
             {
               "code": "A.4.1.1",
-              "libelle": "L’établissement de santé de 1er contact assure la disponibilité des équipements et matériels essentiels pour les services offerts",
+              "libelle": "L’établissement de santé de 1er contact assure la disponibilité des équipements et matériels essentiels pour les services offerts.",
               "categorie": "Essentiel",
-              "registre": "Registre EFE",
+              "registre": null,
+              "ordre": 1,
               "elementsMesurables": [
                 {
-                  "libelle": "Procédure visant à identifier les équipements et fournitures essentiels nécessaires pour fournir les services offerts aux patients",
+                  "libelle": "Procédure visant à identifier les équipements et fournitures essentiels nécessaires pour fournir les services offerts aux patients.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 1
                 },
                 {
-                  "libelle": "Registre des actifs de l’ensemble des équipements",
+                  "libelle": "Registre des actifs de l’ensemble des équipements.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 2
                 },
                 {
-                  "libelle": "Inventaire du matériel de réanimation",
+                  "libelle": "Inventaire du matériel de réanimation.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 3
                 },
                 {
-                  "libelle": "Procédure de retrait d’un équipement",
+                  "libelle": "Procédure de retrait d’un équipement.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 4
                 },
                 {
-                  "libelle": "Personnel concerné : y-a-t-il des éléments indiquant que l’hôpital veille à la disponibilité d'équipements essentiels fonctionnels pour les services offerts?",
+                  "libelle": "Direction de l’ESPC : L’établissement de santé de 1er contact possède-t-il un plan efficace en ce qui concerne le matériel, comprenant un plan de maintenance préventive et de secours en cas de panne ou d’interruption ?",
                   "typeElement": "ENTRETIEN",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": false,
                   "ordre": 5
                 },
                 {
-                  "libelle": "Équipements essentiels fonctionnels",
+                  "libelle": "Espace clinique : matériel de réanimation, y compris chariot, défibrillateur et disponibilité de médicaments vitaux.",
                   "typeElement": "OBSERVATION",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": false,
                   "ordre": 6
-                }
-              ],
-              "ordre": 1
-            }
-          ],
-          "ordre": 3
-        },
-        {
-          "code": "A.5",
-          "libelle": "L’établissement de santé de 1er contact veille à ce que du personnel compétent, y compris des praticiens indépendants et des bénévoles, soient disponibles pour dispenser des soins sûrs à tout moment",
-          "criteres": [
-            {
-              "code": "A.5.1.1",
-              "libelle": "L’établissement de santé de 1er contact assure la mise à disposition de personnel compétent en nombre suffisant pour dispenser des soins sûrs aux patients à tout moment",
-              "categorie": "Essentiel",
-              "registre": "Registre RH",
-              "elementsMesurables": [
-                {
-                  "libelle": "Fichier du personnel qui identifie les effectifs, les types et les qualifications du personnel en fonction des services fournis",
-                  "typeElement": "DOCUMENT_A_EXAMINER",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": true,
-                  "ordre": 1
                 },
                 {
-                  "libelle": "Lettre de notification de la désignation du responsable de la planification des ressources humaines",
-                  "typeElement": "DOCUMENT_A_EXAMINER",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": true,
-                  "ordre": 2
-                },
-                {
-                  "libelle": "Lettre de notification de la désignation du responsable de la PCI à temps plein ou à temps partiel selon la taille de l’établissement",
-                  "typeElement": "DOCUMENT_A_EXAMINER",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": true,
-                  "ordre": 3
-                },
-                {
-                  "libelle": "Avec le Responsble de l'ESPC: Quels sont les effectifs du personnel, les types et les qualifications du personnel en fonction des services fournis.",
-                  "typeElement": "ENTRETIEN",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": false,
-                  "ordre": 4
-                },
-                {
-                  "libelle": "Y a-t-il parmi eux une personne désignée responsable de la PCI ?",
-                  "typeElement": "ENTRETIEN",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": false,
-                  "ordre": 5
-                },
-                {
-                  "libelle": "une personne responsable de la sécurité environnementale ? une personne désignée responsable de la sécurité du personnel et des patients pendant les procédures de radiologie ?",
-                  "typeElement": "ENTRETIEN",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": false,
-                  "ordre": 6
-                },
-                {
-                  "libelle": "Échantillon randomisé de plusieurs dossiers du personnel",
+                  "libelle": "Espace clinique : équipement validé pour les tests diagnostiques sur le lieu de soins.",
                   "typeElement": "OBSERVATION",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": false,
                   "ordre": 7
+                },
+                {
+                  "libelle": "Maintenance des équipements ; date du dernier test des appareils et numéro d’actif.",
+                  "typeElement": "OBSERVATION",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 8
                 }
-              ],
-              "ordre": 1
-            },
+              ]
+            }
+          ]
+        },
+        {
+          "code": "A.5",
+          "libelle": "L’établissement de santé de 1er contact veille à ce que du personnel compétent, y compris des praticiens indépendants et des bénévoles, soient disponibles pour dispenser des soins sûrs à tout moment.",
+          "ordre": 4,
+          "criteres": [
             {
-              "code": "A.5.1.2",
-              "libelle": "L’établissement de santé de 1er contact dispose d’une procédure définie pour s’assurer que tout le personnel de santé est inscrit auprès d’un organisme approprié qui l’autorise à exercer",
+              "code": "A.5.1.1",
+              "libelle": "L’établissement de santé de 1er contact assure la mise à disposition de personnel compétent en nombre suffisant pour dispenser des soins sûrs aux patients à tout moment.",
               "categorie": "Essentiel",
-              "registre": "Registre RH",
+              "registre": null,
+              "ordre": 1,
               "elementsMesurables": [
                 {
-                  "libelle": "Procédures pour valider et consigner les qualifications et les homologations du personnel, y compris du responsable désigné",
+                  "libelle": "Fichier du personnel qui identifie les effectifs, les types et les qualifications du personnel en fonction des services fournis.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 1
                 },
                 {
-                  "libelle": "Dossiers du personnel justifiant des qualifications, des affiliations professionnelles et des homologations (autorisation d’exercer délivrée par une autorité compétente et inscription du professionnel de santé à jour de ses cotisations au conseil de l’ordre) du personnel",
+                  "libelle": "Lettre de notification de la désignation du responsable de la planification des ressources humaines.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 2
                 },
                 {
-                  "libelle": "Quittance de paiement des cotisations de l’année à son ordre professionnel",
+                  "libelle": "Lettre de notification de la désignation du responsable de la PCI à temps plein ou à temps partiel selon la taille de l’établissement.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 3
                 },
                 {
-                  "libelle": "Autorisation d’exercice en clientèle privée au besoin",
+                  "libelle": "Direction de l’ESPC : Présenter les effectifs du personnel, les types et les qualifications du personnel en fonction des services fournis. Y a-t-il parmi eux une personne désignée responsable de la PCI ? une personne responsable de la sécurité environnementale ? une personne désignée responsable de la sécurité du personnel et des patients pendant les procédures de radiologie ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 4
+                }
+              ]
+            },
+            {
+              "code": "A.5.1.2",
+              "libelle": "L’établissement de santé de 1er contact dispose d’une procédure définie pour s’assurer que tout le personnel de santé est inscrit auprès d’un organisme approprié qui l’autorise à exercer.",
+              "categorie": "Essentiel",
+              "registre": null,
+              "ordre": 2,
+              "elementsMesurables": [
+                {
+                  "libelle": "Procédures pour valider et consigner les qualifications et les homologations du personnel, y compris du responsable désigné.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 1
+                },
+                {
+                  "libelle": "Dossiers du personnel justifiant des qualifications, des affiliations professionnelles et des homologations (autorisation d’exercer délivrée par une autorité compétente et inscription du professionnel de santé à jour de ses cotisations au conseil de l’ordre) du personnel.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 2
+                },
+                {
+                  "libelle": "Quittance de paiement des cotisations de l’année à son ordre professionnel.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 3
+                },
+                {
+                  "libelle": "Autorisation d’exercice en clientèle privée au besoin.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 4
                 },
                 {
-                  "libelle": "Avec le Responsble de l'ESPC: Le personnel clinique qualifié, qu’il soit employé pour une durée indéterminée ou temporaire, est-il autorisé à exercer par un organisme compétent ?",
+                  "libelle": "Direction de l’ESPC : Le personnel clinique qualifié, qu’il soit employé pour une durée indéterminée ou temporaire, est-il autorisé à exercer par un organisme compétent ?",
                   "typeElement": "ENTRETIEN",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": false,
                   "ordre": 5
                 },
                 {
-                  "libelle": "Échantillon randomisé de plusieurs registres",
+                  "libelle": "Dossiers médicaux du personnel.",
                   "typeElement": "OBSERVATION",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": false,
                   "ordre": 6
                 }
-              ],
-              "ordre": 2
+              ]
             }
-          ],
-          "ordre": 4
+          ]
         }
       ]
     },
@@ -451,120 +423,66 @@
       "normes": [
         {
           "code": "B.2",
-          "libelle": "L’établissement de santé de 1er contact sensibilise ses patients et leurs accompagnants sur les moyens qu’il leur donne de participer à la prise de décisions appropriées concernant leurs soins",
+          "libelle": "L’établissement de santé de 1er contact sensibilise ses patients et leurs accompagnants sur les moyens qu’il leur donne de participer à la prise de décisions appropriées concernant leurs soins.",
+          "ordre": 1,
           "criteres": [
             {
               "code": "B.2.1.1",
-              "libelle": "Le consentement éclairé est obtenu, avant une procédure figurant sur la liste dédiée, par du personnel formé selon des modalités et dans une langue que le patient ou la personne de confiance peut comprendre",
+              "libelle": "Le consentement éclairé est obtenu, avant une procédure figurant sur la liste dédiée, par du personnel formé selon des modalités et dans une langue que le patient ou la personne de confiance peut comprendre.",
               "categorie": "Essentiel",
-              "registre": "Registre DM/IPP",
+              "registre": null,
+              "ordre": 1,
               "elementsMesurables": [
                 {
-                  "libelle": "Procédures relatives au consentement éclairé, comprenant des instructions sur : les traitements (liste des actes) pour lesquels un consentement éclairé est nécessaire",
+                  "libelle": "Procédures relatives au consentement éclairé, comprenant des instructions sur :\n– les traitements pour lesquels un consentement éclairé est nécessaire.\n– les informations données au patient en s’assurant que tous les risques, bénéfices et effets indésirables potentiels sont expliqués préalablement à l’intervention et à toute sédation.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 1
                 },
                 {
-                  "libelle": "Procédures relatives au consentement éclairé, comprenant des instructions sur : les informations données au patient en s’assurant que tous les risques, les bénéfices et effets indésirables potentiels sont expliqués préalablement à l’intervention et à toute sédation",
+                  "libelle": "les rapports d’évaluation de la conformité aux procédures inhérentes au consentement éclairé.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 2
                 },
                 {
-                  "libelle": "Formulaires de consentement éclairé disponibles dans tous les services",
+                  "libelle": "Echantillons randomisés des dossiers médicaux à analyser systématiquement : le formulaire de consentement éclairé est rempli, signé par les patients, horodaté, et figure dans le dossier médical du patient.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 3
                 },
                 {
-                  "libelle": "les rapports d’évaluation de la conformité aux procédures inhérentes au consentement éclairé.",
-                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "libelle": "Patient(s) : Savez-vous s’il existe un formulaire de consentement soumis à la signature de tout patient devant subir une intervention ? Avez-vous déjà subi une intervention ? Avez-vous signé ce formulaire ?",
+                  "typeElement": "ENTRETIEN",
                   "typeReponse": "OUI_NON",
-                  "entreDansScore": true,
+                  "entreDansScore": false,
                   "ordre": 4
                 },
                 {
-                  "libelle": "Echantillons randomisés des dossiers médicaux à analyser systématiquement : le formulaire de consentement éclairé est rempli, signé par les patients, horodaté, et figure dans le dossier médical du patient",
-                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "libelle": "Formulaire de consentement (le cas échéant) : informations sur les risques et les avantages des procédures consenties ; formulaire signé conformément à la politique de l’établissement.",
+                  "typeElement": "OBSERVATION",
                   "typeReponse": "OUI_NON",
-                  "entreDansScore": true,
+                  "entreDansScore": false,
                   "ordre": 5
-                },
-                {
-                  "libelle": "Avec le Responsable médical : Existe t-il des preuves indiquant que la procédure concernant le consentement éclairé est appliquée ?",
-                  "typeElement": "ENTRETIEN",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": false,
-                  "ordre": 6
-                },
-                {
-                  "libelle": "Avec le Responsable médical : Existe-t-il des preuves de la mise en œuvre d'une procédure de consentement éclairé? Patients ou personne autorisée: quelles ont été les démarches avant de signer le formulaire de consentement éclairé?",
-                  "typeElement": "ENTRETIEN",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": false,
-                  "ordre": 7
-                },
-                {
-                  "libelle": "Avec le Patient: Savez-vous, s’il existe un formulaire de consentement soumis à la signature de tout patient devant subir une intervention ?",
-                  "typeElement": "ENTRETIEN",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": false,
-                  "ordre": 8
-                },
-                {
-                  "libelle": "Avez-vous déjà subi une intervention ?",
-                  "typeElement": "ENTRETIEN",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": false,
-                  "ordre": 9
-                },
-                {
-                  "libelle": "Avez-vous signé ce formulaire ?",
-                  "typeElement": "ENTRETIEN",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": false,
-                  "ordre": 10
-                },
-                {
-                  "libelle": "Avec le patient: Quelles ont été les démarches avant de signer le formulaire de consentement éclairé?",
-                  "typeElement": "ENTRETIEN",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": false,
-                  "ordre": 11
-                },
-                {
-                  "libelle": "Des formulaires de consentement éclairé sont disponibles dans les services concernés",
-                  "typeElement": "OBSERVATION",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": false,
-                  "ordre": 12
-                },
-                {
-                  "libelle": "Formulaires de consentement éclairé remplis, signés par les patients et horodatés figurant dans les dossiers médicaux des patients comportant : informations sur les risques et les avantages des procédures consenties figurant sur le formulaire de consentement",
-                  "typeElement": "OBSERVATION",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": false,
-                  "ordre": 13
                 }
-              ],
-              "ordre": 1
+              ]
             }
-          ],
-          "ordre": 1
+          ]
         },
         {
           "code": "B.3",
-          "libelle": "L’établissement de santé de 1er contact veille à la vérification de l’identité de chaque patient à chaque étape des soins de manière à permettre de l’identifier sans ambiguïté ni risque de confusion entre deux patients",
+          "libelle": "L’établissement de santé de 1er contact veille à la vérification de l’identité de chaque patient à chaque étape des soins de manière à permettre de l’identifier sans ambiguïté ni risque de confusion entre deux patients.",
+          "ordre": 2,
           "criteres": [
             {
               "code": "B.3.1.1",
               "libelle": "La procédure d’identification utilisée dans l’établissement de santé de 1er contact nécessite au moins deux moyens permettant d’identifier un patient",
               "categorie": "Essentiel",
-              "registre": "Registre DM/IPP",
+              "registre": null,
+              "ordre": 1,
               "elementsMesurables": [
                 {
                   "libelle": "Procédures d’identification et de vérification de l’identité des patients, incluant deux identifiants connus du patient.",
@@ -574,272 +492,230 @@
                   "ordre": 1
                 },
                 {
-                  "libelle": "Procédures d’identification et de vérification de l’identité des patients mettant l’accent sur les groupes à haut risque (par exemple les nouveau-nés, les nourrissons, les patients vulnérables)",
+                  "libelle": "Liste des identifiants des patients comprennent le nom complet du patient et ses prénoms ; la date et lieu de naissance ; le numéro d’identification personnel et le numéro unique d’identification attribué par l’établissement de santé de 1er contact.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 2
                 },
                 {
-                  "libelle": "Liste des identifiants des patients comprennent le nom complet du patient et ses prénoms; la date et lieu de naissance; le numéro d’identification personnel et le numéro unique d’identification attribué par l’établissement de santé de 1er contact",
-                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "libelle": "Personnel concerné : y a-t-il des éléments indiquant que la procédure d’identification utilisée dans l’établissement de santé de 1er contact nécessite au moins deux moyens permettant d’identifier un patient ?",
+                  "typeElement": "ENTRETIEN",
                   "typeReponse": "OUI_NON",
-                  "entreDansScore": true,
+                  "entreDansScore": false,
                   "ordre": 3
                 },
                 {
-                  "libelle": "Avec le Personnel concerné par l'identification du patient: existe-t-il des preuves que les patients sont identifiés avant de fournir des traitements (par exemple, administrer des médicaments, du sang ou des produits sanguins, bénéficier d'une radiothérapie); avant d'effectuer des procédures (par exemple, l'insertion d'une voie intraveineuse ou une hémodialyse); et avant toute procédure de diagnostic (par exemple, prélèvement de sang et d'autres échantillons pour des tests cliniques, cathétérisme cardiaque ou procédures de radiologie diagnostique). L'identification des patients dans le coma sans identification est-elle également incluse?",
-                  "typeElement": "ENTRETIEN",
+                  "libelle": "Dossiers médicaux : numéro d’identification personnel unique (NIP).",
+                  "typeElement": "OBSERVATION",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": false,
                   "ordre": 4
                 },
                 {
-                  "libelle": "Avec le Patients: comment le personnel vous identifie-t-il?",
-                  "typeElement": "ENTRETIEN",
+                  "libelle": "Laboratoire : identification unique des patients.",
+                  "typeElement": "OBSERVATION",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": false,
                   "ordre": 5
                 },
                 {
-                  "libelle": "Bracelets d'identification du patient ou autres moyens",
+                  "libelle": "Radiologie : identification des patients.",
                   "typeElement": "OBSERVATION",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": false,
                   "ordre": 6
-                },
-                {
-                  "libelle": "Identifiants des patients dans les dossiers médicaux et tout autre document médical le concernant (Numéro d’identification personnel unique)",
-                  "typeElement": "OBSERVATION",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": false,
-                  "ordre": 7
                 }
-              ],
-              "ordre": 1
+              ]
             },
             {
               "code": "B.3.1.2",
-              "libelle": "L’établissement de santé de 1er contact a un système en place afin d’identifier et de documenter les allergies",
+              "libelle": "L’établissement de santé de 1er contact a un système en place afin d’identifier et de documenter les allergies.",
               "categorie": "Essentiel",
-              "registre": "Registre SP",
+              "registre": null,
+              "ordre": 2,
               "elementsMesurables": [
                 {
-                  "libelle": "Procédures concernant l’identification des allergies",
+                  "libelle": "Procédures concernant l’identification des allergies.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 1
                 },
                 {
-                  "libelle": "Système en place pour alerter sur les allergies",
+                  "libelle": "Système en place pour alerter sur les allergies.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 2
                 },
                 {
-                  "libelle": "Avec le Responsable médical : Existe-t-il des preuves de la mise en place d'un système pour identifier et documenter les allergies?",
+                  "libelle": "Personnel concerné : y a-t-il des éléments indiquant que l’établissement de santé de 1er contact a un système en place afin d’identifier et de documenter les allergies ?",
                   "typeElement": "ENTRETIEN",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": false,
                   "ordre": 3
                 },
                 {
-                  "libelle": "Système en place pour identifier les allergies, par exemple un système de codage des couleurs",
+                  "libelle": "Contenu du dossier médical : allergies documentées.",
                   "typeElement": "OBSERVATION",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": false,
                   "ordre": 4
-                },
-                {
-                  "libelle": "Dossier médicaux: allergies documentées",
-                  "typeElement": "OBSERVATION",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": false,
-                  "ordre": 5
                 }
-              ],
-              "ordre": 2
+              ]
             }
-          ],
-          "ordre": 2
+          ]
         }
       ]
     },
     {
-      "nom": "C. Pratiques cliniques fondées sur des preuves",
+      "nom": "C. Pratiques cliniques sécurisées fondées sur des bases factuelles",
       "ordre": 3,
       "normes": [
         {
           "code": "C.1",
-          "libelle": "L’établissement de santé de 1er contact a mis en place un audit clinique et une surveillance efficace afin d’assurer la prise en compte de la sécurité des patients",
+          "libelle": "L’établissement de santé de 1er contact a mis en place un audit clinique et une surveillance efficace afin d’assurer la prise en compte de la sécurité des patients.",
+          "ordre": 1,
           "criteres": [
             {
               "code": "C.1.1.1",
-              "libelle": "L’établissement de santé de 1er contact applique les lignes directrices relatives aux pratiques cliniques",
+              "libelle": "L’établissement de santé de 1er contact applique les lignes directrices relatives aux pratiques cliniques.",
               "categorie": "Essentiel",
-              "registre": "Registre SP",
+              "registre": null,
+              "ordre": 1,
               "elementsMesurables": [
                 {
-                  "libelle": "Lignes directrices relatives aux pratiques cliniques fondées sur les cinq diagnostics les plus fréquents et les cinq maladies les plus dangereuses",
+                  "libelle": "Lignes directrices relatives aux pratiques cliniques fondées sur les cinq diagnostics les plus fréquents et les cinq maladies les plus dangereuses.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 1
                 },
                 {
-                  "libelle": "Disponibilité de ces lignes directrices cliniques et d’autres orientations",
+                  "libelle": "Disponibilité de ces lignes directrices cliniques et d’autres orientations.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 2
                 },
                 {
-                  "libelle": "Rapport de mise en œuvre des lignes directrices, des protocoles et listes de contrôle liés à la sécurité",
+                  "libelle": "Rapport de mise en œuvre des lignes directrices, des protocoles et listes de contrôle liés à la sécurité.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 3
                 },
                 {
-                  "libelle": "Avec le Responsable médical: Quelles sont les es cinq diagnostics les plus fréquents et les cinq maladies les plus dangereuses ?",
+                  "libelle": "Responsable médical : L’établissement de santé de 1er contact se conforme-t-il à des lignes directrices de pratique clinique, y compris les lignes directrices de l’OMS, lorsqu’il en existe ?",
                   "typeElement": "ENTRETIEN",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": false,
                   "ordre": 4
-                },
-                {
-                  "libelle": "Avec le Responsable médical: L’établissement de santé de 1er contact se conforme-t-il à des lignes directrices de pratique clinique, y compris les lignes directrices de l’OMS, lorsqu’il en existe ?",
-                  "typeElement": "ENTRETIEN",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": false,
-                  "ordre": 5
-                },
-                {
-                  "libelle": "Respect de la conformité aux lignes directrices relatives aux pratiques cliniques",
-                  "typeElement": "OBSERVATION",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": false,
-                  "ordre": 6
                 }
-              ],
-              "ordre": 1
+              ]
             },
             {
               "code": "C.1.1.2",
-              "libelle": "L’établissement de santé de 1er contact dispose de canaux de communication efficaces en son sein, y compris pour les résultats critiques et urgents",
+              "libelle": "L’établissement de santé de 1er contact dispose de canaux de communication efficaces en son sein, y compris pour les résultats critiques et urgents.",
               "categorie": "Essentiel",
-              "registre": "Registre SP",
+              "registre": null,
+              "ordre": 2,
               "elementsMesurables": [
                 {
-                  "libelle": "Stratégie de communication avec le personnel",
+                  "libelle": "Stratégie de communication avec :\n– le personnel ;\n– le grand public ;\n– d’autres établissements de soins de santé primaires ;\n– les bases de données nationales.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 1
                 },
                 {
-                  "libelle": "Stratégie de communication avec le personnel le grand public",
+                  "libelle": "Procédure pour la communication des résultats ordinaires et critiques urgents.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 2
-                },
-                {
-                  "libelle": "Stratégie de communication avec d’autres établissements de soins de santé primaires",
-                  "typeElement": "DOCUMENT_A_EXAMINER",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": true,
-                  "ordre": 3
-                },
-                {
-                  "libelle": "Stratégie de communication avec les bases de données nationales",
-                  "typeElement": "DOCUMENT_A_EXAMINER",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": true,
-                  "ordre": 4
-                },
-                {
-                  "libelle": "Procédure pour la communication des résultats ordinaires et critiques urgents : Procédures relatives à la communication des résultats ou des consignes par téléphone, y compris la « répétition », par laquelle le message verbal ou téléphonique est entièrement écrit par le destinataire, qui le lit ensuite et le fait confirmer par la personne qui a donné le résultat ou l’ordre",
-                  "typeElement": "DOCUMENT_A_EXAMINER",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": true,
-                  "ordre": 5
-                },
-                {
-                  "libelle": "Procédure pour la communication des résultats ordinaires et critiques urgents : Procédures relatives à la notification des résultats critiques",
-                  "typeElement": "DOCUMENT_A_EXAMINER",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": true,
-                  "ordre": 6
-                },
-                {
-                  "libelle": "Procédure pour la communication des résultats ordinaires et critiques urgents : Procédures relatives à l’enregistrement des résultats critiques et urgents dans le dossier médical",
-                  "typeElement": "DOCUMENT_A_EXAMINER",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": true,
-                  "ordre": 7
                 },
                 {
                   "libelle": "Liste des technologies de l’information utilisées.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
-                  "ordre": 8
+                  "ordre": 3
                 },
                 {
-                  "libelle": "Avec le Responsable de l'établissement de 1er contact: Quelle est la stratégie de communication avec le personnel, le grand public, d’autres établissements de soins de santé primaires et les bases de données nationales ?",
+                  "libelle": "Responsable médical : Quelle procédure de communication utilisent les professionnels de santé entre eux, pour la transmission des informations concernant les patients ?",
                   "typeElement": "ENTRETIEN",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": false,
-                  "ordre": 9
+                  "ordre": 4
+                },
+                {
+                  "libelle": "Responsable médical : Comment les résultats d’imagerie diagnostique et de laboratoire du patient sont-ils vérifiés, communiqués au patient, traités et enregistrés ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 5
+                },
+                {
+                  "libelle": "Laboratoire : communication en urgence des valeurs critiques aux prescripteurs de l’examen de biologie médicale.",
+                  "typeElement": "OBSERVATION",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 6
                 }
-              ],
-              "ordre": 2
+              ]
             },
             {
               "code": "C.1.1.3",
-              "libelle": "L’établissement de santé de 1er contact veille à réduire la transmission verbale ou téléphonique d’ordonnances et de résultats et le cas échéant, les informations reçues doivent obligatoirement être notées puis répétées par le destinataire lorsque la communication verbale est indispensable",
+              "libelle": "L’établissement de santé de 1er contact veille à réduire la transmission verbale ou téléphonique d’ordonnances et de résultats et le cas échéant, les informations reçues doivent obligatoirement être notées puis répétées par le destinataire lorsque la communication verbale est indispensable.",
               "categorie": "Essentiel",
-              "registre": "Registre SP",
+              "registre": null,
+              "ordre": 3,
               "elementsMesurables": [
                 {
-                  "libelle": "Procédures concernant la transmission des ordonnances par voie orale ou par téléphone, incluant : restriction de leur utilisation",
+                  "libelle": "Procédures concernant la transmission des ordonnances par voie orale ou par téléphone, incluant :",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 1
                 },
                 {
-                  "libelle": "Procédures concernant la transmission des ordonnances par voie orale ou par téléphone, incluant : répétition orale des informations dictées",
+                  "libelle": "– restriction de leur utilisation ;",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 2
                 },
                 {
-                  "libelle": "Avec le Responsable médical: Existe-t-il des preuves indiquant que l’établissement de 1er contact veille à réduire au strict nécessaire la transmission orale ou téléphonique d’ordonnances et de résultats et, le cas échéant, que les informations reçues sont notées puis répétées par le destinataire pour confirmation ?",
+                  "libelle": "– répétition orale des informations dictées.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 3
+                },
+                {
+                  "libelle": "Personnel concerné : y a-t-il des éléments indiquant que l’établissement de santé de 1er contact veille à réduire la transmission verbale ou téléphonique d’ordonnances et de résultats et le cas échéant, les informations reçues doivent obligatoirement être notées puis répétées par le destinataire lorsque la communication verbale est indispensable ?",
                   "typeElement": "ENTRETIEN",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": false,
-                  "ordre": 3
+                  "ordre": 4
                 }
-              ],
-              "ordre": 3
+              ]
             }
-          ],
-          "ordre": 1
+          ]
         },
         {
           "code": "C.2",
-          "libelle": "L’établissement de santé de 1er contact dispose d’un programme fonctionnel de prévention et de contrôle des infections permettant de réduire les risques d’infections associées aux soins",
+          "libelle": "L’établissement de santé de 1er contact dispose d’un programme fonctionnel de prévention et de contrôle des infections permettant de réduire les risques d’infections associées aux soins.",
+          "ordre": 2,
           "criteres": [
             {
               "code": "C.2.1.1",
-              "libelle": "L’établissement de santé de 1er contact dispose d’un programme coordonné de prévention et de contrôle des infections",
+              "libelle": "L’établissement de santé de 1er contact dispose d’un programme coordonné de prévention et de contrôle des infections.",
               "categorie": "Essentiel",
-              "registre": "Registre PCI",
+              "registre": null,
+              "ordre": 1,
               "elementsMesurables": [
                 {
                   "libelle": "Lignes directrices de l'OMS sur les principales composantes de la PCI",
@@ -849,113 +725,162 @@
                   "ordre": 1
                 },
                 {
-                  "libelle": "Cahier des charges et note de service désignant le point focal (personne formée à la PCI) de l’établissement de santé de 1er contact disposant de temps dédié aux activités de la PCI.",
+                  "libelle": "Plan d’actions de prévention et le contrôle des infections.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 2
                 },
                 {
-                  "libelle": "Registre du personnel clinique et des agents de bionettoyage de première ligne lors de leur embauche formés à la PCI.",
+                  "libelle": "Cahier des charges et note de service désignant le point focal (personne formée à la PCI) de l’établissement de santé de 1er contact disposant de temps dédié aux activités de la PCI.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 3
                 },
                 {
-                  "libelle": "Liste des matériels et équipements de PCI suffisants et appropriés",
+                  "libelle": "Procédures fondées sur des données probantes, adaptées aux établissements et basées sur les lignes directrices nationales en matière de PCI.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 4
                 },
                 {
-                  "libelle": "Procédure de notification et alerte pour les flambées épidémiques et la surveillance des infections associées aux soins conformément aux plans nationaux",
+                  "libelle": "Registre du personnel clinique et des agents de bionettoyage de première ligne lors de leur embauche formés à la PCI .",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 5
                 },
                 {
-                  "libelle": "Rapports de suivi des indicateurs de PCI, sur la base des priorités identifiées dans les autres composantes.",
+                  "libelle": "Liste des matériels et équipements de PCI suffisants et appropriés.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 6
                 },
                 {
-                  "libelle": "Dispositif approprié pour réduire la promiscuité dans l’établissement et optimiser les effectifs du personnel",
+                  "libelle": "Procédure de notification et alerte pour les flambées épidémiques et la surveillance des infections associées aux soins conformément aux plans nationaux.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 7
                 },
                 {
-                  "libelle": "Avec le Responsable de la PCI: Existe-t-il des preuves que l'ESPC dispose d'un programme de contrôle de la prévention des infections, y compris la structure organisationnelle, les directives, le plan et les lignes directrices?",
-                  "typeElement": "ENTRETIEN",
+                  "libelle": "Stratégies multimodales de prévention pour les interventions de PCI prioritaires.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
-                  "entreDansScore": false,
+                  "entreDansScore": true,
                   "ordre": 8
                 },
                 {
-                  "libelle": "Respect des pratiques de prévention et de contrôle des infections",
-                  "typeElement": "OBSERVATION",
+                  "libelle": "Rapports de suivi des indicateurs de PCI, sur la base des priorités identifiées dans les autres composantes.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 9
+                },
+                {
+                  "libelle": "Dispositif approprié pour réduire la promiscuité dans l’établissement et optimiser les effectifs du personnel.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 10
+                },
+                {
+                  "libelle": "Responsable PCI : L’établissement de santé dispose-t-il d’un programme fonctionnel de prévention et de contrôle des infections ?",
+                  "typeElement": "ENTRETIEN",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": false,
-                  "ordre": 9
+                  "ordre": 11
+                },
+                {
+                  "libelle": "Responsable PCI : Quels sont les objectifs de la lutte contre les infections ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 12
+                },
+                {
+                  "libelle": "Responsable PCI : L’établissement respecte-t-il les procédures opératoires normalisées reconnues en matière de PCI ? Donnez des exemples.",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 13
                 }
-              ],
-              "ordre": 1
+              ]
             },
             {
               "code": "C.2.1.2",
-              "libelle": "L’établissement de santé de 1er contact s’assure que tous les équipements sont nettoyés, désinfectés et stérilisés correctement",
+              "libelle": "L’établissement de santé de 1er contact s’assure que tous les équipements sont nettoyés, désinfectés et stérilisés correctement.",
               "categorie": "Essentiel",
-              "registre": "Registre EFE",
+              "registre": null,
+              "ordre": 2,
               "elementsMesurables": [
                 {
-                  "libelle": "Procédures de nettoyage, de désinfection et de stérilisation des équipements",
+                  "libelle": "Procédures de nettoyage, de désinfection et de stérilisation des équipements.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 1
                 },
                 {
-                  "libelle": "Rapports d’évaluation de la conformité aux procédures de nettoyage, de désinfection et de stérilisation des équipements",
+                  "libelle": "Lignes directrices de l'OMS sur les composantes essentielles et les exigences minimales en matière de la PCI.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 2
                 },
                 {
-                  "libelle": "Avec le Responsable de la PCI: Existe-t-il des preuves que l'hôpital assure un nettoyage, une désinfection et une stérilisation appropriés de tous les équipements en mettant particulièrement l'accent sur les zones à haut risque?",
-                  "typeElement": "ENTRETIEN",
+                  "libelle": "Rapports d’évaluation de la conformité aux procédures de nettoyage, de désinfection et de stérilisation des équipements.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
-                  "entreDansScore": false,
+                  "entreDansScore": true,
                   "ordre": 3
                 },
                 {
-                  "libelle": "Nettoyage, désinfection et stérilisation adéquats des équipements, en mettant particulièrement l'accent sur les zones à haut risque",
-                  "typeElement": "OBSERVATION",
+                  "libelle": "Responsable PCI : L’établissement de santé de 1er contact dispose-t-il de procédure pour la stérilisation des instruments chirurgicaux ? Comment les instruments sont-ils stérilisés ?",
+                  "typeElement": "ENTRETIEN",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": false,
                   "ordre": 4
+                },
+                {
+                  "libelle": "Responsable PCI : Existe-t-il des dispositifs médicaux à usage unique dans l’établissement ? Comment l’établissement s’assure-t-il qu’ils ne sont pas réutilisés ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 5
+                },
+                {
+                  "libelle": "Responsable PCI : Quelles sont les températures critiques de stérilisation selon les catégories d’équipements ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 6
+                },
+                {
+                  "libelle": "Solutions de nettoyage et de désinfection.",
+                  "typeElement": "OBSERVATION",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 7
                 }
-              ],
-              "ordre": 2
+              ]
             }
-          ],
-          "ordre": 2
+          ]
         },
         {
           "code": "C.3",
-          "libelle": "L’établissement de santé de 1er contact dispose d’un système pour assurer la sécurité des médicaments",
+          "libelle": "L’établissement de santé de 1er contact dispose d’un système pour assurer la sécurité des médicaments.",
+          "ordre": 3,
           "criteres": [
             {
               "code": "C.3.1.1",
-              "libelle": "L’établissement de santé de 1er contact dispose d’un système de gestion assurant la sécurité des médicaments qui répond aux besoins des patients et satisfait à la réglementation en vigueur",
+              "libelle": "L’établissement de santé de 1er contact dispose d’un système de gestion assurant la sécurité des médicaments qui répond aux besoins des patients et satisfait à la réglementation en vigueur.",
               "categorie": "Essentiel",
-              "registre": "Registre MV",
+              "registre": null,
+              "ordre": 1,
               "elementsMesurables": [
                 {
                   "libelle": "Programme de sécurité des médicaments.",
@@ -965,220 +890,199 @@
                   "ordre": 1
                 },
                 {
-                  "libelle": "Brochures d’information du patient",
+                  "libelle": "Brochures d’information du patient.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 2
                 },
                 {
-                  "libelle": "Rapports d’évaluation du programme de sécurité des médicaments",
+                  "libelle": "Rapports d’évaluation du programme de sécurité des patients",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 3
                 },
                 {
-                  "libelle": "Avec le Responsable médical: Existe-t-il des preuves que l'ESPC dispose d’un système de gestion assurant la sécurité des médicaments qui répond aux besoins des patients et satisfait à la réglementation en vigueur?",
+                  "libelle": "Personnel concerné : y a-t-il des éléments indiquant que l’établissement de santé de 1er contact dispose d’un système de gestion assurant la sécurité des médicaments qui répond aux besoins des patients et satisfait à la réglementation en vigueur ?",
                   "typeElement": "ENTRETIEN",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": false,
                   "ordre": 4
                 },
                 {
-                  "libelle": "Conservation des médicaments",
+                  "libelle": "Pharmacie : procédure concernant le stockage, les commandes, la préparation et la délivrance, l’administration et le suivi.",
                   "typeElement": "OBSERVATION",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": false,
                   "ordre": 5
-                },
-                {
-                  "libelle": "Surveillance de la température dans les réfrigérateurs et les congélateurs utilisés pour stocker les médicaments et les vaccins dans tout l'hôpital",
-                  "typeElement": "OBSERVATION",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": false,
-                  "ordre": 6
                 }
-              ],
-              "ordre": 1
+              ]
             },
             {
               "code": "C.3.1.2",
-              "libelle": "L’établissement de santé de 1er contact conserve des médicaments à haut risque dans un lieu sécurisé",
+              "libelle": "L’établissement de santé de 1er contact conserve des médicaments à haut risque dans un lieu sécurisé.",
               "categorie": "Essentiel",
-              "registre": "Registre MV",
+              "registre": null,
+              "ordre": 2,
               "elementsMesurables": [
                 {
-                  "libelle": "Procédure d'achat, disponibilité et stockage des grandes concentrations d’électrolytes",
+                  "libelle": "Procédures de retrait de grandes concentrations d’électrolytes (notamment le chlorure de potassium, le phosphate de potassium et le chlorure de sodium) des services pour les stocker dans un lieu sécurisé.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 1
                 },
                 {
-                  "libelle": "Procédures de retrait de grandes concentrations d’électrolytes (notamment le chlorure de potassium, le phosphate de potassium et le chlorure de sodium) des services pour les stocker dans un lieu sécurisé",
-                  "typeElement": "DOCUMENT_A_EXAMINER",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": true,
-                  "ordre": 2
-                },
-                {
-                  "libelle": "Avec le Responsable de la Pharmacie: Existe-t-il des preuves que l'ESPC élimine les concentrations élevées d'électrolytes, y compris le chlorure de potassium, le phosphate de potassium et le chlorure de sodium des services d'hospitalisation et les stocke en lieu sécurisé?",
+                  "libelle": "Personnel concerné : y a-t-il des éléments indiquant que l’établissement de santé de 1er contact conserve des médicaments à haut risque dans un lieu sécurisé ?",
                   "typeElement": "ENTRETIEN",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": false,
-                  "ordre": 3
+                  "ordre": 2
                 },
                 {
-                  "libelle": "Les concentrations élevées d'électrolytes, y compris le chlorure de potassium, le phosphate de potassium et le chlorure de sodium, sont absentes dans les services d'hospitalisation",
+                  "libelle": "Pharmacie : stockage approprié des solutions concentrées et grandes concentrations d’électrolytes, des médicaments dont le nom présente une ressemblance écrite ou auditive, des matières dangereuses ou médicaments à haut risque ; élimination des médicaments périmés ou non utilisés.",
                   "typeElement": "OBSERVATION",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": false,
-                  "ordre": 4
+                  "ordre": 3
                 }
-              ],
-              "ordre": 2
+              ]
             },
             {
               "code": "C.3.1.3",
-              "libelle": "L’établissement de santé de 1er contact s’assure de la disponibilité des médicaments d’importance vitale à tout moment",
+              "libelle": "L’établissement de santé de 1er contact s’assure de la disponibilité des médicaments d’importance vitale à tout moment.",
               "categorie": "Essentiel",
-              "registre": "Registre MV",
+              "registre": null,
+              "ordre": 3,
               "elementsMesurables": [
                 {
-                  "libelle": "Liste des médicaments vitaux fournis en fonction des besoins de l’ESPC",
+                  "libelle": "Liste des médicaments vitaux fournis en fonction des besoins de l’ESPC.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 1
                 },
                 {
-                  "libelle": "Fiches de stock des médicaments vitaux",
+                  "libelle": "Fiches de stock des médicaments vitaux.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 2
                 },
                 {
-                  "libelle": "Rapport de disponibilité des médicaments vitaux en fonction des besoins de l’établissement",
+                  "libelle": "Rapport de disponibilité des médicaments vitaux en fonction des besoins de l’établissement.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 3
                 },
                 {
-                  "libelle": "Disponibilité des médicaments d’importance vitale",
-                  "typeElement": "OBSERVATION",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": false,
-                  "ordre": 4
-                }
-              ],
-              "ordre": 3
-            },
-            {
-              "code": "C.3.1.4",
-              "libelle": "Le processus de distribution et de stockage des médicaments et des vaccins thermosensibles garanti l’absence de rupture de la chaîne de froid",
-              "categorie": "Essentiel",
-              "registre": "Registre MV",
-              "elementsMesurables": [
-                {
-                  "libelle": "Disponibilité de la réfrigération",
-                  "typeElement": "DOCUMENT_A_EXAMINER",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": true,
-                  "ordre": 1
-                },
-                {
-                  "libelle": "Procédure de stockage des médicaments thermosensibles",
-                  "typeElement": "DOCUMENT_A_EXAMINER",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": true,
-                  "ordre": 2
-                },
-                {
-                  "libelle": "Procédure de contrôle qualité pour les réfrigérateurs et les médicaments",
-                  "typeElement": "DOCUMENT_A_EXAMINER",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": true,
-                  "ordre": 3
-                },
-                {
-                  "libelle": "Liste des médicaments thermosensibles tels que : o les vaccins; o l’insuline.",
-                  "typeElement": "DOCUMENT_A_EXAMINER",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": true,
-                  "ordre": 4
-                },
-                {
-                  "libelle": "Existe-t-il des preuves que le processus de distribution et de stockage des médicaments et des vaccins thermosensibles garantit l’absence de rupture de la chaîne de froid?",
+                  "libelle": "Personnel concerné : y a-t-il des éléments indiquant que l’établissement de santé de 1er contact s’assure de la disponibilité des médicaments d’importance vitale à tout moment ?",
                   "typeElement": "ENTRETIEN",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": false,
-                  "ordre": 5
+                  "ordre": 4
                 },
                 {
-                  "libelle": "Surveillance de la température dans les réfrigérateurs et les congélateurs utilisés pour stocker les médicaments et les vaccins dans tout l'hôpital",
+                  "libelle": "Espace clinique : matériel de réanimation, y compris chariot, défibrillateur et disponibilité de médicaments vitaux.",
                   "typeElement": "OBSERVATION",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": false,
-                  "ordre": 6
+                  "ordre": 5
                 }
-              ],
-              "ordre": 4
+              ]
+            },
+            {
+              "code": "C.3.1.4",
+              "libelle": "Le processus de distribution et de stockage des médicaments et des vaccins thermosensibles garanti l’absence de rupture de la chaîne de froid.",
+              "categorie": "Essentiel",
+              "registre": null,
+              "ordre": 4,
+              "elementsMesurables": [
+                {
+                  "libelle": "Disponibilité de la réfrigération.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 1
+                },
+                {
+                  "libelle": "Procédure de contrôle qualité pour les réfrigérateurs et les médicaments.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 2
+                },
+                {
+                  "libelle": "Liste des médicaments thermosensibles tels que :\n– les vaccins ;\n– l’insuline.",
+                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": true,
+                  "ordre": 3
+                },
+                {
+                  "libelle": "Personnel concerné : y a-t-il des éléments indiquant que le processus de distribution et de stockage des médicaments et des vaccins thermosensibles garanti l’absence de rupture de la chaîne de froid ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 4
+                }
+              ]
             }
-          ],
-          "ordre": 3
+          ]
         },
         {
           "code": "C.4",
           "libelle": "L’établissement de santé de 1er contact a mis en place des systèmes pour gérer et contrôler les situations d’urgence en cas d’épidémie de maladies infectieuses.",
+          "ordre": 4,
           "criteres": [
             {
               "code": "C.4.1.1",
-              "libelle": "L’établissement de santé de 1er contact effectue une analyse des lacunes axée sur les ressources et les services existants",
+              "libelle": "L’établissement de santé de 1er contact effectue une analyse des lacunes axée sur les ressources et les services existants.",
               "categorie": "Essentiel",
-              "registre": "Registre CQSP",
+              "registre": null,
+              "ordre": 1,
               "elementsMesurables": [
                 {
-                  "libelle": "Document ou rapport de l'analyse des lacunes comprenant : l’analyse des risques",
+                  "libelle": "Documentation de l’analyse des lacunes qui comprend : l’analyse des risques ;",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 1
                 },
                 {
-                  "libelle": "Document ou rapport de l'analyse des lacunes comprenant : l’évaluation de la capacité d’intervention.",
+                  "libelle": "Documentation de l’analyse des lacunes qui comprend : l’évaluation de la capacité d’intervention.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 2
                 },
                 {
-                  "libelle": "Avec le Responsable de l'ESPC: Comment les risques sont-ils identifiés et quelles mesures proactives sont prises pour améliorer la sécurité des patients au sein de l’établissement ou du réseau ?",
+                  "libelle": "Direction de l’ESPC : Comment l’établissement de santé de 1er contact peut-il s’adapter pendant une pandémie ?",
                   "typeElement": "ENTRETIEN",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": false,
                   "ordre": 3
                 }
-              ],
-              "ordre": 1
+              ]
             },
             {
               "code": "C.4.1.2",
-              "libelle": "L’établissement a mis en place un plan d’urgence pour la gestion des flambées épidémiques et la riposte face à ces événements",
+              "libelle": "L’établissement a mis en place un plan d’urgence pour la gestion des flambées épidémiques et la riposte face à ces événements.",
               "categorie": "Essentiel",
-              "registre": "Registre CQSP",
+              "registre": null,
+              "ordre": 2,
               "elementsMesurables": [
                 {
-                  "libelle": "Plan d’urgence pour la gestion des flambées épidémiques et la riposte face à ces événements comportant : la preuve d’une analyse des lacunes et d’un plan de préparation aux situations d'urgence testé sur une base annuelle",
+                  "libelle": "Plan d’urgence pour la gestion des flambées épidémiques et la riposte face à ces événements.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 1
                 },
                 {
-                  "libelle": "Plan d’urgence pour la gestion des flambées épidémiques et la riposte face à ces événements comportant : Protocoles en matière d’hygiène des mains",
+                  "libelle": "Protocoles en matière d’hygiène des mains.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
@@ -1192,23 +1096,30 @@
                   "ordre": 3
                 },
                 {
-                  "libelle": "Avec le Responsable de l'ESPC: L’établissement de santé de 1er contact dispose-t-il de plan d'urgence pour la gestion des flambées épidémiques et de riposte ? Si oui, à quelle fréquence font-ils l’objet d’un exercice de répétition ?",
+                  "libelle": "Direction de l’ESPC : Comment l’établissement de santé de 1er contact peut-il s’adapter pendant une pandémie ?",
                   "typeElement": "ENTRETIEN",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": false,
                   "ordre": 4
+                },
+                {
+                  "libelle": "Direction de l’ESPC : L’établissement de santé de 1er contact dispose-t-il de plans de gestion des catastrophes externes ou internes ? Si oui, à quelle fréquence font-ils l’objet d’un exercice de répétition ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 5
                 }
-              ],
-              "ordre": 2
+              ]
             },
             {
               "code": "C.4.1.3",
-              "libelle": "L’établissement de santé de 1er contact dispose de systèmes de communication pour surveiller, collecter et diffuser des informations sur les alertes de santé publique",
+              "libelle": "L’établissement de santé de 1er contact dispose de systèmes de communication pour surveiller, collecter et diffuser des informations sur les alertes de santé publique.",
               "categorie": "Essentiel",
-              "registre": "Registre CQSP",
+              "registre": null,
+              "ordre": 3,
               "elementsMesurables": [
                 {
-                  "libelle": "Guide SIMR (Système Intégré des Maladies et Riposte)",
+                  "libelle": "Guide SIMR (Système Intégré des Maladies et Riposte).",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
@@ -1220,49 +1131,54 @@
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 2
+                },
+                {
+                  "libelle": "Direction de l’ESPC : Quelle est la stratégie de communication avec le personnel, le grand public, d’autres établissements de soins de santé primaires et les bases de données nationales ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 3
                 }
-              ],
-              "ordre": 3
+              ]
             },
             {
               "code": "C.4.1.4",
-              "libelle": "L’établissement de santé de 1er contact dispose de systèmes supplémentaires de prévention et de contrôle des infections pour le traitement des patients infectés et la prévention de la transmission au personnel, aux autres patients et à la communauté",
+              "libelle": "L’établissement de santé de 1er contact dispose de systèmes supplémentaires de prévention et de contrôle des infections pour le traitement des patients infectés et la prévention de la transmission au personnel, aux autres patients et à la communauté.",
               "categorie": "Essentiel",
-              "registre": "Registre HSE",
+              "registre": null,
+              "ordre": 4,
               "elementsMesurables": [
                 {
-                  "libelle": "Procédure relative aux précautions complémentaires d’hygiène, pour le traitement des patients infectés",
+                  "libelle": "Procédure des précautions complémentaires d’hygiène, pour le traitement des patients infectés.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 1
                 },
                 {
-                  "libelle": "Procédure des précautions complémentaires d’hygiène, pour la prévention de la transmission au personnel, aux autres patients et à la communauté",
+                  "libelle": "Procédure des précautions complémentaires d’hygiène. Pour la prévention de la transmission au personnel, aux autres patients et à la communauté.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 2
                 },
                 {
-                  "libelle": "Avec le Responsable de PCI: Existe-t-il des mesures supplémentaires de prévention et de contrôle des infections pour le traitement des patients infectés et la prévention de la transmission au personnel, aux autres patients et à la communauté ?",
+                  "libelle": "Responsable PCI : Existe-t-il des systèmes supplémentaires de prévention et de contrôle des infections pour le traitement des patients infectés et la prévention de la transmission au personnel, aux autres patients et à la communauté ?",
                   "typeElement": "ENTRETIEN",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": false,
                   "ordre": 3
                 },
                 {
-                  "libelle": "Conformité aux procédures des précautions d'hygiènes supplémentaires",
+                  "libelle": "Espace clinique : équipements de protection individuelle (EPI).",
                   "typeElement": "OBSERVATION",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": false,
                   "ordre": 4
                 }
-              ],
-              "ordre": 4
+              ]
             }
-          ],
-          "ordre": 4
+          ]
         }
       ]
     },
@@ -1273,215 +1189,133 @@
         {
           "code": "D.1",
           "libelle": "L’établissement de santé de 1er contact offre un environnement physique sûr et sécurisé pour les patients, le personnel, les bénévoles et les visiteurs.",
+          "ordre": 1,
           "criteres": [
             {
               "code": "D.1.1.1",
               "libelle": "L’établissement de santé de 1er contact met en place un programme de sécurité incendie, comportant un plan d’évacuation.",
               "categorie": "Essentiel",
-              "registre": "Registre CQSP",
+              "registre": null,
+              "ordre": 1,
               "elementsMesurables": [
                 {
-                  "libelle": "Programme de sécurité incendie",
+                  "libelle": "Procédures de sécurité incendie.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 1
                 },
                 {
-                  "libelle": "Calendrier des formations sur la sécurité incendie et des exercices d’évacuation",
+                  "libelle": "Plan d’évacuation.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 2
-                },
-                {
-                  "libelle": "Listes de contrôle de sécurité des équipements, extincteurs et lances à incendie",
-                  "typeElement": "DOCUMENT_A_EXAMINER",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": true,
-                  "ordre": 3
-                },
-                {
-                  "libelle": "Procédures de sécurité incendie",
-                  "typeElement": "DOCUMENT_A_EXAMINER",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": true,
-                  "ordre": 4
-                },
-                {
-                  "libelle": "Plan d’évacuation",
-                  "typeElement": "DOCUMENT_A_EXAMINER",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": true,
-                  "ordre": 5
                 },
                 {
                   "libelle": "Rapport de visite de l’environnement.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
+                  "ordre": 3
+                },
+                {
+                  "libelle": "Personnel concerné : y a-t-il des éléments indiquant que l’établissement de santé de 1er contact met en place un programme de sécurité incendie, comportant un plan d’évacuation ?",
+                  "typeElement": "ENTRETIEN",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 4
+                },
+                {
+                  "libelle": "Plan d’évacuation en cas d’incendie affiché à tous les niveaux de l’ESPC.",
+                  "typeElement": "OBSERVATION",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
+                  "ordre": 5
+                },
+                {
+                  "libelle": "Présence d’alarmes incendie en état de fonctionnement.",
+                  "typeElement": "OBSERVATION",
+                  "typeReponse": "OUI_NON",
+                  "entreDansScore": false,
                   "ordre": 6
                 },
                 {
-                  "libelle": "Avec le Responsable de sécurité: Que se passe-t-il lorsqu’un incendie survient ?",
-                  "typeElement": "ENTRETIEN",
+                  "libelle": "Issues de secours et escaliers libres d’accès ; panneaux de sortie clairement indiqués et suffisamment éclairés.",
+                  "typeElement": "OBSERVATION",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": false,
                   "ordre": 7
                 },
                 {
-                  "libelle": "Plan d’évacuation en cas d’incendie affiché à tous les niveaux de l’ESPC",
+                  "libelle": "Tous les extincteurs ont une étiquette à jour, datée et signée ; lances à incendie en état de fonctionnement.",
                   "typeElement": "OBSERVATION",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": false,
                   "ordre": 8
                 },
                 {
-                  "libelle": "Tous les extincteurs ont une étiquette à jour, datée et signée",
+                  "libelle": "Registres de formation incendie du personnel disponibles.",
                   "typeElement": "OBSERVATION",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": false,
                   "ordre": 9
-                },
-                {
-                  "libelle": "Lances à incendie en état de fonctionnement",
-                  "typeElement": "OBSERVATION",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": false,
-                  "ordre": 10
-                },
-                {
-                  "libelle": "Issues de secours et escaliers libres d’accès",
-                  "typeElement": "OBSERVATION",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": false,
-                  "ordre": 11
-                },
-                {
-                  "libelle": "Liquides inflammables stockés en toute sécurité et à utilisation limitée",
-                  "typeElement": "OBSERVATION",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": false,
-                  "ordre": 12
-                },
-                {
-                  "libelle": "Panneaux de sortie clairement indiqués et suffisamment éclairés et toutes les portes de sortie ignifugées",
-                  "typeElement": "OBSERVATION",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": false,
-                  "ordre": 13
-                },
-                {
-                  "libelle": "Zones à forte dépendance ont accès à un système permettant de couper les gaz médicaux en cas d’urgence",
-                  "typeElement": "OBSERVATION",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": false,
-                  "ordre": 14
-                },
-                {
-                  "libelle": "Toutes les bonbonnes de gaz sont : enchaînées ou attachées en toute sécurité",
-                  "typeElement": "OBSERVATION",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": false,
-                  "ordre": 15
-                },
-                {
-                  "libelle": "Toutes les bonbonnes de gaz sont : stockées à l’ombre et à une température appropriée, à l’abri de la lumière directe du soleil",
-                  "typeElement": "OBSERVATION",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": false,
-                  "ordre": 16
-                },
-                {
-                  "libelle": "Toutes les bonbonnes de gaz sont : dotées de capuchon protecteur remis en place lorsque la bonbonne d’oxygène n’est pas utilisée",
-                  "typeElement": "OBSERVATION",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": false,
-                  "ordre": 17
-                },
-                {
-                  "libelle": "Toutes les bonbonnes de gaz sont : des bonbonnes d’oxygène pleines et vides stockées séparément en position verticale",
-                  "typeElement": "OBSERVATION",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": false,
-                  "ordre": 18
-                },
-                {
-                  "libelle": "Registres de formation incendie pour le personnel disponible",
-                  "typeElement": "OBSERVATION",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": false,
-                  "ordre": 19
                 }
-              ],
-              "ordre": 1
+              ]
             }
-          ],
-          "ordre": 1
+          ]
         },
         {
           "code": "D.2",
-          "libelle": "L’établissement de santé de 1er contact a accès aux services d’eau, assainissement et hygiène (WASH) et de gestion sécurisée des déchets",
+          "libelle": "L’établissement de santé de 1er contact a accès aux services d’eau, assainissement et hygiène (WASH) et de gestion sécurisée des déchets.",
+          "ordre": 2,
           "criteres": [
             {
               "code": "D.2.1.1",
-              "libelle": "L’établissement de santé de 1er contact a accès à de l’eau potable avec des réserves couvrant au moins trois jours",
+              "libelle": "L’établissement de santé de 1er contact a accès à de l’eau potable avec des réserves couvrant au moins trois jours.",
               "categorie": "Essentiel",
-              "registre": "Registre HSE",
+              "registre": null,
+              "ordre": 1,
               "elementsMesurables": [
                 {
-                  "libelle": "Rapport de visite de l’environnement de l’établissement apporte la preuve : de la disponibilité de réactifs pour l’analyse de l’eau",
+                  "libelle": "Rapport de visite de l’environnement de l’établissement apporte la preuve :\n– de la disponibilité d’eau courante propre ;\n– de la disponibilité de réactifs pour l’analyse de l’eau ;\n– de la présence de stocks adéquats d’additifs chimiques ;\n– de l’existence d’un contrat avec les fournisseurs d’eau.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 1
                 },
                 {
-                  "libelle": "Rapport de visite de l’environnement de l’établissement apporte la preuve : de la présence de stocks adéquats d’additifs chimiques",
+                  "libelle": "Procédure de constitution d’une réserve d’eau de 3 jours au moins.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 2
                 },
                 {
-                  "libelle": "Rapport de visite de l’environnement de l’établissement apporte la preuve : de l’existence d’un contrat avec les fournisseurs d’eau",
-                  "typeElement": "DOCUMENT_A_EXAMINER",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": true,
-                  "ordre": 3
-                },
-                {
-                  "libelle": "Procédure de constitution d’une réserve d’eau de 3 jours au moins.",
-                  "typeElement": "DOCUMENT_A_EXAMINER",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": true,
-                  "ordre": 4
-                },
-                {
-                  "libelle": "Avec le Responsable de la PCI: Existe-t-il une procédure clairement établie pour constituer des réserves d'eau de trois jours au moins ?",
+                  "libelle": "Personnel concerné : y a-t-il des éléments indiquant que l’établissement de santé de 1er contact a accès à de l’eau potable avec des réserves couvrant au moins trois jours ?",
                   "typeElement": "ENTRETIEN",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": false,
-                  "ordre": 5
+                  "ordre": 3
                 },
                 {
-                  "libelle": "Réserves d'eau de secours",
+                  "libelle": "Services d’eau, d’assainissement et d’hygiène : eau propre.",
                   "typeElement": "OBSERVATION",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": false,
-                  "ordre": 6
+                  "ordre": 4
                 }
-              ],
-              "ordre": 1
+              ]
             },
             {
               "code": "D.2.1.2",
-              "libelle": "Des installations fonctionnelles pour le lavage des mains sont disponibles dans tous les lieux de soins et à moins de cinq mètres des toilettes",
+              "libelle": "Des installations fonctionnelles pour le lavage des mains sont disponibles dans tous les lieux de soins et à moins de cinq mètres des toilettes.",
               "categorie": "Essentiel",
-              "registre": "Registre HSE",
+              "registre": null,
+              "ordre": 2,
               "elementsMesurables": [
                 {
-                  "libelle": "Inventaire des lavabos pour se laver les mains avec de l’eau et du savon",
+                  "libelle": "Inventaire des lavabos pour se laver les mains avec de l’eau et du savon.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
@@ -1495,260 +1329,174 @@
                   "ordre": 2
                 },
                 {
-                  "libelle": "Avec le Responsable de PCI: L’établissement de santé de 1er contact dispose-t-il installations fonctionnelles pour le lavage des mains ?",
+                  "libelle": "Personnel concerné : y a-t-il des éléments indiquant que des installations fonctionnelles pour le lavage des mains sont disponibles dans tous les lieux de soins et à moins de cinq mètres des toilettes ?",
                   "typeElement": "ENTRETIEN",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": false,
                   "ordre": 3
                 },
                 {
-                  "libelle": "lavabos pour se laver les mains et désinfectant pour les mains",
+                  "libelle": "Lavabos pour se laver les mains et désinfectant pour les mains.",
                   "typeElement": "OBSERVATION",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": false,
                   "ordre": 4
                 },
                 {
-                  "libelle": "Affiches de l'OMS : « Les 5 indications de l’hygiène des mains » et « Le lavage des mains : Comment ? »",
+                  "libelle": "Affiches de l’OMS : « Les 5 indications de l’hygiène des mains » et « Le lavage des mains : Comment ? ».",
                   "typeElement": "OBSERVATION",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": false,
                   "ordre": 5
                 }
-              ],
-              "ordre": 2
+              ]
             },
             {
               "code": "D.2.1.3",
               "libelle": "L’établissement de santé de 1er contact se conforme aux lignes directrices sur la gestion des déchets, y compris le stockage, le transport et l’élimination des déchets en toute sécurité.",
               "categorie": "Essentiel",
-              "registre": "Registre GDM/OPCT",
+              "registre": null,
+              "ordre": 3,
               "elementsMesurables": [
                 {
-                  "libelle": "Plan de gestion des déchets qui comprend : les lignes directrices relatives à la gestion des déchets et des objets piquants/tranchants",
+                  "libelle": "Document de lignes directrices relatives à la gestion des déchets et des objets piquants/tranchants.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 1
                 },
                 {
-                  "libelle": "Plan de gestion des déchets qui comprend : la gestion du linge sale",
+                  "libelle": "Procédure d’élimination, de stockage et de gestion des déchets domestiques, médicaux, chimiques et infectieux.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 2
                 },
                 {
-                  "libelle": "Plan de gestion des déchets qui comprend : l'élimination, le stockage et la gestion des déchets, notamment les déchets domestiques, chimiques et infectieux",
+                  "libelle": "Déchets placés dans un lieu dédié, inaccessible aux animaux, fermé à clé, et à température contrôlée.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 3
                 },
                 {
-                  "libelle": "Plan de gestion des déchets qui comprend : la gestion des objets piquants/tranchants",
+                  "libelle": "Contrat avec une société externe pour la collecte et l’élimination des déchets ou plan de travail de l’agent d’hygiène de l’établissement de santé de 1er contact et un plan de collecte et d’élimination des déchets.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 4
                 },
                 {
-                  "libelle": "Procédure d’élimination, de stockage et de gestion des déchets domestiques, médicaux, chimiques et infectieux",
+                  "libelle": "Gestion des objets piquants/tranchants.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 5
                 },
                 {
-                  "libelle": "Contrat avec une société externe pour la collecte et l’élimination des déchets ou plan de travail de l’agent d’hygiène de l’établissement de santé de 1er contact et un plan de collecte et d’élimination des déchets qui comprend : les déchets domestiques",
-                  "typeElement": "DOCUMENT_A_EXAMINER",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": true,
-                  "ordre": 6
-                },
-                {
-                  "libelle": "Contrat avec une société externe pour la collecte et l’élimination des déchets ou plan de travail de l’agent d’hygiène de l’établissement de santé de 1er contact et un plan de collecte et d’élimination des déchets qui comprend : les déchets biomédicaux",
-                  "typeElement": "DOCUMENT_A_EXAMINER",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": true,
-                  "ordre": 7
-                },
-                {
-                  "libelle": "Contrat avec une société externe pour la collecte et l’élimination des déchets ou plan de travail de l’agent d’hygiène de l’établissement de santé de 1er contact et un plan de collecte et d’élimination des déchets qui comprend : les déchets infectieux",
-                  "typeElement": "DOCUMENT_A_EXAMINER",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": true,
-                  "ordre": 8
-                },
-                {
-                  "libelle": "Avec le Responsable de la PCI : Y-a-t-il des éléments indiquant que l’hôpital applique les lignes directrices relatives à la gestion des déchets piquants ou coupants, y compris celles établies par l’OMS ?",
+                  "libelle": "Personnel concerné : y a-t-il des éléments indiquant que l’établissement de santé de 1er contact se conforme aux lignes directrices sur la gestion des déchets, y compris le stockage, le transport et l’élimination des déchets en toute sécurité ?",
                   "typeElement": "ENTRETIEN",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": false,
-                  "ordre": 9
+                  "ordre": 6
                 },
                 {
-                  "libelle": "Boites de sécurité pour objets piquants ou tranchants",
+                  "libelle": "Élimination sans risque des déchets biomédicaux.",
                   "typeElement": "OBSERVATION",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": false,
-                  "ordre": 10
+                  "ordre": 7
                 },
                 {
-                  "libelle": "Poubelles et sacs à code couleur distinct pour les déchets domestiques, cliniques et infectieux",
+                  "libelle": "Local de stockage des déchets sécurisé et à température contrôlée, le cas échéant.",
                   "typeElement": "OBSERVATION",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": false,
-                  "ordre": 11
-                },
-                {
-                  "libelle": "Local de stockage des déchets sécurisé et à température contrôlée, le cas échéant",
-                  "typeElement": "OBSERVATION",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": false,
-                  "ordre": 12
-                },
-                {
-                  "libelle": "Déchets placés dans un lieu dédié, inaccessible aux animaux, fermé à clé, et à température contrôlée.",
-                  "typeElement": "OBSERVATION",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": false,
-                  "ordre": 13
-                },
-                {
-                  "libelle": "Élimination du matériel piquant ou coupant dans une boîte sécurisée",
-                  "typeElement": "OBSERVATION",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": false,
-                  "ordre": 14
+                  "ordre": 8
                 }
-              ],
-              "ordre": 3
+              ]
             },
             {
               "code": "D.2.1.4",
               "libelle": "L’établissement de santé de 1er contact dispose d’une procédure de gestion en toute sécurité des déchets biomédicaux liés aux flambées de maladies infectieuses.",
               "categorie": "Essentiel",
-              "registre": "Registre GDM/OPCT",
+              "registre": null,
+              "ordre": 4,
               "elementsMesurables": [
                 {
-                  "libelle": "Procédure de gestion des déchets pendant une flambée de maladie infectieuse",
+                  "libelle": "Procédure de gestion des déchets pendant une flambée de maladie infectieuse.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 1
                 },
                 {
-                  "libelle": "Régistre de formation du personnel formé aux procédures de gestion des déchets liés aux flambées de maladies infectieuses",
-                  "typeElement": "DOCUMENT_A_EXAMINER",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": true,
-                  "ordre": 2
-                },
-                {
-                  "libelle": "Rapport d'évaluation de la conformité aux procédures de gestion des déchets liés aux flambées de maladies infectieuses",
-                  "typeElement": "DOCUMENT_A_EXAMINER",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": true,
-                  "ordre": 3
-                },
-                {
-                  "libelle": "Y a-t-il des éléments indiquant que l’établissement de santé 1er contact applique les lignes directrices relatives à la gestion des déchets organiques ?",
+                  "libelle": "Personnel concerné : y a-t-il des éléments indiquant que l’établissement de santé de 1er contact dispose d’une procédure de gestion en toute sécurité des déchets biomédicaux liés aux flambées de maladies infectieuses ?",
                   "typeElement": "ENTRETIEN",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": false,
-                  "ordre": 4
+                  "ordre": 2
                 },
                 {
-                  "libelle": "Conformité aux lignes directrices relatives à la gestion des déchets biomédicaux liés aux flambées de maladies infectieuses.",
+                  "libelle": "Élimination sans risque des déchets biomédicaux.",
                   "typeElement": "OBSERVATION",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": false,
-                  "ordre": 5
+                  "ordre": 3
                 }
-              ],
-              "ordre": 4
+              ]
             }
-          ],
-          "ordre": 2
+          ]
         }
       ]
     },
     {
-      "nom": "E. Normes d’apprentissage continu",
+      "nom": "E. Apprentissage continu",
       "ordre": 5,
       "normes": [
         {
           "code": "E.1",
           "libelle": "L’établissement de santé de 1er contact dispose pour le personnel, d’un programme de développement professionnel dans lequel la sécurité des patients est un thème transversal.",
+          "ordre": 1,
           "criteres": [
             {
               "code": "E.1.1.1",
-              "libelle": "L’ensemble du personnel de soins de l’établissement de santé de 1er contact concerné bénéficie d’un programme d’orientation sur la sécurité des patients",
+              "libelle": "L’ensemble du personnel de soins de l’établissement de santé de 1er contact concerné bénéficie d’un programme d’orientation sur la sécurité des patients.",
               "categorie": "Essentiel",
-              "registre": "Registre CQSP",
+              "registre": null,
+              "ordre": 1,
               "elementsMesurables": [
                 {
-                  "libelle": "Programme d’orientation sur la sécurité des patients comprenant : la sécurité incendie",
+                  "libelle": "Programme d’orientation sur la sécurité des patients comprenant :\n– la sécurité incendie ;\n– la manutention manuelle ;\n– l’hygiène des mains ;\n– la PCI – l’utilisation des EPI.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 1
                 },
                 {
-                  "libelle": "Programme d’orientation sur la sécurité des patients comprenant : la manutention manuelle",
+                  "libelle": "Procédure de gestion des risques et l’utilisation du système de notification.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 2
                 },
                 {
-                  "libelle": "Programme d’orientation sur la sécurité des patients comprenant : l’hygiène des mains",
+                  "libelle": "Procédure de gestion des blessures par piqûre d’aiguille.",
                   "typeElement": "DOCUMENT_A_EXAMINER",
                   "typeReponse": "OUI_NON",
                   "entreDansScore": true,
                   "ordre": 3
                 },
                 {
-                  "libelle": "Programme d’orientation sur la sécurité des patients comprenant : la PCI – l’utilisation des EPI.",
-                  "typeElement": "DOCUMENT_A_EXAMINER",
+                  "libelle": "Personnel : Avez-vous bénéficié d’un programme de formation sur la sécurité des patients ? Quels étaient les thèmes abordés ?",
+                  "typeElement": "ENTRETIEN",
                   "typeReponse": "OUI_NON",
-                  "entreDansScore": true,
+                  "entreDansScore": false,
                   "ordre": 4
-                },
-                {
-                  "libelle": "Procédure de gestion des risques et l’utilisation du système de signalement",
-                  "typeElement": "DOCUMENT_A_EXAMINER",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": true,
-                  "ordre": 5
-                },
-                {
-                  "libelle": "Procédure de gestion des accidents d'exposition au sang",
-                  "typeElement": "DOCUMENT_A_EXAMINER",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": true,
-                  "ordre": 6
-                },
-                {
-                  "libelle": "Avec le Responsable médical: L’établissement de santé s’assure-t-il que le personnel reçoit une formation appropriée sur les solutions en matière de sécurité des patients ?",
-                  "typeElement": "ENTRETIEN",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": false,
-                  "ordre": 7
-                },
-                {
-                  "libelle": "Avec le personnel: Avez-vous bénéficié d'un programme de formation sur la sécurité des patients ? Quels étaient les thèmes abordés ?",
-                  "typeElement": "ENTRETIEN",
-                  "typeReponse": "OUI_NON",
-                  "entreDansScore": false,
-                  "ordre": 8
                 }
-              ],
-              "ordre": 1
+              ]
             }
-          ],
-          "ordre": 1
+          ]
         }
       ]
     }

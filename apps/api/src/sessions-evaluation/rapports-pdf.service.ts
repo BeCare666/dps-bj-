@@ -82,7 +82,11 @@ export class RapportsPdfService {
     if (session.statut !== StatutSessionEvaluation.SOUMISE) {
       throw new Error("Session non soumise");
     }
-    const score = calculerScore(session.grille, new Map(session.reponses.map((r) => [r.elementMesurableId, r.valeur])));
+    const score = calculerScore(
+      session.grille,
+      new Map(session.reponses.map((r) => [r.elementMesurableId, r.valeur])),
+      new Map(session.reponses.map((r) => [r.elementMesurableId, r.commentaire])),
+    );
     const [eiLies, historique] = await Promise.all([
       this.sessions.eiLiesAuxCriteres(session.organisationId, score.criteresNonValides.map((c) => c.critereId)),
       this.prisma.sessionEvaluation.findMany({
@@ -134,22 +138,39 @@ export class RapportsPdfService {
 
       titre("Score de conformité");
       doc.font("Helvetica-Bold").fontSize(22).fillColor(BLEU).text(`${donnees.score.scoreGlobal} %`);
-      doc.font("Helvetica").fontSize(10).fillColor("black").text("Pourcentage de critères validés sur le total des critères de la grille.");
+      doc
+        .font("Helvetica")
+        .fontSize(10)
+        .fillColor("black")
+        .text(
+          "Score obtenu (critère respecté = 1, partiellement respecté = 0,5, non respecté = 0) rapporté au nombre de " +
+            "critères calculés. Les documents à « Observations » ne sont pas calculés.",
+        );
 
       titre("Score par domaine");
       for (const d of donnees.score.parDomaine) {
-        doc.text(`${d.nom} : ${d.scorePct} % (${d.criteresValides}/${d.criteresTotal} critères validés)`);
+        const details = [`${d.criteresValides}/${d.criteresApplicables} critères respectés`];
+        if (d.criteresPartiels > 0) details.push(`${d.criteresPartiels} partiellement`);
+        if (d.criteresNonCalcules > 0) details.push(`${d.criteresNonCalcules} non calculé(s)`);
+        doc.text(`${d.nom} : ${d.scorePct} % (${details.join(", ")})`);
       }
 
-      titre(`Critères non validés (${donnees.score.criteresNonValides.length})`);
+      titre(`Critères non respectés ou partiellement respectés (${donnees.score.criteresNonValides.length})`);
       if (donnees.score.criteresNonValides.length === 0) {
-        doc.text("Tous les critères sont validés.");
+        doc.text("Tous les critères calculés sont respectés.");
       }
       for (const c of donnees.score.criteresNonValides) {
         doc.moveDown(0.4).font("Helvetica-Bold").text(`${c.code} — ${c.libelle}`, { continued: false });
-        doc.font("Helvetica").fillColor(GRIS).text(`Domaine : ${c.domaineNom}`).fillColor("black");
+        doc
+          .font("Helvetica")
+          .fillColor(GRIS)
+          .text(
+            `Domaine : ${c.domaineNom} · ${c.score === 0.5 ? "Partiellement respecté (0,5)" : "Non respecté (0)"} · ` +
+              `${c.documentsPresents}/${c.documentsEvalues} document(s) présent(s)`,
+          )
+          .fillColor("black");
         if (c.documentsNonValides.length > 0) {
-          doc.text("Documents non validés :");
+          doc.text("Documents absents :");
           for (const e of c.documentsNonValides) {
             doc.text(`  • ${e.libelle}${e.reponse === "SANS_REPONSE" ? " (sans réponse)" : ""}`);
           }
@@ -163,6 +184,20 @@ export class RapportsPdfService {
           for (const ei of exemples.slice(0, 5)) {
             doc.text(`  • ${date(ei.dateSurvenue)} — ${ei.description.slice(0, 160)}`);
           }
+        }
+      }
+
+      if (donnees.score.criteresNonCalcules.length > 0) {
+        titre(`Critères non calculés (${donnees.score.criteresNonCalcules.length})`);
+        doc.text("Tous les documents de ces critères ont la réponse « Observations » : ils sont exclus du calcul.");
+        for (const c of donnees.score.criteresNonCalcules) doc.text(`  • ${c.code} — ${c.libelle}`);
+      }
+
+      if (donnees.score.observations.length > 0) {
+        titre(`Observations (${donnees.score.observations.length})`);
+        for (const o of donnees.score.observations) {
+          doc.moveDown(0.2).font("Helvetica-Bold").text(`${o.critereCode} — ${o.libelle}`);
+          doc.font("Helvetica").text(o.commentaire ? o.commentaire : "(aucun texte saisi)");
         }
       }
 

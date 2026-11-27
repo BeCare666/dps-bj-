@@ -54,7 +54,7 @@ const LIBELLES_TYPE_ELEMENT: Record<TypeElementMesurable, string> = {
 };
 
 const LIBELLES_TYPE_REPONSE: Record<TypeReponse, string> = {
-  OUI_NON: "Oui / Non",
+  OUI_NON: "Présent / Absent / Observations",
   TEXTE: "Texte libre",
   CHOIX: "Choix multiple",
 };

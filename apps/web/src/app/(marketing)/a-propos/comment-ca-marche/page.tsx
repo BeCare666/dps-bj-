@@ -7,7 +7,6 @@ import {
   IconGraduationCap,
   IconShieldAlert,
   IconShieldCheck,
-  IconUser,
   IconUserPlus,
   IconUsers,
   IconVitals,
@@ -55,11 +54,6 @@ const PROFILS = [
     icon: IconVitals,
     titre: "Personnel soignant",
     texte: "Saisit les constantes au chevet, suit les patients hospitalisés et déclare les événements indésirables.",
-  },
-  {
-    icon: IconUser,
-    titre: "Compte individuel",
-    texte: "Le professionnel de santé qui souhaite se former à titre personnel réserve ses formations en son nom.",
   },
 ];
 

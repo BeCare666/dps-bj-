@@ -34,7 +34,10 @@ export default async function ResultatsPage({ params }: { params: Promise<{ id: 
   }
 
   const criteresValides = resultats.parDomaine.reduce((s, d) => s + d.criteresValides, 0);
-  const criteresTotal = resultats.parDomaine.reduce((s, d) => s + d.criteresTotal, 0);
+  const criteresPartiels = resultats.parDomaine.reduce((s, d) => s + d.criteresPartiels, 0);
+  const criteresApplicables = resultats.parDomaine.reduce((s, d) => s + d.criteresApplicables, 0);
+  const criteresNonCalcules = resultats.criteresNonCalcules ?? [];
+  const observations = resultats.observations ?? [];
 
   // Regroupement des écarts par domaine (ordre des domaines conservé).
   const ecartsParDomaine = new Map<string, typeof resultats.criteresNonValides>();
@@ -57,16 +60,20 @@ export default async function ResultatsPage({ params }: { params: Promise<{ id: 
       <Reveal delay={0.05} className="grid gap-4 sm:grid-cols-3">
         <StatCard label="Score global" valeur={`${resultats.scoreGlobal}%`} sousTexte="calculé à la soumission" icone={IconChecklist} />
         <StatCard
-          label="Critères validés"
-          valeur={`${criteresValides} / ${criteresTotal}`}
-          sousTexte="tous domaines confondus"
+          label="Critères respectés"
+          valeur={`${criteresValides} / ${criteresApplicables}`}
+          sousTexte={
+            criteresNonCalcules.length > 0
+              ? `${criteresNonCalcules.length} critère${criteresNonCalcules.length > 1 ? "s" : ""} non calculé${criteresNonCalcules.length > 1 ? "s" : ""} (observations)`
+              : "tous domaines confondus"
+          }
           icone={IconCheckCircle}
           ton="success"
         />
         <StatCard
           label="Écarts à corriger"
           valeur={`${resultats.criteresNonValides.length}`}
-          sousTexte="critères non validés"
+          sousTexte={criteresPartiels > 0 ? `dont ${criteresPartiels} partiellement respecté${criteresPartiels > 1 ? "s" : ""}` : "critères non respectés"}
           icone={IconAlertTriangle}
           ton={resultats.criteresNonValides.length > 0 ? "warning" : "neutral"}
         />
@@ -87,7 +94,9 @@ export default async function ResultatsPage({ params }: { params: Promise<{ id: 
                     <div className="h-full rounded-full bg-primary" style={{ width: `${domaine.scorePct}%` }} />
                   </div>
                   <p className="mt-1 text-xs text-text-faint tabular-nums">
-                    {domaine.criteresValides} / {domaine.criteresTotal} critères
+                    {domaine.criteresValides} / {domaine.criteresApplicables} critères respectés
+                    {domaine.criteresPartiels > 0 && ` · ${domaine.criteresPartiels} partiellement`}
+                    {domaine.criteresNonCalcules > 0 && ` · ${domaine.criteresNonCalcules} non calculé${domaine.criteresNonCalcules > 1 ? "s" : ""}`}
                   </p>
                 </li>
               ))}
@@ -99,12 +108,12 @@ export default async function ResultatsPage({ params }: { params: Promise<{ id: 
           <Card className="h-full">
             <CardHeader
               titre="Écarts à corriger"
-              description="Critères non validés : au moins un document à examiner manquant"
+              description="Critères non respectés ou partiellement respectés : documents à examiner absents"
             />
             {resultats.criteresNonValides.length === 0 ? (
               <div className="flex items-center gap-3 rounded-[var(--radius-md)] bg-success-soft/60 px-4 py-4 text-sm text-success">
                 <IconCheckCircle width={18} height={18} />
-                Tous les critères sont validés.
+                Tous les critères calculés sont respectés.
               </div>
             ) : (
               <div className="flex flex-col gap-5">
@@ -124,6 +133,10 @@ export default async function ResultatsPage({ params }: { params: Promise<{ id: 
                               </span>
                               <span className="font-medium text-text">{critere.libelle}</span>
                             </div>
+                            <p className="text-xs text-text-muted tabular-nums">
+                              {critere.score === 0.5 ? "Partiellement respecté (0,5)" : "Non respecté (0)"} · {critere.documentsPresents} /{" "}
+                              {critere.documentsEvalues} document{critere.documentsEvalues > 1 ? "s" : ""} présent{critere.documentsPresents > 1 ? "s" : ""}
+                            </p>
                             {/* §6.4 — documents non validés */}
                             {critere.documentsNonValides.length > 0 ? (
                               <ul className="ml-1 flex flex-col gap-0.5 text-text-muted">
@@ -171,6 +184,46 @@ export default async function ResultatsPage({ params }: { params: Promise<{ id: 
           </Card>
         </Reveal>
       </div>
+
+      {(criteresNonCalcules.length > 0 || observations.length > 0) && (
+        <Reveal delay={0.2} className="mt-6">
+          <Card>
+            <CardHeader titre="Observations" description="Éléments à « Observations » : non pris en compte dans le calcul du score" />
+            {criteresNonCalcules.length > 0 && (
+              <div className="mb-5">
+                <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-text-faint">
+                  Critères non calculés · {criteresNonCalcules.length}
+                </p>
+                <ul className="flex flex-col gap-1 text-sm">
+                  {criteresNonCalcules.map((c) => (
+                    <li key={c.critereId} className="flex gap-3">
+                      <span className="shrink-0 rounded-[var(--radius-sm)] bg-bg-subtle px-1.5 py-0.5 font-mono text-xs font-medium text-text-muted">
+                        {c.code}
+                      </span>
+                      <span className="text-text">{c.libelle}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {observations.length > 0 && (
+              <ul className="divide-y divide-border overflow-hidden rounded-[var(--radius-md)] border border-border">
+                {observations.map((o) => (
+                  <li key={o.elementMesurableId} className="flex flex-col gap-1 px-4 py-3 text-sm">
+                    <div className="flex gap-3">
+                      <span className="shrink-0 rounded-[var(--radius-sm)] bg-bg-subtle px-1.5 py-0.5 font-mono text-xs font-medium text-text-muted">
+                        {o.critereCode}
+                      </span>
+                      <span className="text-text">{o.libelle}</span>
+                    </div>
+                    <p className="whitespace-pre-line text-text-muted">{o.commentaire ?? "Aucun texte saisi."}</p>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </Card>
+        </Reveal>
+      )}
     </PageContainer>
   );
 }
