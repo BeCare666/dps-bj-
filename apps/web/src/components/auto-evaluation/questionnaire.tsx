@@ -44,6 +44,14 @@ function ecrirePositionLocale(sessionId: string, position: number) {
   }
 }
 
+function effacerPositionLocale(sessionId: string) {
+  try {
+    window.localStorage.removeItem(clePosition(sessionId));
+  } catch {
+    // Stockage indisponible : rien à effacer.
+  }
+}
+
 interface Question {
   index: number;
   elementId: string;
@@ -239,8 +247,11 @@ export function Questionnaire({ session }: { session: SessionEvaluation }) {
     startSoumission(async () => {
       await envoyerTexteEnAttente();
       const resultat = await soumettreSessionAction(session.id);
+      // En cas de succès, l'action redirige vers les résultats : on n'arrive ici qu'en cas d'erreur.
       if (resultat?.erreur) setErreur(resultat.erreur);
     });
+    // Session soumise ou en cours de soumission : la position locale ne sert plus.
+    effacerPositionLocale(session.id);
   }
 
   const sansReponse = questions.filter((q) => !estRepondu(reponses[q.elementId]));
