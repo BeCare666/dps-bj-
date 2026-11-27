@@ -1,21 +1,12 @@
+import Image from "next/image";
 import Link from "next/link";
-import type { SVGProps } from "react";
 
-// Symbole DSP : un « D » plein (le Dispositif) qui abrite en son cœur un point
-// rose (le patient). Aplats aux couleurs de la charte, même dessin que le
-// favicon (app/icon.svg). Toute modification doit être reportée aux deux.
-export function LogoSymbole(props: SVGProps<SVGSVGElement>) {
-  return (
-    <svg viewBox="0 0 40 40" aria-hidden="true" {...props}>
-      <rect width="40" height="40" rx="9" fill="var(--color-primary)" />
-      <path
-        fill="#ffffff"
-        fillRule="evenodd"
-        d="M11 9.5H18.5A10.5 10.5 0 0 1 18.5 30.5H11ZM15.8 14.3H18.5A5.7 5.7 0 0 1 18.5 25.7H15.8Z"
-      />
-      <circle cx="19.4" cy="20" r="2.6" fill="var(--color-accent)" />
-    </svg>
-  );
+// Symbole DSP : l'écu du logo officiel (mise_a_jour/Logo DSP.png), extrait tel
+// quel sur fond transparent (public/logo-dsp-ecu.png). Le logo complet, avec
+// son texte circulaire, est dans public/logo-dsp.png ; le favicon et les icônes
+// (app/icon.png, app/favicon.ico, app/apple-icon.png) reprennent le même écu.
+export function LogoSymbole({ className = "" }: { className?: string }) {
+  return <Image src="/logo-dsp-ecu.png" alt="" aria-hidden="true" width={246} height={310} className={`object-contain ${className}`} />;
 }
 
 interface LogoProps {

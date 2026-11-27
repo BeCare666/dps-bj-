@@ -15,6 +15,9 @@ export function rendreEmailVerification({ prenom, lienVerification }: DonneesEma
   const texte = "#1F2937";
   const texteAttenue = "#5B6472";
   const bordure = "#E3E8F0";
+  // Logo officiel servi par le site (apps/web/public/logo-dsp.png) : une image
+  // d'email doit avoir une adresse absolue. Sans WEB_APP_URL, en-tête texte seul.
+  const urlLogo = process.env.WEB_APP_URL ? `${process.env.WEB_APP_URL.replace(/\/$/, "")}/logo-dsp.png` : null;
 
   return `<!DOCTYPE html>
 <html lang="fr" xmlns="http://www.w3.org/1999/xhtml">
@@ -49,6 +52,7 @@ export function rendreEmailVerification({ prenom, lienVerification }: DonneesEma
           <!-- En-tête / wordmark -->
           <tr>
             <td align="center" style="padding: 36px 40px 8px 40px;">
+              ${urlLogo ? `<img src="${urlLogo}" width="112" height="112" alt="DSP, Dispositif de Sécurité des Patients" style="display:block; margin:0 auto 12px auto; width:112px; height:112px; border:0;" />` : ""}
               <div style="font-family: -apple-system, Helvetica, Arial, sans-serif; font-weight: 700; letter-spacing: 0.5px; font-size: 20px; color: ${bleuFonce};">
                 DSP
               </div>

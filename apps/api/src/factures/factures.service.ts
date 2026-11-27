@@ -4,6 +4,7 @@ import { PrismaService } from "../prisma/prisma.service.js";
 import { RoleUtilisateur } from "../generated/prisma/enums.js";
 import type { Prisma } from "../generated/prisma/client.js";
 import type { JwtAccessPayload } from "../auth/types/jwt-payload.type.js";
+import { ecrireEnTeteDsp } from "../pdf-entete.js";
 
 const LIBELLES_MODULE: Record<string, string> = { NEWS: "Score NEWS", EI: "Événements indésirables" };
 const LIBELLES_FORMULE: Record<string, string> = { INDIVIDUEL: "individuelle", GROUPE_5: "groupe de 5", GROUPE_10: "groupe de 10" };
@@ -111,7 +112,7 @@ export class FacturesService {
           : "—";
       const transaction = f.reservation?.kkiapayTransactionId ?? f.paiementAbonnement?.kkiapayTransactionId ?? "—";
 
-      doc.fillColor("#1657CC").font("Helvetica-Bold").fontSize(18).text("DSP · Dispositif de Sécurité des Patients");
+      ecrireEnTeteDsp(doc);
       doc.moveDown(1.5).fillColor("black").fontSize(16).text(`Facture ${f.numero}`);
       doc.font("Helvetica").fontSize(10).text(`Émise le ${f.emiseLe.toLocaleDateString("fr-FR")}`);
       doc.moveDown(1).font("Helvetica-Bold").text("Client");

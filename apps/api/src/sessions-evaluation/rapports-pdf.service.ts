@@ -8,6 +8,7 @@ import { grilleStructureInclude } from "../grilles/grilles.service.js";
 import { RoleUtilisateur, StatutRapportPdf, StatutSessionEvaluation } from "../generated/prisma/enums.js";
 import { calculerScore, type ResultatScore } from "./scoring.util.js";
 import { SessionsEvaluationService } from "./sessions-evaluation.service.js";
+import { ecrireEnTeteDsp } from "../pdf-entete.js";
 
 const TENTATIVES_MAX = 3;
 const LOT_PAR_PASSAGE = 3;
@@ -129,8 +130,7 @@ export class RapportsPdfService {
       };
 
       // En-tête
-      doc.fillColor(BLEU).font("Helvetica-Bold").fontSize(18).text("DSP · Dispositif de Sécurité des Patients");
-      doc.fillColor(GRIS).font("Helvetica").fontSize(10).text("Rapport de synthèse d'auto-évaluation documentaire");
+      ecrireEnTeteDsp(doc, "Rapport de synthèse d'auto-évaluation documentaire");
       doc.moveDown(1).fillColor("black").fontSize(11);
       doc.text(`Établissement : ${donnees.organisation}`);
       doc.text(`Grille : ${donnees.grille}`);
